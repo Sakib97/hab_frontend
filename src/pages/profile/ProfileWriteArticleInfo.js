@@ -96,7 +96,16 @@ const ProfileWriteArticleInfo = () => {
         setTitleBN('')
         setSubtitleBN('')
         setDraftInfo({});
-        toast.success("Draft Info Cleared !", { duration: 2000 })
+        // toast.success("Draft Info Cleared !", { duration: 2000 })
+        toast('Draft Info Cleared !',
+            {
+              icon: <i style={{color:"red"}} className="fa-solid fa-trash-can"></i>,
+              style: {
+                borderRadius: '10px',
+                background: '#fff',
+                color: 'black',
+              },
+            })
     }
 
     return (

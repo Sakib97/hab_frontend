@@ -56,7 +56,7 @@ const RichTextEditor = ({ onChange }) => {
     const saveDraftEN = () => {
         setContent2(content);
         localStorage.setItem(DRAFT_ARTICLE_EN, content)
-        toast.success("Draft Saved", { duration: 2000 });
+        toast.success("Draft Article Saved", { duration: 2000 });
     }
 
     // Clear the draft from localStorage
@@ -64,7 +64,15 @@ const RichTextEditor = ({ onChange }) => {
         setContent2('');
         localStorage.removeItem(DRAFT_ARTICLE_EN);
         setContent('');
-        
+        toast('Draft Article Cleared !',
+            {
+              icon: <i style={{color:"red"}} className="fa-solid fa-trash-can"></i>,
+              style: {
+                borderRadius: '10px',
+                background: '#fff',
+                color: 'black',
+              },
+            })
     };
 
     const getHTMLContent = () => {
