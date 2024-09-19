@@ -1,0 +1,28 @@
+.loginForm {
+    width: 100%;
+    max-width: 400px;
+}
+
+.loginForm input {
+    width: 100%;
+    padding: 10px;
+    margin: 4px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.loginForm button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.loginForm button:hover {
+    background-color: #09854b;
+}

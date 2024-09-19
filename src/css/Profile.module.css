@@ -1,0 +1,72 @@
+.profileContainer {
+    display: flex;
+    /* height: 100vh; */
+    /* justify-content: space-between; */
+}
+
+.sidebarColumn {
+    /* flex: 1; */
+    /* max-width: 80px; */
+    
+    /* min-width: 80px;  */
+    background-color: #f0f0f0;
+
+    position: fixed;
+    height: 100%;
+    /* z-index: 1000; */
+    transition: width 0.3s ease-in-out;
+}
+
+.contentColumn {
+    flex: 3;
+    padding: 15px; 
+
+    display: flex;
+    flex-direction: column;
+    
+    /* Vertically centers the content */
+    /* justify-content: center; */
+
+    /* Horizontally centers the content */
+    align-items: center;
+
+    margin-left: 80px;
+    transition: margin-left 0.3s ease-in-out;
+
+}
+
+.expandedContent {
+    margin-left: 250px; /* Adjust margin when sidebar is expanded */
+}
+
+
+h1,
+h2,
+h3,
+h5 {
+    margin: 10px 0;
+}
+
+.sidebarContainer {
+    display: flex;
+    height: 100%;
+    /* color:#000000; */
+    /* color:#efebeb9f; */
+    /* min-height: 400px; */
+
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    /* .profileContainer {
+        flex-direction: column; 
+    }
+    
+    .sidebarColumn {
+        min-width: 100%; 
+    }
+
+    .contentColumn {
+        min-width: 100%; 
+    } */
+}

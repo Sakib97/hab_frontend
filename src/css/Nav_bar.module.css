@@ -1,0 +1,83 @@
+.customNavbar {
+    /* background: linear-gradient(45deg, #424d58, #142155); */
+    background: linear-gradient(45deg, #2b3239, #1d2959);
+    /* background: green; */
+    padding: 10px 20px;
+
+  }
+  
+  .navbarBrandCustom {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fbfafa !important;
+  }
+  
+  .nav-link-custom {
+    font-size: 1rem;
+    margin-right: 20px;
+    color: #fff ;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link-custom:hover {
+    color: #d1ecf1 !important;
+  }
+
+  .nav-item {
+    font-size: 1.2rem;
+  }
+  
+  .dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Container for the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Hidden dropdown content */
+.dropdownContent {
+    /* display: none; */
+    display: block;
+    position: absolute;
+    background-color: #313236;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+    border-radius: 10px;
+}
+
+/* Links inside the dropdown */
+.dropdownContent a {
+    color: rgb(255, 255, 255);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-radius: 8px;
+}
+ 
+/* Change color of dropdown links on hover */
+.dropdownContent a:hover {
+    background-color: #2f62ed
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdownContent {
+    /* display: block; */
+    max-height: 300px;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}

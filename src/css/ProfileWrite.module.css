@@ -1,0 +1,95 @@
+/* General form styling */
+.customFormPart {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  /* Form Row: Align elements in rows */
+  .formRow {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+  }
+  
+  /* Each form group */
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+  }
+  
+  .formGroup label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  /* Custom Select and Input Styling */
+  .customSelect,
+  .customInput {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+  }
+  
+  .customSelect {
+    width: 100%;
+  }
+  
+  .customInput {
+    width: 100%;
+    resize: none;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .submitButton:hover {
+    background-color: #0073e6;
+  }
+
+  /* Vertical Divider Styling */
+.verticalDivider {
+    width: 1px;
+    background-color: #ccc;
+    height: 60px; 
+    /* align-self: stretch; */
+    position: relative; /* Enables relative movement */
+  
+  /* Adjust the following values for movement */
+  transform: translateX(-30px) translateY(20px); 
+  }
+  
+  /* Responsive Layout */
+  @media (max-width: 950px) {
+    .verticalDivider {
+        display: none;
+      }
+  }
+  @media (max-width: 768px) {
+    /* @media (max-width: 900px) { */
+    .formRow {
+      flex-direction: column;
+    }
+    .verticalDivider {
+        display: none;
+      }
+  }

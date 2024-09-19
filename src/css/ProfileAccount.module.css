@@ -1,0 +1,122 @@
+.profileContainer {
+    max-width: 400px;
+    margin: 0px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* .profileImageContainer {
+    margin-bottom: 20px;
+  }
+  
+  .profileImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  } */
+
+
+  .profileImageContainer {
+    position: relative;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .imageWrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profileImage {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Hide the default file input */
+  .hiddenFileInput {
+    display: none;
+  }
+  
+  /* Style for the custom 'Choose File' button */
+  .customFileInput {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .customFileInput:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+
+  
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .row {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .buttonRow{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .inputField:focus {
+    outline: none;
+    border-color: #777;
+  }
+
+  .instructions {
+    font-size: 0.65rem;
+    border-radius: 0.5rem;
+    background: rgba(162, 21, 21, 0.937);;
+    color: #ffffff;
+    position: relative;
+    /* display: flex; */
+    justify-content: start;
+    align-items: start;
+    text-align: start;
+    padding-left: 10px;
+}
+
+.iconToggle {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--icon-color);
+  cursor: pointer; 
+  z-index: 1;
+}

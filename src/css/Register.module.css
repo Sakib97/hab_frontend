@@ -1,0 +1,176 @@
+.register {
+    min-height: 100vh;
+    /* background-color: rgb(141, 143, 151);  */
+    background-color: #d2d0d0;
+}
+
+.pageWrapper {
+    background-color: #d2d0d0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.registrationContainer {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+    min-height: 80vh;
+}
+
+/* Left Section (Logo and Text) */
+.leftSection {
+
+    flex: 1;
+    background-color: #1f2825;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+
+    /* flex-shrink: 0; */
+}
+
+.leftSection .logo img {
+    max-width: 150px;
+    margin-bottom: 20px;
+}
+
+.leftSection h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.leftSection p {
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+/* Right Section (Form) */
+.rightSection {
+    /* flex-grow: 1; */
+
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+}
+
+.registrationForm {
+    width: 100%;
+    max-width: 400px;
+}
+
+.registrationForm h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.nameFields {
+    display: flex;
+    gap: 10px;
+}
+
+.registrationForm input {
+    width: 100%;
+    padding: 10px;
+    margin: 4px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.registrationForm button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.registrationForm button:hover {
+    background-color: #09854b;
+}
+
+
+
+
+/* Add padding to the right so text doesn't overlap with the icon */
+.inputWrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.icon {
+    position: absolute;
+    /* right: 40px; */
+    right: var(--icon-right, 40px);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--icon-color, green); /* Color for the tick mark */
+    font-size: 18px;
+    pointer-events: none; /* Ensure the icon doesn't interfere with input interactions */
+}
+
+.iconToggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--icon-color);
+    cursor: pointer; /* Enable clicking on the eye icon */
+    z-index: 1;
+}
+
+/* instructions for error messages */
+.instructions {
+    font-size: 0.75rem;
+    border-radius: 0.5rem;
+    background: rgba(41, 40, 40, 0.937);;
+    color: #e7e1e1;
+    position: relative;
+    /* display: flex; */
+    justify-content: start;
+    align-items: start;
+    text-align: start;
+    padding-left: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .registrationContainer {
+        flex-direction: column;
+    }
+
+    .leftSection,
+    .rightSection {
+        width: 100%;
+    }
+
+    .leftSection {
+        order: 2;
+        padding: 20px;
+    }
+
+    .rightSection {
+        order: 1;
+        padding: 20px;
+    }
+}
