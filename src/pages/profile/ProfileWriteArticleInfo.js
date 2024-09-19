@@ -92,7 +92,7 @@ const ProfileWriteArticleInfo = () => {
         setSubMenu()
         setTags([])
         setTitleEN(''); 
-        setSubtitleEN('')
+        setSubtitleEN('');
         setTitleBN('')
         setSubtitleBN('')
         setDraftInfo({});
