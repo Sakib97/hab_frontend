@@ -4,6 +4,7 @@ import styles from '../../css/ProfileWrite.module.css'
 import { useState, useEffect } from "react";
 import { franc } from 'franc-min'
 import toast, { Toaster } from 'react-hot-toast';
+import Divider from '@mui/material/Divider';
 
 const ProfileWriteArticleInfo = () => {
     const DRAFT_ARTICLE_INFO = "draftArticleInfo";
@@ -125,7 +126,8 @@ const ProfileWriteArticleInfo = () => {
                     />
                 </div>
 
-                <div className={styles.verticalDivider}></div>
+                {/* <div className={styles.verticalDivider}></div> */}
+                <Divider orientation="vertical" flexItem />
 
                 <div className={styles.formGroup}>
                     <label>Sub Menu *</label>
@@ -139,7 +141,8 @@ const ProfileWriteArticleInfo = () => {
                             { value: 'lucy', label: 'Lucy' }]}
                     />
                 </div>
-                <div className={styles.verticalDivider}></div>
+                {/* <div className={styles.verticalDivider}></div> */}
+                <Divider orientation="vertical" flexItem />
 
                 <div className={styles.formGroup}>
                     <label>Tags *</label>

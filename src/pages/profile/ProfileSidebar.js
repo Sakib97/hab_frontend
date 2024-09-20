@@ -31,13 +31,13 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
 
     return (
         <div className={styles.sidebarContainer} >
-            <Sidebar collapsed={collapsed} >
+            <Sidebar collapsed={collapsed}>
                 <Menu >
                     <MenuItem icon={
                         <img src={logo2} alt="Logo" style={{ width: '50px', borderRadius: '50%' }} />
                     }>
                         <FontAwesomeIcon
-                            onClick={() => { 
+                            onClick={() => {
                                 setCollapsed(true); setSidebarExpanded(false);
                             }}
                             style={{ width: '160px', marginLeft: '60px', fontSize: '20px' }}
@@ -85,7 +85,9 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
             </Sidebar>
             <main style={{ padding: 1 }}>
                 <div>
-                    {/* <ProfileAccount/> */}
+                    {/* <button className="sb-button" onClick={() => setIsExpanded(!isExpanded)}>
+                        Toggle
+                    </button> */}
                 </div>
             </main>
         </div>
