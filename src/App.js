@@ -40,7 +40,7 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
 
-
+ 
             <Route element={<RequireNoAuth />}>
               <Route path="/auth" element={<AuthLayout />}>
                 {/* Index route - default content for /auth */}
@@ -56,6 +56,7 @@ function App() {
             {/* profile page will require authentication */}
             <Route element={<RequireAuth allowedRoles={[ROLES.GeneralUser]} />}>
               <Route path="/profile" element={<Profile />} >
+                <Route index element={<Navigate to="account" />} />
                 <Route path='account' element={<ProfileAccount />}></Route>
               </Route>
             </Route>

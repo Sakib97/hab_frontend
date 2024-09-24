@@ -11,22 +11,23 @@ import { Divider, useMediaQuery, useTheme, createTheme } from '@mui/material';
 const Nav_bar = () => {
     const { auth } = useAuth()
     const { profile } = useProfileContext()
-    // const theme = useTheme();
-    const theme = createTheme({
-        breakpoints: {
-            values: {
-                xs: 0,
-                sm: 600,
-                md: 990,
-                lg: 1200,
-                xl: 1536,
-            },
-        },
-    });
 
-    // This will return `true` on small devices (below "md" breakpoint)
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-    console.log("isSmallScreen:: ", isSmallScreen);
+    // const theme = useTheme();
+    // const theme = createTheme({
+    //     breakpoints: {
+    //         values: {
+    //             xs: 0,
+    //             sm: 600,
+    //             md: 990,
+    //             lg: 1200,
+    //             xl: 1536,
+    //         },
+    //     },
+    // });
+
+    // // This will return `true` on small devices (below "md" breakpoint)
+    // const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+    // console.log("isSmallScreen:: ", isSmallScreen);
 
     return (
         <div>
