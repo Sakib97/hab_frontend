@@ -7,7 +7,17 @@ import toast, { Toaster } from 'react-hot-toast';
 import Divider from '@mui/material/Divider';
 import useFetch from "../../hooks/useFetch";
 
-const ProfileWriteArticleInfo = () => {
+import axios, { axiosPrivate } from "../../api/axios";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useQuery } from "react-query";
+
+const fetchData = async (url, axiosInstance) => {
+    const response = await axiosInstance.get(url);
+    return response.data;
+  };
+
+const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
+
     const GET_MENU_URL = '/api/v1/category/get_all_cat'
     const GET_SUBMENU_URL = '/api/v1/category/get_all_subcat'
     const GET_TAG_URL = '/api/v1/category/get_all_tag'
@@ -49,6 +59,8 @@ const ProfileWriteArticleInfo = () => {
 
         if (savedInfo) {
             const parsedInfo = JSON.parse(savedInfo);
+            finalArticleInfo(parsedInfo);
+
             setCategory(parsedInfo.category)
             setSubCategory(parsedInfo.subCategory)
             setTags(parsedInfo.tags)
@@ -109,7 +121,7 @@ const ProfileWriteArticleInfo = () => {
         // check if newTag is already set before, if so, make the select visible on load 
         // and don't clear it's state
         if (Array.isArray(newTag) && newTag.length !== 0) {
-            console.log("draftInfo.newTag:: ", newTag);
+            // console.log("draftInfo.newTag:: ", newTag);
             setIsNewTagVisible(true);
 
         } else {
@@ -124,9 +136,35 @@ const ProfileWriteArticleInfo = () => {
 
     // get all categories, sub cats and tags; 
     // useFetch(URL, false) means axiosPrivate is deactivated here
-    const { data: catData, error: catError, isLoading: catLoading } = useFetch(GET_MENU_URL, false)
-    const { data: subCatData, error: subCatError, isLoading: subCatLoading } = useFetch(GET_SUBMENU_URL, false)
-    const { data: tagData, error: tagError, isLoading: tagLoading } = useFetch(GET_TAG_URL, false)
+    const axiosInst = axios;
+    const { data: catData, error: catError, isLoading: catLoading } = useQuery(
+        ['menuData', GET_MENU_URL],
+        () => fetchData(GET_MENU_URL, axiosInst), 
+        {
+            staleTime: 60000,  // Example option: Cache data for 60 seconds
+            refetchOnWindowFocus: false,  // Disable refetch on window focus
+        }
+      );
+
+      const { data: subCatData, error: subCatError, isLoading: subCatLoading} = useQuery(
+        ['submenuData', GET_SUBMENU_URL],
+        () => fetchData(GET_SUBMENU_URL, axiosInst), 
+        {
+            staleTime: 60000,  // Example option: Cache data for 60 seconds
+            refetchOnWindowFocus: false,  // Disable refetch on window focus
+        }
+      );
+    
+      const { data: tagData, error: tagError, isLoading: tagLoading } = useQuery(
+        ['tagData', GET_TAG_URL],
+        () => fetchData(GET_TAG_URL, axiosInst), {
+            refetchOnWindowFocus: false,  // Disable refetch on window focus
+        }
+      );
+
+    // const { data: catData, error: catError, isLoading: catLoading } = useFetch(GET_MENU_URL, false)
+    // const { data: subCatData, error: subCatError, isLoading: subCatLoading } = useFetch(GET_SUBMENU_URL, false)
+    // const { data: tagData, error: tagError, isLoading: tagLoading } = useFetch(GET_TAG_URL, false)
 
     // Sort the data by 'order' field before mapping
     const sortedCatData = Array.isArray(catData)
@@ -159,7 +197,7 @@ const ProfileWriteArticleInfo = () => {
         label: subCategory.subcategory_name
     }));
 
-    const tagOptions = Array.isArray(subCatData) ?
+    const tagOptions = Array.isArray(tagData) ?
         tagData.map(tag => ({
             value: tag.tag_name,
             label: tag.tag_name
@@ -174,28 +212,28 @@ const ProfileWriteArticleInfo = () => {
     const saveDraftInfo = () => {
         if (titleEN && detectLanguage(titleEN) !== 'eng') {
             setError(true)
-            toast.error("Save Failed ! Incorrect English Title !", { duration: 4000 });
+            toast.error("Save Failed ! Incorrect English Title ! \nPrevious info will be retained (in any) !", { duration: 6000 });
             return;
         }
         if (subtitleEN && detectLanguage(subtitleEN) !== 'eng') {
             setError(true)
-            toast.error("Save Failed ! Incorrect English SubTitle !", { duration: 4000 });
+            toast.error("Save Failed ! Incorrect English SubTitle ! \nPrevious info will be retained (in any) !", { duration: 6000 });
             return;
         }
         if (titleBN && detectLanguage(titleBN) !== 'ben') {
             setError(true)
-            toast.error("Save Failed ! Incorrect Bangla Title !", { duration: 4000 });
+            toast.error("Save Failed ! Incorrect Bangla Title ! \nPrevious info will be retained (in any) !", { duration: 6000 });
             return;
         }
         if (subtitleBN && detectLanguage(subtitleBN) !== 'ben') {
             setError(true)
-            toast.error("Save Failed ! Incorrect Bangla SubTitle !", { duration: 4000 });
+            toast.error("Save Failed ! Incorrect Bangla SubTitle ! \nPrevious info will be retained (in any) !", { duration: 6000 });
             return;
         }
 
         if (coverImgCapBN && detectLanguage(coverImgCapBN) !== 'ben') {
             setError(true)
-            toast.error("Save Failed ! Incorrect Bangla Image Caption !", { duration: 4000 });
+            toast.error("Save Failed ! \n Incorrect Bangla Image Caption ! \n Previous info will be retained (in any) !", { duration: 6000});
             return;
         }
 
@@ -207,6 +245,7 @@ const ProfileWriteArticleInfo = () => {
             subtitleEN, subtitleBN, coverImgLink, coverImgCapEN, coverImgCapBN
         };
         setDraftInfo(draftData);
+        finalArticleInfo(draftData);
 
         // Save directly to localStorage
         localStorage.setItem(DRAFT_ARTICLE_INFO, JSON.stringify(draftData));
@@ -251,7 +290,8 @@ const ProfileWriteArticleInfo = () => {
                         // For each <Select />, assign the element (el) 
                         // to the corresponding index in the selectRefs.current array.
                         ref={(el) => (selectRefs.current[0] = el)}
-                        placeholder="Select Category"
+                        placeholder={catLoading? "Loading.." : 
+                            catError? "Server Error !" : "Select Category"}
                         style={{ width: 180 }}
                         value={category}
                         onChange={handleCategoryChange}
@@ -266,7 +306,8 @@ const ProfileWriteArticleInfo = () => {
                     <label>Sub Category *</label>
                     <Select
                         ref={(el) => (selectRefs.current[1] = el)}
-                        placeholder="Select Sub Category"
+                        placeholder={subCatLoading? "Loading.." : 
+                            subCatError? "Server Error !" : "Select Sub Category"}
                         style={{ width: 180 }}
                         value={subCategory}
                         onChange={setSubCategory}
@@ -288,7 +329,9 @@ const ProfileWriteArticleInfo = () => {
                         style={{ width: 250 }}
                         onChange={setTags}
                         suffixIcon={suffix}
-                        placeholder="Please select"
+                        // placeholder="Please select"
+                        placeholder={tagLoading? "Loading.." : 
+                            tagError? "Server Error !" : "Please select"}
                         options={tagOptions}
                     />
                     <span style={{ fontSize: "12px" }}>No Matching Tags?

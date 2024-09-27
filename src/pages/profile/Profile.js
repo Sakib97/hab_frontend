@@ -26,7 +26,6 @@ const Profile = () => {
     useEffect(() => {
         // console.log("profile:: ", profile);
         const controller = new AbortController();
-
         const getProfile = async () => {
             try {
                 const response = await axiosPrivate.get(PROFILE_URL, {

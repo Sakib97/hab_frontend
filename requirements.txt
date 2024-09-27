@@ -59,3 +59,6 @@ npm i franc-min
 # ant design
 npm install antd --save
 npm install @ant-design/icons --save
+
+# react-query for better state management
+npm i react-query

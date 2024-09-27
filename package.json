@@ -35,6 +35,7 @@
     "react-hot-toast": "^2.4.1",
     "react-image-file-resizer": "^0.4.8",
     "react-pro-sidebar": "^1.1.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "6.4",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"

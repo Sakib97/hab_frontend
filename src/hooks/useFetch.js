@@ -31,7 +31,9 @@ const useFetch = (url, usePrivate = false) => {
                 if (isMounted) {
                     setError(err);  // Store the error if one occurs
                   }
-            } finally {
+                  
+            } 
+            finally {
                 if (isMounted) {
                     setIsLoading(false);  // Set loading state to false when the request completes
                   }
@@ -44,6 +46,7 @@ const useFetch = (url, usePrivate = false) => {
             controller.abort();  // Cancel the request if the component is unmounted
           };
     }, [url, axiosPrivate, usePrivate])
+// }, [])
 
     return  { data, error, isLoading };  
 }
