@@ -23,7 +23,7 @@ function App() {
 
   const ROLES = {
     'Sadmin': 1453,
-    'Admin': 1203,
+    'Author': 1203,
     'Editor': 1260,
     'SubEditor': 1444,
     'GeneralUser': 2024

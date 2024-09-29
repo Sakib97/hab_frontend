@@ -141,9 +141,14 @@ const ProfileWrite = () => {
           <RichTextEditor language="bn" onChange={setEditorContentBN} />
         </div>
 
-        <button type="submit" name="reviewSubmit" className="btn btn-success" >Submit for Review</button>
+        <hr />
+        <div style={{display: "flex", justifyContent: "center"}}>
+          <button type="submit" name="reviewSubmit" className="btn btn-success" >
+            Submit for Review
+          </button>
+        </div>
       </form>
-
+      <br /> <br />
     </div>
   );
 }

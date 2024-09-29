@@ -7,6 +7,7 @@ import { faEye, faEyeSlash, faSpinner } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { axiosPrivate } from "../../api/axios";
 import Compress from "compress.js";
+import ProfileAccountRole from "./ProfileAccountRole";
 
 
 const ProfileAccount = () => {
@@ -212,7 +213,9 @@ const ProfileAccount = () => {
         try {
             const edit_obj = { "first_name": firstName, 
                 "last_name": lastName, 
-                "password": pwd, "image_url": imageUrl, "delete_image_url": deleteImageUrl }
+                "password": pwd, "image_url": imageUrl, "delete_image_url": deleteImageUrl?deleteImageUrl: "" }
+            console.log("edit:: ", JSON.stringify(edit_obj));
+            
             const response = await axiosPrivate.put(EDIT_ACC_URL,
                 JSON.stringify(edit_obj),
             )
@@ -239,6 +242,7 @@ const ProfileAccount = () => {
 
 
     return (
+<div>        
         <div className={styles.profileContainer}>
             <div><Toaster /></div>
 
@@ -356,6 +360,9 @@ const ProfileAccount = () => {
                 </form>
             </div>
         </div>
+
+        <ProfileAccountRole/>
+    </div>
     );
 }
 
