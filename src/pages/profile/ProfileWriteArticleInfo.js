@@ -7,9 +7,11 @@ import toast, { Toaster } from 'react-hot-toast';
 import Divider from '@mui/material/Divider';
 import useFetch from "../../hooks/useFetch";
 
+
 import axios, { axiosPrivate } from "../../api/axios";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useQuery } from "react-query";
+import {  useLocation } from "react-router-dom";
 
 const fetchData = async (url, axiosInstance) => {
     const response = await axiosInstance.get(url);
@@ -29,7 +31,6 @@ const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
     const [isNewTagVisible, setIsNewTagVisible] = useState(false);
     const [isOldTagDisabled, setIsOldTagDisabled] = useState(false);
 
-
     const [category, setCategory] = useState()
     const [subCategory, setSubCategory] = useState()
     const [titleEN, setTitleEN] = useState('')
@@ -47,6 +48,14 @@ const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
     // To Apply the blur() method to close all Select when the user scrolls
     // otherwise open menu scrolls up of navbar
     const selectRefs = useRef([]);  // Array of refs
+
+    const location = useLocation();
+    useEffect(() => {
+        // Dismiss all toasts when the component is unmounted
+        return () => {
+          toast.remove();
+        };
+      }, [location]); // Runs on page navigation
 
     const detectLanguage = (text) => {
         const detectedLanguage = franc(text, { only: ['eng', 'ben'] })
@@ -249,7 +258,7 @@ const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
 
         // Save directly to localStorage
         localStorage.setItem(DRAFT_ARTICLE_INFO, JSON.stringify(draftData));
-        toast.success("Draft Info Saved!", { duration: 2000 });
+        toast.success("Draft Info Saved!", { duration: 1000 });
 
         // console.log("info:: ", category, subCategory, tags, titleEN, titleBN, subtitleEN, subtitleBN);
     }
@@ -277,12 +286,13 @@ const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
                     background: '#fff',
                     color: 'black',
                 },
+                duration: 1000
             })
     }
 
     return (
         <div className={styles.customFormPart}>
-            <div><Toaster /></div>
+            <Toaster/>
             <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                     <label>Category *</label>

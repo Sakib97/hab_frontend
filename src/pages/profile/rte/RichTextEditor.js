@@ -3,6 +3,7 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import JoditEditor from 'jodit-react';
 import toast, { Toaster } from 'react-hot-toast';
 import DOMPurify from 'dompurify';
+import { useLocation } from 'react-router-dom';
 
 const RichTextEditor = ({ language, onChange }) => {
     const DRAFT_ARTICLE_EN = "draftArticleEn";
@@ -38,6 +39,14 @@ const RichTextEditor = ({ language, onChange }) => {
         }
     }, []);
 
+    const location = useLocation();
+    useEffect(() => {
+        // Dismiss all toasts when the component is unmounted
+        return () => {
+          toast.remove();
+        };
+      }, [location]); // Runs on page navigation
+
     // IMP::: https://xdsoft.net/jodit/play.html
     const config = useMemo(() => ({
         readonly: false, // all options from https://xdsoft.net/jodit/docs/,
@@ -48,7 +57,8 @@ const RichTextEditor = ({ language, onChange }) => {
         // minWidth: 400,
         maxWidth: 800,
         toolbarStickyOffset: 50,
-        removeButtons: removeButtonList, 
+        // removeButtons: removeButtonList, 
+        removeButtons: ['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'], 
         events: {
             error: (error) => {
                 // Handle the error
@@ -62,7 +72,7 @@ const RichTextEditor = ({ language, onChange }) => {
         // toolbarAdaptive: true,
 
     }),
-        [],
+        []
     );
 
     const handleEditorChange = (newContent) => {
@@ -75,11 +85,11 @@ const RichTextEditor = ({ language, onChange }) => {
         setContent2(content);
         if (isLangEN) {
             localStorage.setItem(DRAFT_ARTICLE_EN, content)
-            toast.success("English Draft Article Saved !", { duration: 2000 });
+            toast.success("English Draft Article Saved !", { duration: 1000 });
         }
         if (isLangBN) {
             localStorage.setItem(DRAFT_ARTICLE_BN, content)
-            toast.success("বাংলা খসড়া সেভ হয়েছে !", { duration: 2000 });
+            toast.success("বাংলা খসড়া সেভ হয়েছে !", { duration: 1000 });
         }
 
     }
@@ -105,6 +115,7 @@ const RichTextEditor = ({ language, onChange }) => {
                     background: '#fff',
                     color: 'black',
                 },
+                duration: 1000
             })
     };
 
@@ -136,7 +147,9 @@ const RichTextEditor = ({ language, onChange }) => {
                     // onFocus = {newContent => handleEditorChange(newContent)}
                     onChange={newContent => handleEditorChange(newContent)}
                     // onChange={value => setContent(value)}
-                    onBlur={value => setContent2(value)}
+                    onBlur={newContent => setContent2(newContent? newContent : "write")}
+                    // onFocus={newContent => setContent2(newContent)}
+                    // onClick={value => setContent2(value)}
                 // onChange={newContent => {const newC = newContent;}}
                 />
 

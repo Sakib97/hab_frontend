@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { axiosPrivate } from "../../api/axios";
 import Compress from "compress.js";
 import ProfileAccountRole from "./ProfileAccountRole";
+import { useLocation } from "react-router-dom";
 
 
 const ProfileAccount = () => {
@@ -42,6 +43,15 @@ const ProfileAccount = () => {
 
     const [loading, setLoading] = useState(false)
     const [imgLoading, setImgLoading] = useState(false)
+
+    const location = useLocation();
+    useEffect(() => {
+        // Dismiss all toasts when the component is unmounted
+        return () => {
+          toast.remove();
+        };
+      }, [location]); // Runs on page navigation
+
 
     useEffect(() => {
         if (enableEdit) {
@@ -101,7 +111,7 @@ const ProfileAccount = () => {
     useEffect(() => {
         if (selectedFile) {
             handleImgUpload();
-        } else{
+        } else {
             // console.log("Sorry, no Image");
         }
     }, [selectedFile]);
@@ -128,7 +138,7 @@ const ProfileAccount = () => {
             return;
         }
 
-        if (!selectedFile.type.startsWith('image/')){
+        if (!selectedFile.type.startsWith('image/')) {
             console.log("Not an Image !");
             makeToast("Not an Image !", 'error')
             return;
@@ -182,11 +192,11 @@ const ProfileAccount = () => {
                 // delete previous image while uploading a new image via api can be implemented later
                 // or we can limit the number of times image can be changed
                 // console.log("imageUrl, delete_rul:: ", imgUrl, deleteUrl);
-                
+
                 setImgLoading(false)
                 // console.log("imageUrl, delete_rul:: ", imgUrl, deleteUrl);
                 setSelectedFile(null) //preventing image upload on refresh
-                
+
             } catch (error) {
                 makeToast("Error uploading image", 'error')
                 console.log("Error uploading image");
@@ -196,7 +206,7 @@ const ProfileAccount = () => {
         }
     }
 
-   
+
 
     const handleSubmit = async (event) => {
         setLoading(true)
@@ -211,11 +221,13 @@ const ProfileAccount = () => {
             return;
         }
         try {
-            const edit_obj = { "first_name": firstName, 
-                "last_name": lastName, 
-                "password": pwd, "image_url": imageUrl, "delete_image_url": deleteImageUrl?deleteImageUrl: "" }
+            const edit_obj = {
+                "first_name": firstName,
+                "last_name": lastName,
+                "password": pwd, "image_url": imageUrl, "delete_image_url": deleteImageUrl ? deleteImageUrl : ""
+            }
             console.log("edit:: ", JSON.stringify(edit_obj));
-            
+
             const response = await axiosPrivate.put(EDIT_ACC_URL,
                 JSON.stringify(edit_obj),
             )
@@ -242,127 +254,126 @@ const ProfileAccount = () => {
 
 
     return (
-<div>        
-        <div className={styles.profileContainer}>
+        <div>
             <div><Toaster /></div>
+            <div className={styles.profileContainer}>
+                <div className={styles.profileImageContainer}>
+                    <div className={styles.imageWrapper}>
+                        <img
+                            src={imageUrl}
+                            alt="Profile"
+                            className={styles.profileImage}
+                        />
 
-            <div className={styles.profileImageContainer}>
-                <div className={styles.imageWrapper}>
-                    <img
-                        src={imageUrl}
-                        alt="Profile"
-                        className={styles.profileImage}
-                    />
+                        {enableEdit &&
+                            <label htmlFor="fileInput" className={styles.customFileInput}>
+                                {imgLoading ? "..." : <i className="fa-solid fa-pen-to-square" />}
+                            </label>}
+                        {enableEdit && <input
+                            type="file"
+                            accept="image/*"
+                            id="fileInput"
+                            className={styles.hiddenFileInput}
+                            onChange={handleFileChange}
+                            disabled={imgLoading}
+                        />}
 
-                    {enableEdit && 
-                    <label htmlFor="fileInput" className={styles.customFileInput}>
-                         {imgLoading ? "..." : <i className="fa-solid fa-pen-to-square" />}
-                    </label> }
-                    {enableEdit && <input
-                        type="file"
-                        accept="image/*"
-                        id="fileInput"
-                        className={styles.hiddenFileInput}
-                        onChange={handleFileChange}
-                        disabled={imgLoading}
-                    />}
+                    </div>
 
                 </div>
 
-            </div>
+                <div className={styles.profileInfo}>
+                    <form onSubmit={handleSubmit} className={styles.profileInfo}>
+                        <div className={styles.row}>
+                            <input
+                                type="text"
+                                value={firstName}
+                                ref={fnameRef}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                className={styles.inputField}
+                                onFocus={() => setFnameFocus(true)}
+                                onBlur={() => setFnameFocus(false)}
+                                disabled={enableEdit ? false : true}
+                            />
+                            <input
+                                type="text"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                className={styles.inputField}
+                                onFocus={() => setLnameFocus(true)}
+                                onBlur={() => setLnameFocus(false)}
+                                disabled={enableEdit ? false : true}
+                            />
+                        </div>
+                        {((fnameFocus && firstName && !isValidFname) || (lnameFocus && lastName && !isValidLname)) &&
+                            <div className={styles.instructions}>
+                                <div>Name must be between 2 to 10 characters. Must begin with a letter. <br />
+                                    Letters, numbers, underscores, hyphens allowed. No space is allowed.
+                                </div>
 
-            <div className={styles.profileInfo}>
-                <form onSubmit={handleSubmit} className={styles.profileInfo}>
-                    <div className={styles.row}>
-                        <input
-                            type="text"
-                            value={firstName}
-                            ref={fnameRef}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            className={styles.inputField}
-                            onFocus={() => setFnameFocus(true)}
-                            onBlur={() => setFnameFocus(false)}
-                            disabled={enableEdit ? false : true}
-                        />
-                        <input
-                            type="text"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            className={styles.inputField}
-                            onFocus={() => setLnameFocus(true)}
-                            onBlur={() => setLnameFocus(false)}
-                            disabled={enableEdit ? false : true}
-                        />
-                    </div>
-                    {((fnameFocus && firstName && !isValidFname) || (lnameFocus && lastName && !isValidLname)) &&
-                        <div className={styles.instructions}>
-                            <div>Name must be between 2 to 10 characters. Must begin with a letter. <br />
-                                Letters, numbers, underscores, hyphens allowed. No space is allowed.
-                            </div>
+                            </div>}
+
+                        <div className={styles.row}>
+                            <input
+                                type="email"
+                                value={profile.user_email}
+                                className={styles.inputField}
+                                disabled
+                            />
+                        </div>
+                        {enableEdit && <div className={styles.row}>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={pwd}
+                                ref={pwdRef}
+                                onChange={(e) => { setPWD(e.target.value) }}
+                                className={styles.inputField}
+                                placeholder="New Password"
+                                onFocus={() => setPWDFocus(true)}
+                                onBlur={() => setPWDFocus(false)}
+                                disabled={(enableEdit && enablePWDEdit) ? false : true}
+
+                            />
+                            {enableEdit && enablePWDEdit && <FontAwesomeIcon
+                                icon={showPassword ? faEyeSlash : faEye}
+                                className={styles.iconToggle}
+                                onClick={togglePasswordVisibility}
+                                style={{ "--icon-color": "grey" }}
+                            />}
+                            {!enablePWDEdit && <button className="btn btn-light"
+                                onClick={handleEnablePWDEdit}
+                                disabled={(isValidFname && isValidLname) ? false : true}
+                            >
+                                <i className="fa-solid fa-pen-to-square" />
+                            </button>}
+                            {enablePWDEdit && <button className="btn btn-light" onMouseDown={handleCancelPWDEdit}><i className="fa-solid fa-xmark" /></button>}
 
                         </div>}
 
-                    <div className={styles.row}>
-                        <input
-                            type="email"
-                            value={profile.user_email}
-                            className={styles.inputField}
-                            disabled
-                        />
-                    </div>
-                    {enableEdit && <div className={styles.row}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            value={pwd}
-                            ref={pwdRef}
-                            onChange={(e) => { setPWD(e.target.value) }}
-                            className={styles.inputField}
-                            placeholder="New Password"
-                            onFocus={() => setPWDFocus(true)}
-                            onBlur={() => setPWDFocus(false)}
-                            disabled={(enableEdit && enablePWDEdit) ? false : true}
-
-                        />
-                        {enableEdit && enablePWDEdit && <FontAwesomeIcon
-                            icon={showPassword ? faEyeSlash : faEye}
-                            className={styles.iconToggle}
-                            onClick={togglePasswordVisibility}
-                            style={{ "--icon-color": "grey" }}
-                        />}
-                        {!enablePWDEdit && <button className="btn btn-light"
-                            onClick={handleEnablePWDEdit}
-                            disabled={(isValidFname && isValidLname) ? false : true}
-                        >
-                            <i className="fa-solid fa-pen-to-square" />
-                        </button>}
-                        {enablePWDEdit && <button className="btn btn-light" onMouseDown={handleCancelPWDEdit}><i className="fa-solid fa-xmark" /></button>}
-
-                    </div>}
-
-                    {enablePWDEdit && pwdFocus && pwd && !isValidPWD &&
-                        <div className={styles.instructions}>
-                            <div>Password must be between 8 to 24 characters. <br />
-                                Must include uppercase, lowercase letters, a number and a special character.<br />
-                                Allowed special chars - !@#$%.
+                        {enablePWDEdit && pwdFocus && pwd && !isValidPWD &&
+                            <div className={styles.instructions}>
+                                <div>Password must be between 8 to 24 characters. <br />
+                                    Must include uppercase, lowercase letters, a number and a special character.<br />
+                                    Allowed special chars - !@#$%.
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
 
-                    {!enableEdit && <button onClick={handleEnableEdit} className="btn btn-primary"> Edit </button>}
+                        {!enableEdit && <button onClick={handleEnableEdit} className="btn btn-primary"> Edit </button>}
 
-                    {enableEdit && <div className={styles.buttonRow}>
-                        <button className="btn btn-success"
-                            disabled={(isValidFname && isValidLname && !loading) ? false : true}>
-                            {loading ? <i className="fa-solid fa-spinner" /> : <i className="fa-solid fa-check" />}
-                        </button>
-                        <button onMouseDown={handleCancelEdit} className="btn btn-danger"><i className="fa-solid fa-xmark" /></button>
-                    </div>}
-                </form>
+                        {enableEdit && <div className={styles.buttonRow}>
+                            <button className="btn btn-success"
+                                disabled={(isValidFname && isValidLname && !loading) ? false : true}>
+                                {loading ? <i className="fa-solid fa-spinner" /> : <i className="fa-solid fa-check" />}
+                            </button>
+                            <button onMouseDown={handleCancelEdit} className="btn btn-danger"><i className="fa-solid fa-xmark" /></button>
+                        </div>}
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <ProfileAccountRole/>
-    </div>
+            <ProfileAccountRole />
+        </div>
     );
 }
 
