@@ -1,0 +1,45 @@
+.treeViewContainer {
+    position: fixed;
+    top: 150px;
+    right: 10px;
+    width: 150px;
+    background-color: #f9f9f9; /* Light background */
+    padding: 10px;
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    max-height: 400px; /* Prevents from overflowing */
+    overflow-y: auto; /* Scrollable content */
+  }
+  .treeViewContainer ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+  
+  .treeViewContainer a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 5px 0;
+    font-size: 14px;
+  }
+  
+  .treeViewContainer a:hover,
+  .treeViewContainer .active {
+    color: #007bff; /* Highlight color */
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  @media (max-width: 1235px) {
+    .treeViewContainer {
+        width: 100px; /* Hide on smaller screens */
+    }
+  }
+
+  @media (max-width: 1135px) {
+    .treeViewContainer {
+        display: none;
+    }
+  }

@@ -5,6 +5,8 @@ import { Collapse, Divider } from "antd";
 import toast, { Toaster } from 'react-hot-toast';
 import styles from '../../css/ProfileWrite.module.css'
 import ProfileWriteArticleInfo from "./ProfileWriteArticleInfo";
+import TableOfContent from "../../components/TableOfContent";
+
 
 const ProfileWrite = () => {
   const [open, setOpen] = useState(false);
@@ -12,6 +14,7 @@ const ProfileWrite = () => {
   // articleInfo fetches data from ProfileWriteArticleInfo.js component into this component
   const [articleInfo, setArticleInfo] = useState('')
   const [editorContentEN, setEditorContentEN] = useState("");
+  const [editorContentBN, setEditorContentBN] = useState("");
 
   const countWords = (text) => {
     // Split by spaces or newlines and filter out empty strings
@@ -19,10 +22,10 @@ const ProfileWrite = () => {
   };
 
   const isAllReqFieldsPresent = (obj, excludedFieldList) => {
-    for (const [key, value] of Object.entries(obj)){
-      if (excludedFieldList.includes(key)){
+    for (const [key, value] of Object.entries(obj)) {
+      if (excludedFieldList.includes(key)) {
         continue;
-      } else if (!value){
+      } else if (!value) {
         return false;
       }
     }
@@ -37,7 +40,8 @@ const ProfileWrite = () => {
     const buttonName = clickedButton.name; // The name of the button
 
     if (buttonName === 'reviewSubmit') {
-      console.log("Editor Content in ProfileWrite: ", editorContentEN);
+      console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
+      console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
 
       const parser = new DOMParser();
       const doc = parser.parseFromString(editorContentEN, "text/html");
@@ -48,11 +52,11 @@ const ProfileWrite = () => {
       const words = countWords(doc.body.textContent)
       console.log("no of words:: ", words);
       console.log("detectedLanguage:: ", detectedLanguage);
-      
-      if (isAllReqFieldsPresent(articleInfo, ['tags', 'newTag'])){
+
+      if (isAllReqFieldsPresent(articleInfo, ['tags', 'newTag'])) {
         console.log("finalArticleInfo::: ", articleInfo);
-      }else {
-        toast.error("Please fill all required (*) Article Info !", { duration: 7000 });
+      } else {
+        toast.error("Please fill in all required (*) Article Info !", { duration: 7000 });
         return;
       }
 
@@ -90,33 +94,52 @@ const ProfileWrite = () => {
     {
       key: '2',
       label: 'Literary Instructions',
-      children: <div dangerouslySetInnerHTML={{ __html: collapseText2 }} />,
+      children: <div id="litIns" dangerouslySetInnerHTML={{ __html: collapseText2 }} />,
     },
+  ];
+
+  const sections = [
+    { id: 'instructions', name: 'Instructions' },
+    { id: 'article-info', name: 'Article Information' },
+    { id: 'body-en', name: 'Article Body (English)' },
+    { id: 'body-bn', name: 'Article Body (Bangla)' },
   ];
 
   return (
     <div className="profileWrite">
       <div><Toaster /></div>
 
+      < TableOfContent sections={sections} />
+
       <h1 style={{ display: "flex", justifyContent: "center" }}>Start Writing.. </h1>
-      <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Instructions</Divider>
-      <Collapse
+
+      <div id="instructions">
+        <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Instructions</Divider>
+      </div>
+
+      <Collapse style={{ boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.2)" }}
         accordion size="large" expandIconPosition='end'
         items={items}
       />
-      <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Info</Divider>
 
+      <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Info</Divider>
       <form className={styles.customForm} onSubmit={handleSubmit}>
 
-        <ProfileWriteArticleInfo finalArticleInfo={setArticleInfo} />
+        <div id="article-info">
+          <ProfileWriteArticleInfo finalArticleInfo={setArticleInfo} />
+        </div>
 
-        <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (English)</Divider>
+
         {/* Pass down the state and the setter to the editor */}
-        <RichTextEditor onChange={setEditorContentEN} />
+        <div id="body-en">
+          <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (English)</Divider>
+          <RichTextEditor language="en" onChange={setEditorContentEN} />
+        </div>
 
-
-        {/* <Divider style={{ borderColor: '#000000' }} orientation="left">Article Body (Bangla)</Divider>
-        <RichTextEditor onChange={setEditorContentEN} /> */}
+        <div id="body-bn">
+          <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (Bangla)</Divider>
+          <RichTextEditor language="bn" onChange={setEditorContentBN} />
+        </div>
 
         <button type="submit" name="reviewSubmit" className="btn btn-success" >Submit for Review</button>
       </form>

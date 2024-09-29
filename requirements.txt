@@ -62,3 +62,7 @@ npm install @ant-design/icons --save
 
 # react-query for better state management
 npm i react-query
+
+# for table of contents
+npm install @mui/x-tree-view
+npm install @mui/material @emotion/react @emotion/styled

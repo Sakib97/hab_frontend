@@ -4,21 +4,37 @@ import JoditEditor from 'jodit-react';
 import toast, { Toaster } from 'react-hot-toast';
 import DOMPurify from 'dompurify';
 
-const RichTextEditor = ({ onChange }) => {
+const RichTextEditor = ({ language, onChange }) => {
     const DRAFT_ARTICLE_EN = "draftArticleEn";
     const DRAFT_ARTICLE_BN = "draftArticleBn";
 
     // const editor = useRef(null);
     const [content, setContent] = useState('');
+    // content2 needed to solve JoditEditor typing issue
     const [content2, setContent2] = useState('');
+    const [isLangEN, setIsLangEN] = useState(false)
+    const [isLangBN, setIsLangBN] = useState(false)
+    const [removeButtonList, setRemoveButtonList] = useState([])
+
 
     // Load content from localStorage when the component mounts
     useEffect(() => {
-        const savedContent = localStorage.getItem(DRAFT_ARTICLE_EN);
+        let savedContent;
+        if (language === 'en') {
+            setIsLangEN(true)
+            setIsLangBN(false)
+            savedContent = localStorage.getItem(DRAFT_ARTICLE_EN);
+            setRemoveButtonList(['speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'])
+        } else if (language === 'bn') {
+            setIsLangEN(false)
+            setIsLangBN(true)
+            savedContent = localStorage.getItem(DRAFT_ARTICLE_BN);
+            setRemoveButtonList(['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'])
+        }
         if (savedContent) {
             setContent(savedContent);
             setContent2(savedContent);
-            onChange(savedContent); 
+            onChange(savedContent);
         }
     }, []);
 
@@ -26,13 +42,13 @@ const RichTextEditor = ({ onChange }) => {
     const config = useMemo(() => ({
         readonly: false, // all options from https://xdsoft.net/jodit/docs/,
         autofocus: true,
-        placeholder: 'Start Article Body...',
-        minHeight: 300,
+        placeholder: language==='en' ? 'Start Article Body...' : 'লিখা শুরু করুন...',
+        minHeight: 500,
         maxHeight: 600,
         // minWidth: 400,
         maxWidth: 800,
         toolbarStickyOffset: 50,
-        removeButtons: ['speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'],
+        removeButtons: removeButtonList, 
         events: {
             error: (error) => {
                 // Handle the error
@@ -40,8 +56,10 @@ const RichTextEditor = ({ onChange }) => {
                 toast.error("An error occurred in the editor.", { duration: 2000 });
             },
         },
+        
         statusbar: false,
         toolbarAdaptive: false,
+        // toolbarAdaptive: true,
 
     }),
         [],
@@ -53,25 +71,40 @@ const RichTextEditor = ({ onChange }) => {
         
     };
 
-    const saveDraftEN = () => {
+    const saveDraft = () => {
         setContent2(content);
-        localStorage.setItem(DRAFT_ARTICLE_EN, content)
-        toast.success("Draft Article Saved", { duration: 2000 });
+        if (isLangEN) {
+            localStorage.setItem(DRAFT_ARTICLE_EN, content)
+            toast.success("English Draft Article Saved !", { duration: 2000 });
+        }
+        if (isLangBN) {
+            localStorage.setItem(DRAFT_ARTICLE_BN, content)
+            toast.success("বাংলা খসড়া সেভ হয়েছে !", { duration: 2000 });
+        }
+
     }
 
-    // Clear the draft from localStorage
-    const clearDraftEN = () => {
+    //Clear the draft from localStorage
+    const clearDraft = () => {
+        let toastMsg;
         setContent2('');
-        localStorage.removeItem(DRAFT_ARTICLE_EN);
         setContent('');
-        toast('Draft Article Cleared !',
+        if (isLangEN) {
+            localStorage.removeItem(DRAFT_ARTICLE_EN);
+            toastMsg = 'English Draft Article Cleared !'
+        }
+        if (isLangBN) {
+            localStorage.removeItem(DRAFT_ARTICLE_BN);
+            toastMsg = 'বাংলা খসড়া ক্লিয়ার হয়েছে !'
+        }
+        toast(toastMsg,
             {
-              icon: <i style={{color:"red"}} className="fa-solid fa-trash-can"></i>,
-              style: {
-                borderRadius: '10px',
-                background: '#fff',
-                color: 'black',
-              },
+                icon: <i style={{ color: "red" }} className="fa-solid fa-trash-can"></i>,
+                style: {
+                    borderRadius: '10px',
+                    background: '#fff',
+                    color: 'black',
+                },
             })
     };
 
@@ -81,7 +114,7 @@ const RichTextEditor = ({ onChange }) => {
             content: sanitizedContent,
         };
         const jsonString = JSON.stringify(jsonData);
-        
+
         console.log("Saved JSON:", jsonString);
         console.log("sanitizedContent htmlContent::", sanitizedContent);  // You can also use it elsewhere in your application
         console.log("htmlContent::", content);  // You can also use it elsewhere in your application
@@ -93,21 +126,36 @@ const RichTextEditor = ({ onChange }) => {
 
     return (
         <div>
-            <div className={styles.editor}>
+            <div className={`${styles.editor}`} >
                 <div><Toaster /></div>
-                
+
                 <JoditEditor
                     // ref={editor}
                     value={content2}
                     config={config}
                     // onFocus = {newContent => handleEditorChange(newContent)}
-                    // onBlur={newContent => handleEditorChange(newContent)} 
                     onChange={newContent => handleEditorChange(newContent)}
-                    // onChange={newContent => {const newC = newContent;}}
+                    // onChange={value => setContent(value)}
+                    onBlur={value => setContent2(value)}
+                // onChange={newContent => {const newC = newContent;}}
                 />
-                <div style={{marginTop: "10px", display:"flex", justifyContent:"center"}}>
-                    <button  type="submit" name="saveDraft" onClick={saveDraftEN} className='btn btn-success'> Save Draft </button> &nbsp;&nbsp;
-                    <button  type="submit" name="clearDraft" onClick={clearDraftEN} className='btn btn-danger'> Clear Draft </button>
+
+                <div style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
+                    <button type="submit" name="saveDraftEN"
+                        onClick={saveDraft} className='btn btn-success'>
+                        <i className="fa-solid fa-floppy-disk"></i>
+                        <span className={isLangBN ? 'bn' : ''}>
+                            {isLangEN ? ' Save Draft' : ' ড্রাফট সেভ'}
+                        </span>
+                    </button> &nbsp;&nbsp;
+
+                    <button type="submit" name="clearDraftEN"
+                        onClick={clearDraft} className='btn btn-danger'>
+                        <i className="fa-regular fa-trash-can"></i>
+                        <span className={isLangBN ? 'bn' : ''}>
+                            {isLangEN ? ' Clear Draft' : ' ড্রাফট ক্লিয়ার'}
+                        </span>
+                    </button>
                 </div>
 
             </div>

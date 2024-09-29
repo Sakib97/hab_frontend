@@ -7,7 +7,7 @@
 .sidebarColumn {
     /* flex: 1; */
     /* max-width: 80px; */
-    
+
     /* min-width: 80px;  */
     background-color: #f0f0f0;
 
@@ -19,24 +19,25 @@
 
 .contentColumn {
     flex: 3;
-    padding: 15px; 
+    padding: 15px;
 
     display: flex;
     flex-direction: column;
-    
+
     /* Vertically centers the content */
     /* justify-content: center; */
 
     /* Horizontally centers the content */
     align-items: center;
 
-    margin-left: 80px;
+    margin-left: 70px;
     transition: margin-left 0.3s ease-in-out;
 
 }
 
 .expandedContent {
-    margin-left: 250px; /* Adjust margin when sidebar is expanded */
+    margin-left: 250px;
+    /* Adjust margin when sidebar is expanded */
 }
 
 
@@ -69,4 +70,9 @@ h5 {
     .contentColumn {
         min-width: 100%; 
     } */
+
+    .contentColumn {
+        max-width: 84%;
+    }
+
 }
