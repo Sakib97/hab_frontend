@@ -362,11 +362,11 @@ const ProfileAccount = () => {
                         {!enableEdit && <button onClick={handleEnableEdit} className="btn btn-primary"> Edit </button>}
 
                         {enableEdit && <div className={styles.buttonRow}>
-                            <button className="btn btn-success"
+                            <button style={{borderRadius: "20px"}} className="btn btn-success"
                                 disabled={(isValidFname && isValidLname && !loading) ? false : true}>
                                 {loading ? <i className="fa-solid fa-spinner" /> : <i className="fa-solid fa-check" />}
                             </button>
-                            <button onMouseDown={handleCancelEdit} className="btn btn-danger"><i className="fa-solid fa-xmark" /></button>
+                            <button style={{borderRadius: "20px"}} onMouseDown={handleCancelEdit} className="btn btn-danger"><i className="fa-solid fa-xmark" /></button>
                         </div>}
                     </form>
                 </div>

@@ -1,7 +1,7 @@
 import { Select } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 import styles from '../../css/ProfileWrite.module.css'
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { franc } from 'franc-min'
 import toast, { Toaster } from 'react-hot-toast';
 import Divider from '@mui/material/Divider';
@@ -18,7 +18,7 @@ const fetchData = async (url, axiosInstance) => {
     return response.data;
   };
 
-const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
+const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
 
     const GET_MENU_URL = '/api/v1/category/get_all_cat'
     const GET_SUBMENU_URL = '/api/v1/category/get_all_subcat'
@@ -290,6 +290,25 @@ const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
             })
     }
 
+      // Expose the resetFields method to the parent component
+  useImperativeHandle(ref, () => ({
+    articleInfoResetFields() {
+        localStorage.removeItem(DRAFT_ARTICLE_INFO);
+        setCategory()
+        setSubCategory()
+        setTags([])
+        setNewTag([])
+        setTitleEN('');
+        setSubtitleEN('');
+        setTitleBN('')
+        setSubtitleBN('')
+        setCoverImgLink('')
+        setCoverImgCapEN('')
+        setCoverImgCapBN('')
+        setDraftInfo({});
+    }
+  }));
+
     return (
         <div className={styles.customFormPart}>
             <Toaster/>
@@ -473,6 +492,6 @@ const ProfileWriteArticleInfo = ({finalArticleInfo}) => {
             </div>
         </div>
     );
-}
+})
 
 export default ProfileWriteArticleInfo;

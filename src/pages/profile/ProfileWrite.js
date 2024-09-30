@@ -6,7 +6,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import styles from '../../css/ProfileWrite.module.css'
 import ProfileWriteArticleInfo from "./ProfileWriteArticleInfo";
 import TableOfContent from "../../components/TableOfContent";
-
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 const ProfileWrite = () => {
   const [open, setOpen] = useState(false);
@@ -15,6 +16,13 @@ const ProfileWrite = () => {
   const [articleInfo, setArticleInfo] = useState('')
   const [editorContentEN, setEditorContentEN] = useState("");
   const [editorContentBN, setEditorContentBN] = useState("");
+
+  // Add a ref to the form
+  const formRef = useRef(null);
+  // Create a ref to access the child (info, RTE)
+  const articleInfoChildRef = useRef(null); 
+  const rteChildRef1 = useRef(null);
+  const rteChildRef2 = useRef(null);
 
   const countWords = (text) => {
     // Split by spaces or newlines and filter out empty strings
@@ -32,6 +40,19 @@ const ProfileWrite = () => {
     return true;
   }
 
+  // Function to reset both children
+  const handleResetInfoRTE = () => {
+    if(articleInfoChildRef.current){
+      articleInfoChildRef.current.articleInfoResetFields()
+    }
+    if (rteChildRef1.current) {
+      rteChildRef1.current.rteResetFields(); // Reset first child
+    }
+    if (rteChildRef2.current) {
+      rteChildRef2.current.rteResetFields(); // Reset second child
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
 
@@ -40,6 +61,7 @@ const ProfileWrite = () => {
     const buttonName = clickedButton.name; // The name of the button
 
     if (buttonName === 'reviewSubmit') {
+      handleResetInfoRTE()
       console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
       console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
 
@@ -105,6 +127,11 @@ const ProfileWrite = () => {
     { id: 'body-bn', name: 'Article Body (Bangla)' },
   ];
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <div className="profileWrite">
       <div><Toaster /></div>
@@ -123,30 +150,62 @@ const ProfileWrite = () => {
       />
 
       <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Info</Divider>
-      <form className={styles.customForm} onSubmit={handleSubmit}>
+      <form ref={formRef} className={styles.customForm} onSubmit={handleSubmit}>
 
         <div id="article-info">
-          <ProfileWriteArticleInfo finalArticleInfo={setArticleInfo} />
+          <ProfileWriteArticleInfo ref={articleInfoChildRef} finalArticleInfo={setArticleInfo} />
         </div>
-
 
         {/* Pass down the state and the setter to the editor */}
         <div id="body-en">
           <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (English)</Divider>
-          <RichTextEditor language="en" onChange={setEditorContentEN} />
+          <RichTextEditor ref={rteChildRef1} language="en" onChange={setEditorContentEN} />
         </div>
 
         <div id="body-bn">
           <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (Bangla)</Divider>
-          <RichTextEditor language="bn" onChange={setEditorContentBN} />
+          <RichTextEditor ref={rteChildRef2} language="bn" onChange={setEditorContentBN} />
         </div>
 
         <hr />
-        <div style={{display: "flex", justifyContent: "center"}}>
-          <button type="submit" name="reviewSubmit" className="btn btn-success" >
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <button onClick={handleShow} 
+                  name="confirmModal" 
+                  className="btn btn-success" >
             Submit for Review
           </button>
+          {/* <button type="submit" name="reviewSubmit" className="btn btn-success" >
+            Submit for Review
+          </button> */}
         </div>
+        <Modal aria-labelledby="contained-modal-title-vcenter" centered
+            show={show} onHide={handleClose} 
+            container={formRef.current}  // modal will be rendered inside <form><form/>
+            // modal renders at the end of <body/> by defalut
+            >
+
+            {/* <Modal.Header closeButton> */}
+            <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
+              <Modal.Title>Confirm Submit ?</Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
+              If you confirm, all drafts will be cleared !
+            </Modal.Body>
+            
+            <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
+              <Button style={{borderRadius: "20px"}} variant="outline-danger" 
+                onClick={handleClose}>
+                <i className="fa-solid fa-xmark"></i>
+              </Button>
+              <Button type="submit" 
+                      name="reviewSubmit" 
+                      style={{borderRadius: "20px"}} variant="outline-success" 
+                      >
+                <i className="fa-solid fa-check"></i>
+              </Button>
+            </Modal.Footer>
+          </Modal>
       </form>
       <br /> <br />
     </div>

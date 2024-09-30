@@ -1,11 +1,12 @@
 import styles from '../../../css/RTE.module.css'
-import { useRef, useState, useEffect, useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useState, useEffect, useMemo } from 'react';
 import JoditEditor from 'jodit-react';
 import toast, { Toaster } from 'react-hot-toast';
 import DOMPurify from 'dompurify';
 import { useLocation } from 'react-router-dom';
 
-const RichTextEditor = ({ language, onChange }) => {
+// Use forwardRef to allow parent to access child methods
+const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
     const DRAFT_ARTICLE_EN = "draftArticleEn";
     const DRAFT_ARTICLE_BN = "draftArticleBn";
 
@@ -119,6 +120,16 @@ const RichTextEditor = ({ language, onChange }) => {
             })
     };
 
+    // Expose the resetFields method to the parent component
+  useImperativeHandle(ref, () => ({
+    rteResetFields() {
+        setContent2('');
+        setContent('');
+        localStorage.removeItem(DRAFT_ARTICLE_EN);
+        localStorage.removeItem(DRAFT_ARTICLE_BN);
+    }
+  }));
+
     const getHTMLContent = () => {
         const sanitizedContent = DOMPurify.sanitize(content);
         const jsonData = {
@@ -182,7 +193,7 @@ const RichTextEditor = ({ language, onChange }) => {
             /> */}
         </div>
     );
-}
+})
 
 export default RichTextEditor;
 

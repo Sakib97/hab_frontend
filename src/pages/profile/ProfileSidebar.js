@@ -3,7 +3,7 @@ import useAuth from "../../hooks/useAuth";
 
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import {
-    faUser, faBookBookmark, faComments, faRightFromBracket,
+    faUser, faBookBookmark, faComments, faRightFromBracket, faNewspaper,
     faBell, faCircleChevronLeft, faCircleChevronRight, faFilePen
 }
     from "@fortawesome/free-solid-svg-icons";
@@ -52,8 +52,11 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
                     <MenuItem icon={<FontAwesomeIcon icon={faBell} />}> Notifications</MenuItem>
                     <MenuItem icon={<FontAwesomeIcon icon={faBookBookmark} />}> Bookmarks</MenuItem>
                     <MenuItem icon={<FontAwesomeIcon icon={faComments} />}> My Comments </MenuItem>
-                    {/* <MenuItem component={<Link  to="/profile/write"/>}  icon={<FontAwesomeIcon icon={faFilePen} />}> Write Article </MenuItem> */}
-                    {auth?.roles?.includes(1260) && <MenuItem component={<Link to="/profile/write" />} icon={<FontAwesomeIcon icon={faFilePen} />}> Write Article </MenuItem>}
+                    
+                    
+                    { (auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) && <MenuItem icon={<FontAwesomeIcon icon={faNewspaper} />}> My Articles </MenuItem>}
+                    { (auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) && <MenuItem component={<Link to="/profile/write" />} icon={<FontAwesomeIcon icon={faFilePen} />}> Write Article </MenuItem>}
+                    
                     <hr />
                     <br /><br /><br />
 
