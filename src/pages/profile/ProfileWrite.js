@@ -20,7 +20,7 @@ const ProfileWrite = () => {
   // Add a ref to the form
   const formRef = useRef(null);
   // Create a ref to access the child (info, RTE)
-  const articleInfoChildRef = useRef(null); 
+  const articleInfoChildRef = useRef(null);
   const rteChildRef1 = useRef(null);
   const rteChildRef2 = useRef(null);
 
@@ -30,19 +30,22 @@ const ProfileWrite = () => {
   };
 
   const isAllReqFieldsPresent = (obj, excludedFieldList) => {
-    for (const [key, value] of Object.entries(obj)) {
-      if (excludedFieldList.includes(key)) {
-        continue;
-      } else if (!value) {
-        return false;
+    // if (obj) {
+      for (const [key, value] of Object.entries(obj)) {
+        if (excludedFieldList.includes(key)) {
+          continue;
+        } else if (!value) {
+          return false;
+        }
       }
-    }
-    return true;
+      return true;
+    // } else return false;
+
   }
 
   // Function to reset both children
-  const handleResetInfoRTE = () => {
-    if(articleInfoChildRef.current){
+  const handleResetInfoAndRTE = () => {
+    if (articleInfoChildRef.current) {
       articleInfoChildRef.current.articleInfoResetFields()
     }
     if (rteChildRef1.current) {
@@ -61,7 +64,14 @@ const ProfileWrite = () => {
     const buttonName = clickedButton.name; // The name of the button
 
     if (buttonName === 'reviewSubmit') {
-      handleResetInfoRTE()
+      console.log("init finalArticleInfo::: ", articleInfo);
+      if (isAllReqFieldsPresent(articleInfo, ['tags', 'newTag'])) {
+        console.log("finalArticleInfo::: ", articleInfo);
+      } else {
+        toast.error("Please fill in all required (*) Article Info correctly !", { duration: 7000 });
+        return;
+      }
+      handleResetInfoAndRTE()
       console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
       console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
 
@@ -75,12 +85,7 @@ const ProfileWrite = () => {
       console.log("no of words:: ", words);
       console.log("detectedLanguage:: ", detectedLanguage);
 
-      if (isAllReqFieldsPresent(articleInfo, ['tags', 'newTag'])) {
-        console.log("finalArticleInfo::: ", articleInfo);
-      } else {
-        toast.error("Please fill in all required (*) Article Info !", { duration: 7000 });
-        return;
-      }
+
 
     }
   };
@@ -169,9 +174,9 @@ const ProfileWrite = () => {
 
         <hr />
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <button onClick={handleShow} 
-                  name="confirmModal" 
-                  className="btn btn-success" >
+          <button onClick={handleShow}
+            name="confirmModal"
+            className="btn btn-success" >
             Submit for Review
           </button>
           {/* <button type="submit" name="reviewSubmit" className="btn btn-success" >
@@ -179,33 +184,34 @@ const ProfileWrite = () => {
           </button> */}
         </div>
         <Modal aria-labelledby="contained-modal-title-vcenter" centered
-            show={show} onHide={handleClose} 
-            container={formRef.current}  // modal will be rendered inside <form><form/>
-            // modal renders at the end of <body/> by defalut
+          show={show} onHide={handleClose}
+          container={formRef.current}  // modal will be rendered inside <form><form/>
+        // modal renders at the end of <body/> by defalut
+        >
+
+          {/* <Modal.Header closeButton> */}
+          <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
+            <Modal.Title>Confirm Submit ?</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
+            Please save all drafts before submitting ! <br/>
+            If you confirm, all drafts will be cleared !
+          </Modal.Body>
+
+          <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
+            <Button style={{ borderRadius: "20px" }} variant="outline-danger"
+              onClick={handleClose}>
+              <i className="fa-solid fa-xmark"></i>
+            </Button>
+            <Button type="submit"
+              name="reviewSubmit"
+              style={{ borderRadius: "20px" }} variant="outline-success"
             >
-
-            {/* <Modal.Header closeButton> */}
-            <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
-              <Modal.Title>Confirm Submit ?</Modal.Title>
-            </Modal.Header>
-
-            <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
-              If you confirm, all drafts will be cleared !
-            </Modal.Body>
-            
-            <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
-              <Button style={{borderRadius: "20px"}} variant="outline-danger" 
-                onClick={handleClose}>
-                <i className="fa-solid fa-xmark"></i>
-              </Button>
-              <Button type="submit" 
-                      name="reviewSubmit" 
-                      style={{borderRadius: "20px"}} variant="outline-success" 
-                      >
-                <i className="fa-solid fa-check"></i>
-              </Button>
-            </Modal.Footer>
-          </Modal>
+              <i className="fa-solid fa-check"></i>
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </form>
       <br /> <br />
     </div>

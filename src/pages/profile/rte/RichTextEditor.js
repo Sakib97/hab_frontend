@@ -4,6 +4,7 @@ import JoditEditor from 'jodit-react';
 import toast, { Toaster } from 'react-hot-toast';
 import DOMPurify from 'dompurify';
 import { useLocation } from 'react-router-dom';
+import { poweredByJodit } from 'jodit/esm/plugins/powered-by-jodit/powered-by-jodit';
 
 // Use forwardRef to allow parent to access child methods
 const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
@@ -16,31 +17,32 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
     const [content2, setContent2] = useState('');
     const [isLangEN, setIsLangEN] = useState(false)
     const [isLangBN, setIsLangBN] = useState(false)
-    const [removeButtonList, setRemoveButtonList] = useState([])
 
-
+    const location = useLocation();
     // Load content from localStorage when the component mounts
     useEffect(() => {
+        let isMounted = true;
         let savedContent;
         if (language === 'en') {
             setIsLangEN(true)
             setIsLangBN(false)
             savedContent = localStorage.getItem(DRAFT_ARTICLE_EN);
-            setRemoveButtonList(['speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'])
         } else if (language === 'bn') {
             setIsLangEN(false)
             setIsLangBN(true)
             savedContent = localStorage.getItem(DRAFT_ARTICLE_BN);
-            setRemoveButtonList(['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'])
         }
-        if (savedContent) {
+        if (savedContent  && isMounted) {
             setContent(savedContent);
             setContent2(savedContent);
             onChange(savedContent);
         }
-    }, []);
+        return () => {
+            isMounted = false; 
+        }
+    }, [onChange, location]);
 
-    const location = useLocation();
+    
     useEffect(() => {
         // Dismiss all toasts when the component is unmounted
         return () => {
@@ -51,15 +53,19 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
     // IMP::: https://xdsoft.net/jodit/play.html
     const config = useMemo(() => ({
         readonly: false, // all options from https://xdsoft.net/jodit/docs/,
-        autofocus: true,
-        placeholder: language==='en' ? 'Start Article Body...' : 'লিখা শুরু করুন...',
+        autofocus: false,
+        placeholder: 
+            language==='en' ? 'Start Article Body...' : 'লিখা শুরু করুন...'
+            ,
         minHeight: 500,
         maxHeight: 600,
         // minWidth: 400,
         maxWidth: 800,
         toolbarStickyOffset: 50,
-        // removeButtons: removeButtonList, 
-        removeButtons: ['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant'], 
+        removeButtons: language==='bn' ? 
+        ['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'source', 'ai-commands', 'ai-assistant'] 
+        : ['speechRecognize', 'about', 'copyformat','classSpan', 'ai-commands', 'ai-assistant'] 
+        , 
         events: {
             error: (error) => {
                 // Handle the error
@@ -67,10 +73,41 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
                 toast.error("An error occurred in the editor.", { duration: 2000 });
             },
         },
-        
-        statusbar: false,
+        // defaultMode: 3,
+        statusbar: true,
+        showXPathInStatusbar: false,
+        showCharsCounter: false,
+        hidePoweredByJodit: true,
         toolbarAdaptive: false,
         // toolbarAdaptive: true,
+        controls: {
+            paragraph: {
+                list: ({
+                    p: 'Pharagraph',
+                    h1: 'Heading 1',
+                    h2: 'Heading 2',
+                    h3: 'Heading 3',
+                    h4: 'Heading 4',
+                    blockquote: 'Quote',
+                    div: 'Div',
+                    pre: 'Source code'
+                })
+            },
+
+            // font: {
+            //     list: {
+            //         'Noto Serif Bengali, sherif': 'surjo',
+            //         'Alkatra, system-ui': 'Alkatra',
+            //         'Galada, cursive': 'Galada'
+            //     }
+            // },
+
+            // classSpan: {
+            //     list: {
+            //         toc: 'tocccc'
+            //     }
+            // }
+        }, 
 
     }),
         []
@@ -153,12 +190,12 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
 
                 <JoditEditor
                     // ref={editor}
-                    value={content2}
+                    value={content2 || ""}
                     config={config}
                     // onFocus = {newContent => handleEditorChange(newContent)}
                     onChange={newContent => handleEditorChange(newContent)}
                     // onChange={value => setContent(value)}
-                    onBlur={newContent => setContent2(newContent? newContent : "write")}
+                    onBlur={newContent => setContent2(newContent)}
                     // onFocus={newContent => setContent2(newContent)}
                     // onClick={value => setContent2(value)}
                 // onChange={newContent => {const newC = newContent;}}
