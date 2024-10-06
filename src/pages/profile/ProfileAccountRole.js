@@ -13,7 +13,7 @@ const ProfileAccountRole = () => {
 
     const ROLE_COLORS = {
         'Sadmin': '#cd201f',
-        'Author': 'gold',
+        'Author': '#E85C0F',
         'Editor': '#3b5999',
         'SubEditor': '#87d068',
         'General User': 'gray'

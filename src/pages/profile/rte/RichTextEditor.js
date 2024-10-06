@@ -32,7 +32,8 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
             setIsLangBN(true)
             savedContent = localStorage.getItem(DRAFT_ARTICLE_BN);
         }
-        if (savedContent  && isMounted) {
+        // if (savedContent  && isMounted) {
+            if (savedContent ) {
             setContent(savedContent);
             setContent2(savedContent);
             onChange(savedContent);
@@ -40,10 +41,12 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
         return () => {
             isMounted = false; 
         }
-    }, [onChange, location]);
+    // }, [onChange, location]);
+}, []);
 
     
     useEffect(() => {
+
         // Dismiss all toasts when the component is unmounted
         return () => {
           toast.remove();
@@ -51,12 +54,31 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
       }, [location]); // Runs on page navigation
 
     // IMP::: https://xdsoft.net/jodit/play.html
-    const config = useMemo(() => ({
+    const isContent = ()=> {
+        if (language === 'en'){
+            const savedContent1 = localStorage.getItem(DRAFT_ARTICLE_EN);
+            if (savedContent1 != null) {
+                return true;
+            }
+            return false;
+        }
+        if (language === 'bn'){
+            const savedContent2 = localStorage.getItem(DRAFT_ARTICLE_BN);
+            if (savedContent2 != null) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    
+
+    const config = useMemo(() => ({        
         readonly: false, // all options from https://xdsoft.net/jodit/docs/,
         autofocus: false,
-        placeholder: 
+        placeholder: !isContent() ?
             language==='en' ? 'Start Article Body...' : 'লিখা শুরু করুন...'
-            ,
+            : ' ',
         minHeight: 500,
         maxHeight: 600,
         // minWidth: 400,
