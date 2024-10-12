@@ -64,5 +64,14 @@ npm install @ant-design/icons --save
 npm i react-query
 
 # for table of contents
-npm install @mui/x-tree-view
-npm install @mui/material @emotion/react @emotion/styled
+# npm install @mui/x-tree-view
+# npm install @mui/material @emotion/react @emotion/styled
+
+# for mui sidebar
+# npm install -S @toolpad/core
+
+# for rewind-UI sidebar
+# npm install @rewind-ui/core
+
+# for cbdreact
+# npm install --save cdbreact

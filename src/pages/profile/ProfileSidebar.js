@@ -24,9 +24,16 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
     const logout = useLogout();
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const toggleSidebar = () => {
-        setIsExpanded(!isExpanded);
-        // console.log("roles:: ", auth.roles);
+    // for hover effect on sidebar menue
+    const defaultStyle = {
+        backgroundColor: "transparent",
+        transition: "background-color 0.3s ease",
+    };
+    const handleMouseEnter = (e) => {
+        e.currentTarget.style.backgroundColor = "#CBCBCB"; // hover background color
+    };
+    const handleMouseLeave = (e) => {
+        e.currentTarget.style.backgroundColor = "transparent"; // reset background color
     };
 
     return (
@@ -46,17 +53,49 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
                     </MenuItem>
                     <hr />
 
-                    <MenuItem component={<Link to="/profile/account" />}
+                    <MenuItem
+                        style={defaultStyle}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        component={<Link to="/profile/account" />}
                         icon={<FontAwesomeIcon icon={faUser} />}>
                         My Account</MenuItem>
-                    <MenuItem icon={<FontAwesomeIcon icon={faBell} />}> Notifications</MenuItem>
-                    <MenuItem icon={<FontAwesomeIcon icon={faBookBookmark} />}> Bookmarks</MenuItem>
-                    <MenuItem icon={<FontAwesomeIcon icon={faComments} />}> My Comments </MenuItem>
-                    
-                    
-                    { (auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) && <MenuItem icon={<FontAwesomeIcon icon={faNewspaper} />}> My Articles </MenuItem>}
-                    { (auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) && <MenuItem component={<Link to="/profile/write" />} icon={<FontAwesomeIcon icon={faFilePen} />}> Write Article </MenuItem>}
-                    
+                    <MenuItem
+                        style={defaultStyle}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        icon={<FontAwesomeIcon icon={faBell} />}> Notifications</MenuItem>
+                    <MenuItem
+                        style={defaultStyle}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        icon={<FontAwesomeIcon icon={faBookBookmark} />}> Bookmarks</MenuItem>
+                    <MenuItem
+                        style={defaultStyle}
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        icon={<FontAwesomeIcon icon={faComments} />}> My Comments </MenuItem>
+
+
+                    {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
+                        <MenuItem
+                            style={defaultStyle}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            icon={<FontAwesomeIcon icon={faNewspaper} />}>
+                            My Articles
+                        </MenuItem>}
+
+                    {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
+                        <MenuItem
+                            style={defaultStyle}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            component={<Link to="/profile/write" />}
+                            icon={<FontAwesomeIcon icon={faFilePen} />}>
+                            Write Article
+                        </MenuItem>}
+
                     <hr />
                     <br /><br /><br />
 

@@ -11,6 +11,7 @@ const Home = () => {
         <div className="home">
             <div className="container">
                 <h1>This is Home page</h1>
+                
                 <h3>
                     Name: {auth.email}  {auth.roles}<br />
                     Full Name: {profile.first_name} {profile.last_name}

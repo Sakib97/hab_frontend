@@ -35,7 +35,7 @@ const TableOfContent = ({ sections }) => {
 
   return (
     <div className={styles.treeViewContainer}>
-        Table of Contents
+        Contents
         <hr />
       <ul>
         {sections.map((section) => (
