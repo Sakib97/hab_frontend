@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound';
 import AuthLayout from './pages/auth/AuthLayout';
 import Profile from './pages/profile/Profile';
 import Sadmin from './pages/dashboard/Sadmin';
-import Editor from './pages/dashboard/Editor';
+import Editor from './pages/dashboard/editor/Editor';
 import Unauthorized from './pages/Unauthorized';
 import RequireAuth from './pages/auth/RequireAuth';
 import RequireNoAuth from './pages/auth/RequireNoAuth';
@@ -16,7 +16,7 @@ import ProfileAccount from './pages/profile/ProfileAccount';
 import ProfileWrite from './pages/profile/ProfileWrite';
 import ForgetPassMail from './pages/auth/ForgetPassMail';
 import ForgetPassResetPass from './pages/auth/ForgetPassResetPass';
-
+import EditorArticleReview from './pages/dashboard/editor/EditorArticleReview';
 
 
 function App() {
@@ -61,9 +61,16 @@ function App() {
               </Route>
             </Route>
 
-            <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
+            {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}> */}
+            <Route element={<RequireAuth allowedRoles={[ROLES.Author]} />}>
               <Route path="/profile" element={<Profile />} >
                 <Route path='write' element={<ProfileWrite />}></Route>
+              </Route>
+            </Route>
+
+            <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
+              <Route path="/editor_dashboard" element={<Editor />} >
+                <Route path='review' element={<EditorArticleReview />}></Route>
               </Route>
             </Route>
 
@@ -71,10 +78,7 @@ function App() {
               <Route path="/sadmin_dashboard" element={<Sadmin />} />
             </Route>
 
-            <Route element={<RequireAuth allowedRoles={[ROLES.Sadmin, ROLES.Editor]} />}>
-              <Route path="/editor_dashboard" element={<Editor />} />
-            </Route>
-
+            
             <Route path="/unauthorized" element={<Unauthorized />} />
 
 
