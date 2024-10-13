@@ -95,7 +95,7 @@ const Editor = () => {
     return (
         <div className="editor" >
             <div className={`${styles.editorNav}`} >
-                <Navbar className={`bg-body-tertiary ${styles.secNav}`} >
+                <Navbar sticky='top' className={`bg-body-tertiary ${styles.secNav}`} >
                     <Container>
                         <Button variant="light" onClick={() => setCollapsed(!collapsed)}>
                             {collapsed ? <MenuTwoToneIcon /> : <MenuOpenIcon />}
@@ -105,19 +105,16 @@ const Editor = () => {
                         <Navbar.Toggle />
                         <Navbar.Collapse className="justify-content-end">
                         </Navbar.Collapse>
-
                     </Container>
-
                 </Navbar>
-
-
             </div>
 
             <div style={{ display: 'flex', minHeight: '400px', marginTop: '50px' }}>
                 <div className={`${styles.editorSidebar}`} >
                     {/* className={`${styles.editorMenu}`} */}
                     <Sidebar
-                        // style={{borderTop: "1px solid black", borderRight: "1px solid black",}}
+                        // style={{position: "fixed"}}
+                        // collapsedWidth="100px"
                         backgroundColor={broken ? "white" : "#f0f0f0"}
                         collapsed={collapsed}
                         toggled={broken && !collapsed}
@@ -158,9 +155,7 @@ const Editor = () => {
                 </div>
 
                 <main style={{ padding: 0 }}>
-                    <div style={{width:'100vw', margin: '0', padding: "10px", 
-                        borderTop: "1px solid black", borderBottom: "1px solid black", 
-                        position: "fixed", backgroundColor: "#f0f0f0"}} >
+                    <div className={`${styles.editorBreadcrumb}`} >
                         {/* {crums} */}
                         <Breadcrumb>
                             <Breadcrumb.Item key="home">

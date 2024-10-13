@@ -1,23 +1,25 @@
 .editorNav {
     position: fixed;
     width: 100%;
-    top: 56px;
+    /* top: 56px; */
+    transform: translateY(-56px);
     z-index: 999;
     border-bottom: 1px solid black
 }
 
 .editorSidebar {
-    /* position: fixed;  */
-    /* top: 0; */
-    /* left: 0; */
+    /* position: fixed; 
+    top: 160px;
+    left: 0; */
+    /* margin-right: 50px; */
 
-    min-height: 100vh; 
+    min-height: 100vh;
     /* width: 250px; */
     /* overflow-y: auto; */
     background-color: #f0f0f0;
     border-right: 1px solid black;
     border-top: 1px solid black;
-    
+
     /* z-index: 1000;  */
 }
 
@@ -37,6 +39,16 @@
     background-color: #e0e0e0;
 }
 
+.editorBreadcrumb {
+    width: 100vw;
+    padding: 13px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    position: fixed;
+    background-color: #f0f0f0;
+}
+
+/* sAdmin */
 .sidebar {
     transition: all 0.5s ease;
     width: 170px;
@@ -103,8 +115,17 @@
 }
 
 @media (max-width: 768px) {
+    /* .editorNav {
+        top: 0px;
+        position: relative;
+    }
+
+    .editorBreadcrumb {
+        transform: translateY(-52px);
+    } */
+
     .editorSidebar {
-        border-right: 0px ;
-        border-top: 0px ;
+        border-right: 0px;
+        border-top: 0px;
     }
 }
