@@ -17,7 +17,8 @@ import ProfileWrite from './pages/profile/ProfileWrite';
 import ForgetPassMail from './pages/auth/ForgetPassMail';
 import ForgetPassResetPass from './pages/auth/ForgetPassResetPass';
 import EditorArticleReview from './pages/dashboard/editor/EditorArticleReview';
-
+import EditorUnrevArticles from './pages/dashboard/editor/EditorUnrevArticles';
+import EditorReviewHistory from './pages/dashboard/editor/EditorReviewHistory';
 
 function App() {
 
@@ -40,15 +41,15 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
 
- 
+
             <Route element={<RequireNoAuth />}>
               <Route path="/auth" element={<AuthLayout />}>
                 {/* Index route - default content for /auth */}
                 <Route index element={<Navigate to="login" />} />  {/* Redirects to login by default */}
                 <Route path="register" element={<Register />}></Route>
-                <Route path="login" element={<Login />}></Route> 
-                <Route path="forget_pass_mail" element={<ForgetPassMail />}></Route> 
-                <Route path='reset_pass_token' element={<ForgetPassResetPass/>}></Route>
+                <Route path="login" element={<Login />}></Route>
+                <Route path="forget_pass_mail" element={<ForgetPassMail />}></Route>
+                <Route path='reset_pass_token' element={<ForgetPassResetPass />}></Route>
               </Route>
             </Route>
 
@@ -70,7 +71,10 @@ function App() {
 
             <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
               <Route path="/editor_dashboard" element={<Editor />} >
-                <Route path='review' element={<EditorArticleReview />}></Route>
+                <Route path='review' element={<EditorArticleReview />}>
+                  <Route path='unreviwed-articles' element={<EditorUnrevArticles />}></Route>
+                  <Route path='review-history' element={<EditorReviewHistory />}></Route>
+                </Route>
               </Route>
             </Route>
 
@@ -78,7 +82,7 @@ function App() {
               <Route path="/sadmin_dashboard" element={<Sadmin />} />
             </Route>
 
-            
+
             <Route path="/unauthorized" element={<Unauthorized />} />
 
 

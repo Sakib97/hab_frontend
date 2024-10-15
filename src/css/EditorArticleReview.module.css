@@ -1,0 +1,91 @@
+.navbar {
+    position: fixed;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 5px ;
+    transform: translateY(-1px);
+    background-color: white;
+    width: 100%; 
+    z-index: 999;
+
+}
+
+
+.navItems {
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1; 
+}
+
+/* Links Style */
+.link {
+    text-decoration: none;
+    color: #606060;
+    padding: 0 15px;
+    font-size: 16px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* Black bar touches the bottom of the navbar */
+.link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* Adjust this to make it touch the border */
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: black;
+    transition: width 0.3s ease;
+}
+
+.link:hover::after {
+    width: 100%; /* On hover, black bar stretches full width */
+}
+
+/* Active Link */
+.activeLink {
+    color: black;
+    font-weight: bold;
+}
+
+/* Black bar stays under active link */
+.activeLink::after {
+    width: 100%;
+    background-color: black;
+}
+
+
+/* Responsive Layout for Small Screens */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: row;
+        /* Adjusted padding for small screens */
+        transform: translateY(20px);
+        /* margin-top: -10px; */
+        padding-left: 10px; 
+        font-size: 12px; 
+    }
+
+    .navItems {
+        flex-direction: row; /* Stack the links vertically */
+        width: 50%; /* Full width */
+        /* align-items: flex-start;  */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+       
+    }
+
+    .link {
+        /* padding: 0px 0px;  */
+        padding-left: 10px;
+        font-size: 12px; 
+        width: 100%; /* Full width links */
+        text-align: center; /* Align text to the left */
+        
+    }
+}

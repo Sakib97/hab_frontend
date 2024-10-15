@@ -39,44 +39,22 @@ const Editor = () => {
     const location = useLocation();
     let currentLink = ''
     const pathArray = location.pathname.split('/').filter((crumb) => crumb !== '');
-    const crums = pathArray.map((crum, index) => {
-        currentLink += `/${crum}`; // Accumulate current path
-        const crumbName = breadcrumbNameMap[crum] || crum;
-        // const { name, icon } = breadcrumbNameMap[crum] || { name: crum, icon: null };
-        // Check if it's the last breadcrumb item
-        const isLast = index === pathArray.length - 1;
-        return (
-            // <div className="crum" key={index}>
-            //     <Link to={currentLink}> {crum} </Link>
-            // </div>
-            <Breadcrumb.Item key={index + 1}>
+    const breadcrumbItems = [
+        {
+            key: 'home',
+            title: <Link to="/"><HomeOutlined /></Link>,
+        },
+        ...pathArray.map((crum, index) => {
+            currentLink += `/${crum}`;
+            const crumbName = breadcrumbNameMap[crum] || crum;
+            const isLast = index === pathArray.length - 1;
 
-                {isLast ? (
-                    // Render plain text for the last item (no link)
-                    <span>{crumbName}</span>
-                ) : (
-                    // Render as a link for other items
-                    <Link to={currentLink}>{crumbName}</Link>
-                )}
-            </Breadcrumb.Item>
-        );
-        // return {
-        //     path: currentLink,
-        //     title: (
-        //         <>
-        //             <span>{crum}</span>
-        //         </>
-        //     ),
-        // };
-    });
-    // const breadcrumbItems = [
-    //     {
-    //         href: '/',
-    //         title: <HomeOutlined />,
-    //     },
-    //     ...crums, // Spread the dynamic crumbs here
-    // ];
-    // console.log("crums:: ", crums);
+            return {
+                key: index + 1,
+                title: isLast ? crumbName : <Link to={currentLink}>{crumbName}</Link>
+            };
+        })
+    ];
 
 
     // for hover effect on sidebar menue
@@ -123,8 +101,8 @@ const Editor = () => {
                         onBackdropClick={broken ? () => setCollapsed(true) : ''}
                     >
                         <Menu>
-                            {broken && <MenuItem disabled >Editor</MenuItem>}
-                            {broken && <MenuItem style={{ marginBottom: "20px" }} disabled >Editor</MenuItem>}
+                            {broken && <MenuItem disabled >Editor Menu</MenuItem>}
+                            {/* {broken && <MenuItem style={{ marginBottom: "20px" }} disabled >Editor</MenuItem>} */}
                             <MenuItem
                                 style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
@@ -156,17 +134,9 @@ const Editor = () => {
 
                 <main style={{ padding: 0 }}>
                     <div className={`${styles.editorBreadcrumb}`} >
-                        {/* {crums} */}
-                        <Breadcrumb>
-                            <Breadcrumb.Item key="home">
-                                <Link to="/"><HomeOutlined /></Link>
-                            </Breadcrumb.Item>
-                            {crums}
-                        </Breadcrumb>
-                        
-                        {/* <Breadcrumb items={breadcrumbItems} /> */}
+                         <Breadcrumb items={breadcrumbItems} />
                     </div>
-                    <div style={{ marginTop: "25px", padding: 10 }}>
+                    <div style={{ marginTop: "25px", paddingTop: 10 }}>
                         <Outlet />
                     </div>
                     <GoToTopButton />
