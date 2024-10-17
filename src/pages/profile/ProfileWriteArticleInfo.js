@@ -452,7 +452,7 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                     <input
                         type="text"
                         className={styles.customInput}
-                        placeholder="https://i.imgur.com/Hu9L5RH.jpg"
+                        placeholder="https://i.ibb.co.com/v3bscpR/home.jpg"
                         value={coverImgLink}
                         onChange={(e) => setCoverImgLink(e.target.value)}
                     // required

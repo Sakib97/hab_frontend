@@ -94,7 +94,7 @@ const ProfileWrite = () => {
   <li> Write the article both in <b>English</b> and <b>বাংলা</b> </li>
   <li> Include <b> Images </b> to make the article appealing </li>
   <ul>
-    <li> Upload the image in a hosting site like: <a href="https://imgbb.com/"> https://imgbb.com/ </a> or <a href="https://imgur.com/"> https://imgur.com/ </a> etc. </li>
+    <li> Upload the image in a hosting site like: <a href="https://imgbb.com/"> https://imgbb.com/ </a> </li>
     <li> Copy the <b> image URL </b> and paste in <b>"Image (<i class="fa-regular fa-image"></i>)" </b> option </li>
     <li> Finally, resize and palce the image in the Editor as necessary</li>
   </ul>

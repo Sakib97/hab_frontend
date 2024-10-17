@@ -7,10 +7,10 @@ const EditorArticleReview = () => {
     const location = useLocation();
     const [activePath, setActivePath] = useState(location.pathname);
 
-    useEffect(()=> {
+    useEffect(() => {
         setActivePath(location.pathname)
-    },[location])
-    
+    }, [location])
+
     return (
         <div style={{ marginTop: "15px" }}>
             <div className={styles.navbar}>
@@ -46,14 +46,18 @@ const EditorArticleReview = () => {
                         </Link></Col>
                     </Row> */}
                     {/* <div className={styles.searchIcon}>
-                        <i className="fa fa-search"></i>
+                        <i className="fa fa-search"></i> 
                     </div> */}
                 </div>
             </div>
 
-            <div style={{ paddingTop: "40px" }} className="unreviewd">
+            <div style={{
+                paddingTop: "40px", 
+                // display: "flex", justifyContent: "center", alignItems: "center"
+            }}
+                className="unreviewd">
                 {/* <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus labore sed ducimus, dolorem magni, pariatur molestiae beatae dolor quibusdam impedit architecto. Officiis fugiat qui minus ipsa hic sapiente odit?</h4> */}
-                <Outlet/>
+                <Outlet />
             </div>
         </div>
 
