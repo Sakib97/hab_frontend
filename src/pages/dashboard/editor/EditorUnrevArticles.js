@@ -4,6 +4,8 @@ import React from 'react';
 import useAuth from '../../../hooks/useAuth';
 import { useQuery } from 'react-query';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import { Link } from 'react-router-dom';
+
 
 // const data = Array.from({
 //     length: 23,
@@ -47,7 +49,9 @@ const EditorUnrevArticles = () => {
     // console.log("unrevData:: ", unrevData);
 
     const unredDataDisplay = Array.from({ length: unrevData?.length }).map((_, i) => ({
-        href: 'https://ant.design',
+        // href: 'https://ant.design', // /editor_dashboard/review/
+        
+        href: '/editor_dashboard/review/article-review',
         title: unrevData[i].title_en, // Map title with title_en from API response
         avatar: unrevData[i].author_image_url, // Map avatar with author_image_url from API response
         description: unrevData[i].author_firstname + " " + unrevData[i].author_lastname + " || " + unrevData[i].submitted_at,
@@ -108,7 +112,7 @@ const EditorUnrevArticles = () => {
                                 <List.Item.Meta
                                 
                                     avatar={<Avatar src={item.avatar} />}
-                                    title={<a href={item.href}>{item.title}</a>}
+                                    title={<Link to={item.href}>{item.title}</Link>}
                                     description={item.description}
                                 />
                                 {item.content}

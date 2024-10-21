@@ -32,7 +32,9 @@ const Nav_bar = () => {
     return (
         <div>
 
-            <Navbar sticky="top" bg="dark" variant="dark" expand="lg" className={`${styles.customNavbar} bg-body-tertiary`} >
+            <Navbar
+                fixed="top" bg="dark" variant="dark" expand="lg" 
+                className={`${styles.customNavbar} bg-body-tertiary`} >
                 <Container >
                     <Navbar.Brand href="/" className={styles.navbarBrandCustom}>History & Beyond</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -21,7 +21,7 @@ const EditorArticleReview = () => {
                         onClick={() => setActivePath('/editor_dashboard/review/unreviwed-articles')}
                     >
                         Unreviwed Articles
-                    </Link>
+                    </Link> &nbsp;&nbsp;
                     <Link
                         to="/editor_dashboard/review/review-history"
                         className={`${styles.link} ${activePath === '/editor_dashboard/review/review-history' ? styles.activeLink : ''}`}
@@ -54,6 +54,7 @@ const EditorArticleReview = () => {
             <div style={{
                 paddingTop: "40px", 
                 // display: "flex", justifyContent: "center", alignItems: "center"
+                // display: "flex"
             }}
                 className="unreviewd">
                 {/* <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate voluptatibus labore sed ducimus, dolorem magni, pariatur molestiae beatae dolor quibusdam impedit architecto. Officiis fugiat qui minus ipsa hic sapiente odit?</h4> */}

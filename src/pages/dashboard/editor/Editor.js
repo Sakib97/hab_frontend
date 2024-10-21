@@ -128,13 +128,85 @@ const Editor = () => {
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
                                 icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+
+                            <MenuItem
+                                style={defaultStyle}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                icon={<NotificationsTwoToneIcon />}>Notification</MenuItem>
+
+                            <MenuItem disabled></MenuItem>
                         </Menu>
+
                     </Sidebar>
                 </div>
 
-                <main style={{ padding: 0 }}>
+                <main className={`${styles.editorContent} 
+                ${!collapsed ? styles.expandedEditor : ''}`}
+                    style={{ padding: 0 }}>
                     <div className={`${styles.editorBreadcrumb}`} >
-                         <Breadcrumb items={breadcrumbItems} />
+                        <Breadcrumb items={breadcrumbItems} />
                     </div>
                     <div style={{ marginTop: "25px", paddingTop: 10 }}>
                         <Outlet />

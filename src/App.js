@@ -19,7 +19,7 @@ import ForgetPassResetPass from './pages/auth/ForgetPassResetPass';
 import EditorArticleReview from './pages/dashboard/editor/EditorArticleReview';
 import EditorUnrevArticles from './pages/dashboard/editor/EditorUnrevArticles';
 import EditorReviewHistory from './pages/dashboard/editor/EditorReviewHistory';
-
+import EditorArticleDetailsForRev from './pages/dashboard/editor/EditorArticleDetailsForRev';
 function App() {
 
   const ROLES = {
@@ -37,7 +37,7 @@ function App() {
           <Nav_bar></Nav_bar>
         </div>
 
-        <div className="content">
+        <div style={{paddingTop: "62px"}} className="content">
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
 
@@ -74,6 +74,8 @@ function App() {
                 <Route path='review' element={<EditorArticleReview />}>
                   <Route path='unreviwed-articles' element={<EditorUnrevArticles />}></Route>
                   <Route path='review-history' element={<EditorReviewHistory />}></Route>
+                  <Route path='article-review' element={<EditorArticleDetailsForRev />}></Route>
+                
                 </Route>
               </Route>
             </Route>
