@@ -59,6 +59,9 @@ const Editor = () => {
 
     // for hover effect on sidebar menue
     const defaultStyle = {
+        borderRadius: "10px",
+        marginTop: "4px",
+        marginLeft: "5px",
         backgroundColor: "transparent",
         transition: "background-color 0.3s ease",
     };
@@ -129,7 +132,7 @@ const Editor = () => {
                                 onMouseLeave={handleMouseLeave}
                                 icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
 
-                            <MenuItem
+                            {/* <MenuItem
                                 style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
@@ -196,7 +199,7 @@ const Editor = () => {
                                 onMouseLeave={handleMouseLeave}
                                 icon={<NotificationsTwoToneIcon />}>Notification</MenuItem>
 
-                            <MenuItem disabled></MenuItem>
+                            <MenuItem disabled></MenuItem> */}
                         </Menu>
 
                     </Sidebar>

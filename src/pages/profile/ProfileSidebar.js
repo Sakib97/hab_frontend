@@ -26,6 +26,8 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
 
     // for hover effect on sidebar menue
     const defaultStyle = {
+        borderRadius: "10px",
+        margin: "0 4px 0 5px",
         backgroundColor: "transparent",
         transition: "background-color 0.3s ease",
     };

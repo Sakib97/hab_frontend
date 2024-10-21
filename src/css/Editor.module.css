@@ -30,7 +30,7 @@
 
 /* Style for the scrollbar track (background) */
 .editorSidebar::-webkit-scrollbar-track {
-    background: #c8c1c1f4;
+    background: #f0f0f0;
     /* Light grey background */
     border-radius: 10px;
 }
