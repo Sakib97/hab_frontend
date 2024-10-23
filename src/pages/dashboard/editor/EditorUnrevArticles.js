@@ -50,23 +50,26 @@ const EditorUnrevArticles = () => {
 
     const unredDataDisplay = Array.from({ length: unrevData?.length }).map((_, i) => ({
         // href: 'https://ant.design', // /editor_dashboard/review/
-        
+
         href: '/editor_dashboard/review/article-review',
         title: unrevData[i].title_en, // Map title with title_en from API response
         avatar: unrevData[i].author_image_url, // Map avatar with author_image_url from API response
         description: unrevData[i].author_firstname + " " + unrevData[i].author_lastname + " || " + unrevData[i].submitted_at,
         content: unrevData[i].subtitle_en, // Map content with content_en from API response
         // content: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Exercitationem impedit ea numquam fuga beatae rem asperiores sit optio sint, illum, laboriosam esse, animi reiciendis tempora ipsam quae iusto eius deleniti quisquam laudantium voluptate a. Minima sunt laborum aperiam aliquid assumenda, accusamus nam vel totam, officiis voluptates fugiat laboriosam eveniet at.",
-        cover_img_link: unrevData[i].cover_img_link
+        cover_img_link: unrevData[i].cover_img_link,
+        status: unrevData[i].status,
+        article: unrevData[i]
     }));
     // console.log("unredDataDisplay:: ", unredDataDisplay);
 
 
 
     return (
-        <div style={{ padding: "20px",
+        <div style={{
+            padding: "20px",
             // display: "flex", justifyContent: "center", alignItems: "center"
-          }}>
+        }}>
             {/* <h1>Unreviewd articles</h1> */}
             {/* Loading Icon goed here */}
 
@@ -91,7 +94,7 @@ const EditorUnrevArticles = () => {
                         // }
                         renderItem={(item) => (
                             <List.Item
-                            
+
                                 key={item.title}
                                 // actions={[
                                 //     <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
@@ -110,12 +113,20 @@ const EditorUnrevArticles = () => {
                                 }
                             >
                                 <List.Item.Meta
-                                
+
                                     avatar={<Avatar src={item.avatar} />}
-                                    title={<Link to={item.href}>{item.title}</Link>}
+                                    // title={<Link to={item.href}>{item.title}</Link>}
+                                    // title={<Link
+                                    //     to={{ pathname: item.href, state: { article: item.article } }}>
+                                    //     {item.title}</Link>}
+                                    title={<Link to={item.href}
+                                         state={{ article: item.article }}>
+                                        {item.title}</Link>}
                                     description={item.description}
                                 />
                                 {item.content}
+                                <hr />
+                                Status: <b>{item.status} </b>
                             </List.Item>
                         )}
                     />
