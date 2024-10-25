@@ -6,25 +6,6 @@ import { useQuery } from 'react-query';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import { Link } from 'react-router-dom';
 
-
-// const data = Array.from({
-//     length: 23,
-// }).map((_, i) => ({
-//     href: 'https://ant.design',
-//     title: `ant design part ${i}`,
-//     avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=${i}`,
-//     description:
-//         'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-//     content:
-//         'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-// }));
-// const IconText = ({ icon, text }) => (
-//     <Space>
-//         {React.createElement(icon)}
-//         {text}
-//     </Space>
-// );
-
 const fetchData = async (url, axiosInstance) => {
     const response = await axiosInstance.get(url);
     return response.data;
@@ -70,9 +51,6 @@ const EditorUnrevArticles = () => {
             padding: "20px",
             // display: "flex", justifyContent: "center", alignItems: "center"
         }}>
-            {/* <h1>Unreviewd articles</h1> */}
-            {/* Loading Icon goed here */}
-
             {unrevLoading ? "Loading..." :
                 unrevError ? "Server Error ! " :
                     <List
@@ -87,27 +65,14 @@ const EditorUnrevArticles = () => {
                         }}
                         // dataSource={data}
                         dataSource={unredDataDisplay}
-                        // footer={
-                        //     <div>
-                        //         <b>ant design</b> footer part
-                        //     </div>
-                        // }
                         renderItem={(item) => (
                             <List.Item
 
                                 key={item.title}
-                                // actions={[
-                                //     <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-                                //     <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                                //     <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
-                                // ]}
                                 extra={
                                     <img
                                         width={212}
                                         alt="logo"
-                                        // src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                                        // src="https://i.imgur.com/Hu9L5RH.jpg" https://ibb.co.com/r3SZW7k
-                                        // src="https://i.ibb.co.com/v3bscpR/home.jpg"
                                         src={item.cover_img_link}
                                     />
                                 }
@@ -115,10 +80,6 @@ const EditorUnrevArticles = () => {
                                 <List.Item.Meta
 
                                     avatar={<Avatar src={item.avatar} />}
-                                    // title={<Link to={item.href}>{item.title}</Link>}
-                                    // title={<Link
-                                    //     to={{ pathname: item.href, state: { article: item.article } }}>
-                                    //     {item.title}</Link>}
                                     title={<Link to={item.href}
                                          state={{ article: item.article }}>
                                         {item.title}</Link>}

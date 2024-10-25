@@ -8,14 +8,35 @@ import ProfileWriteArticleInfo from "./ProfileWriteArticleInfo";
 import TableOfContent from "../../components/TableOfContent";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import DOMPurify from 'dompurify';
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import { useMutation, useQueryClient } from 'react-query';
+
+const postData = async (data, url, axiosInstance) => {
+  const response = await axiosInstance.post(url,
+    JSON.stringify(data),
+    {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    }
+  );
+  return response.data;
+}
 
 const ProfileWrite = () => {
+  const CREATE_ARTICLE_API = '/api/v1/article/create_article'
   const [open, setOpen] = useState(false);
 
   // articleInfo fetches data from ProfileWriteArticleInfo.js component into this component
   const [articleInfo, setArticleInfo] = useState('')
   const [editorContentEN, setEditorContentEN] = useState("");
   const [editorContentBN, setEditorContentBN] = useState("");
+
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   // Add a ref to the form
   const formRef = useRef(null);
@@ -30,15 +51,17 @@ const ProfileWrite = () => {
   };
 
   const isAllReqFieldsPresent = (obj, excludedFieldList) => {
-    // if (obj) {
-      for (const [key, value] of Object.entries(obj)) {
-        if (excludedFieldList.includes(key)) {
-          continue;
-        } else if (!value) {
-          return false;
-        }
+    if (!obj) {
+      return false;
+    }
+    for (const [key, value] of Object.entries(obj)) {
+      if (excludedFieldList.includes(key)) {
+        continue;
+      } else if (!value) {
+        return false;
       }
-      return true;
+    }
+    return true;
     // } else return false;
 
   }
@@ -56,6 +79,48 @@ const ProfileWrite = () => {
     }
   };
 
+  const getSanitizedHTML = (content) => {
+    const sanitizedContent = DOMPurify.sanitize(content);
+    // const jsonData = {
+    //     content: sanitizedContent,
+    // };
+    // const jsonString = JSON.stringify(jsonData);
+
+    // console.log("Saved JSON:", jsonString);
+    // console.log("sanitizedContent htmlContent::", sanitizedContent);  
+    // console.log("htmlContent::", content);  
+    return sanitizedContent;
+  };
+
+  // const renderHTMLContent = () => {
+  //     return { __html: content };  // Prepare the HTML content for rendering
+  // };
+
+  const axiosInst = axiosPrivate;
+  const { mutate, isLoading, isError, isSuccess } = useMutation(
+    (article_obj) => postData(article_obj, CREATE_ARTICLE_API, axiosInst), // Pass the data here
+    {
+      onMutate: () => {
+        setLoading(true);
+        setError(null);
+        setSuccess(false);
+      },
+      onSuccess: (data) => {
+        setLoading(false);
+        setSuccess(true);
+        console.log("Success Server message:", data.message);
+        // Invalidate any queries you need to refetch after posting, if necessary
+        queryClient.invalidateQueries('createArticle');
+      },
+      onError: (error) => {
+        setLoading(false);
+        setError(error);
+        setSuccess(false);
+        console.error("Error posting data: ", error);
+      },
+    }
+  );
+
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
 
@@ -64,7 +129,8 @@ const ProfileWrite = () => {
     const buttonName = clickedButton.name; // The name of the button
 
     if (buttonName === 'reviewSubmit') {
-      console.log("init finalArticleInfo::: ", articleInfo);
+      console.log("init finalArticleInfo::: ", articleInfo.coverImgCapEN
+      );
       if (isAllReqFieldsPresent(articleInfo, ['tags', 'newTag'])) {
         console.log("finalArticleInfo::: ", articleInfo);
       } else {
@@ -74,21 +140,45 @@ const ProfileWrite = () => {
       handleResetInfoAndRTE()
       console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
       console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
+      const sanitizedContentEN = getSanitizedHTML(editorContentEN)
+      const sanitizedContentBN = getSanitizedHTML(editorContentBN)
+      const article_obj = {
+        "category_id": articleInfo.categoryID,
+        "subcategory_id": articleInfo.subcategoryID,
+        "title_en": articleInfo.titleEN,
+        "title_bn": articleInfo.titleBN,
+        "subtitle_en": articleInfo.subtitleEN,
+        "subtitle_bn": articleInfo.subtitleBN,
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(editorContentEN, "text/html");
+        "content_en": sanitizedContentEN,
+        "content_bn": sanitizedContentBN,
+        "cover_img_link": articleInfo.coverImgLink,
+        "cover_img_cap_en": articleInfo.coverImgCapEN,
+        "cover_img_cap_bn": articleInfo.coverImgCapBN,
+        "tags": JSON.stringify(articleInfo.tags),
+        "new_tag": JSON.stringify(articleInfo.newTag)
+      }
+      mutate(article_obj);
+      console.log("loading:: ", loading);
+      console.log("success:: ", success);
+      console.log("error:: ", error);
+      
+      
 
-      console.log("refined Content in ProfileWrite: ", doc.body.textContent);
+      // const parser = new DOMParser();
+      // const doc = parser.parseFromString(editorContentEN, "text/html");
 
-      const detectedLanguage = franc(doc.body.textContent, { only: ['eng', 'ben'] })
-      const words = countWords(doc.body.textContent)
-      console.log("no of words:: ", words);
-      console.log("detectedLanguage:: ", detectedLanguage);
+      // console.log("refined Content in ProfileWrite: ", doc.body.textContent);
 
-
+      // const detectedLanguage = franc(doc.body.textContent, { only: ['eng', 'ben'] })
+      // const words = countWords(doc.body.textContent)
+      // console.log("no of words:: ", words);
+      // console.log("detectedLanguage:: ", detectedLanguage);
 
     }
   };
+
+  //  
 
   const collapseText1 = `<ul> 
   <li> Write the article both in <b>English</b> and <b>বাংলা</b> </li>
@@ -195,7 +285,7 @@ const ProfileWrite = () => {
           </Modal.Header>
 
           <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
-            Please save all drafts before submitting ! <br/>
+            Please save all drafts before submitting ! <br />
             If you confirm, all drafts will be cleared !
           </Modal.Body>
 

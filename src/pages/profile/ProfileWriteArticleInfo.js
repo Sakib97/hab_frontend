@@ -33,6 +33,9 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
 
     const [category, setCategory] = useState()
     const [subCategory, setSubCategory] = useState()
+    const [categoryID, setCategoryID] = useState()
+    const [subcategoryID, setSubCategoryID] = useState()
+
     const [titleEN, setTitleEN] = useState('')
     const [subtitleEN, setSubtitleEN] = useState('')
     const [titleBN, setTitleBN] = useState('')
@@ -191,6 +194,14 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
     })
     )
 
+    const categoryNameIdMap = filteredSortedCatData.map(category =>
+        ({
+            id: category.category_id,
+            name: category.category_name
+        })
+        )
+    
+
     // get the subcats by category and then sort
     // Filter the enabled subcategory data based on the selected category
     const filteredSubCatData = Array.isArray(subCatData)
@@ -206,6 +217,15 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
         label: subCategory.subcategory_name
     }));
 
+    const subcategoryNameIdMap = sortedSubCatData.map(subCategory =>
+        ({
+            id: subCategory.subcategory_id,
+            name: subCategory.subcategory_name,
+        })
+        )
+    // console.log("subcategoryNameIdMap:: ", subcategoryNameIdMap);
+
+
     const tagOptions = Array.isArray(tagData) ?
         tagData.map(tag => ({
             value: tag.tag_name,
@@ -215,7 +235,17 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
     const handleCategoryChange = (category_name) => {
         setCategory(category_name);  // Update the selected category
         setSubCategory();  // Clear the selected subcategory
+        const category_id = categoryNameIdMap.find(cat => cat.name === category_name)?.id
+        setCategoryID(category_id)
+
     };
+
+    const handleSubCategoryChange = (subcategory_name)=> {
+        setSubCategory(subcategory_name)
+        const subcategory_id = subcategoryNameIdMap.find(subcat => subcat.name === subcategory_name)?.id
+        setSubCategoryID(subcategory_id)
+        // console.log("subcategory_id:: ", subcategory_id);
+    }
 
 
     const saveDraftInfo = () => {
@@ -249,7 +279,7 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
         setError(false);
 
         const draftData = {
-            category: category, subCategory: subCategory,
+            category: category, subCategory: subCategory, categoryID, subcategoryID,
             tags, newTag: newTag ? newTag : '', titleEN, titleBN,
             subtitleEN, subtitleBN, coverImgLink, coverImgCapEN, coverImgCapBN
         };
@@ -339,7 +369,8 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                             subCatError? "Server Error !" : "Select Sub Category"}
                         style={{ width: 180 }}
                         value={subCategory}
-                        onChange={setSubCategory}
+                        // onChange={setSubCategory}
+                        onChange={handleSubCategoryChange}
                         options={subMenuOptions}
                     />
                 </div>
