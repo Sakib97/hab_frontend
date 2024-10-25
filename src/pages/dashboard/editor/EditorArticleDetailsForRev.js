@@ -6,14 +6,26 @@ import { useState, useEffect } from 'react';
 import Badge from 'react-bootstrap/Badge';
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
-import { Button, Tooltip, Switch } from "antd";
+import LowPriorityOutlinedIcon from '@mui/icons-material/LowPriorityOutlined';
+import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import Divider from '@mui/material/Divider';
+import { Button, Tooltip } from "antd";
 import LanguageToggle from '../../../components/LanguageToggle';
-
+import { Input } from 'antd';
+const { TextArea } = Input;
 
 const EditorArticleDetailsForRev = () => {
     const [newTag, setNewTag] = useState(false)
     const [tagsList, setTagsList] = useState([])
     const [submittedAt, setSubmittedAt] = useState()
+
+    const [isAcceptable, setIsAcceptable] = useState(true)
+    const [isReviseable, setIsReviseable] = useState(false)
+    const [isRejectable, setIsRejectable] = useState(false)
+    const [reviseReason, setReviseReason] = useState('')
+    const [rejectReason, setRejectReason] = useState('')
+
     const location = useLocation();
     const article = location.state?.article;
 
@@ -66,7 +78,37 @@ const EditorArticleDetailsForRev = () => {
         return <h3 style={{ padding: "30px", color: "red" }}>No article data found!</h3>;
     }
     // console.log("article::: ", article);
-    // const avatarUrl = 'https://i.ibb.co.com/v3bscpR/home.jpg'
+
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Prevent page reload
+        const clickedButton = e.nativeEvent.submitter; // The button that triggered the submit
+        const buttonName = clickedButton.name; // The name of the button
+
+        if (buttonName === 'revision') {
+            setIsRejectable(false)
+            setIsReviseable(true)
+            setIsAcceptable(false)
+        }
+        if (buttonName === 'reject') {
+            setIsReviseable(false)
+            setIsRejectable(true)
+            setIsAcceptable(false)
+        }
+        if (buttonName === 'revisionCancel') {
+            setRejectReason('')
+            setReviseReason('')
+            setIsReviseable(false)
+            setIsRejectable(false)
+            setIsAcceptable(true)
+        }
+        if (buttonName === 'rejectCancel') {
+            setRejectReason('')
+            setReviseReason('')
+            setIsReviseable(false)
+            setIsRejectable(false)
+            setIsAcceptable(true)
+        }
+    }
 
 
     return (
@@ -86,10 +128,10 @@ const EditorArticleDetailsForRev = () => {
                 <div className={styles.infoRow}>
                     <span className={styles.category}>
                         Category: <strong>{article.category_name}</strong></span>
-                    ||
+
                     <span className={styles.subcategory}>
                         Sub-category: <strong>{article.subcategory_name}</strong></span>
-                    ||
+
                     <span className={styles.tagRequest}>
                         {newTag && <span>New Tag Request: </span>}
                         {!newTag && <span>Tags: </span>}
@@ -98,17 +140,19 @@ const EditorArticleDetailsForRev = () => {
                                 {tag}
                             </Badge>
                         ))}
-
                         {newTag && <span>
+                            <br />
                             <Tooltip title="Accept">
                                 <Button size='small'
-                                    style={{ color: "green" }} shape="circle"
-                                    icon={<CheckCircleTwoToneIcon fontSize="small" />} />
-                            </Tooltip>
+                                    // style={{ color: "black", border: "solid", borderWidth: "1px" }} 
+                                    shape="circle"
+                                    icon={<CheckCircleTwoToneIcon style={{ color: "green" }} fontSize="small" />} />
+                            </Tooltip> &nbsp;
                             <Tooltip title="Decline">
                                 <Button size='small'
-                                    style={{ color: "red" }} shape="circle"
-                                    icon={<CancelTwoToneIcon style={{ fontSize: '20px' }} />} />
+                                    // style={{ color: "black", border: "solid", borderWidth: "1px" }}
+                                    shape="circle"
+                                    icon={<CancelTwoToneIcon style={{ color: "red", fontSize: '20px' }} />} />
                             </Tooltip>
                         </span>}
                     </span>
@@ -121,7 +165,10 @@ const EditorArticleDetailsForRev = () => {
                     <span className={styles.authorStatus}>
                         {article.author_firstname} {article.author_lastname}
                     </span>
-                    <span className={styles.separator}>||</span>
+                    <Divider style={{ backgroundColor: "black" }} orientation="vertical" flexItem />
+                    <Divider style={{ backgroundColor: "black" }} orientation="vertical" flexItem />
+
+
                     <span className={styles.date}>{submittedAt}</span>
                 </div>
 
@@ -129,9 +176,6 @@ const EditorArticleDetailsForRev = () => {
                 Article Status: <b>{article.status}</b>
             </div>
             <hr />
-            {/* <div >
-                <h2>Hello World</h2>
-            </div> */}
 
             <div className={styles.articleContainer}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
@@ -140,7 +184,6 @@ const EditorArticleDetailsForRev = () => {
                 <div>
                     <img src={article.cover_img_link} alt="cover_image" />
                 </div>
-                {/*  style={{display: "flex", flexDirection:"row"}} */}
                 <div style={{ display: "flex", justifyContent: "center" }} >
 
                     {isEnglish && <span>Caption: {article.cover_img_cap_en}</span>}
@@ -158,6 +201,100 @@ const EditorArticleDetailsForRev = () => {
                     {!isEnglish && <span className='bn'>{article.content_bn}</span>}
                 </div>
             </div>
+            <hr />
+
+            <form onSubmit={handleSubmit}>
+                <div className={styles.articleContainer}>
+                    {isReviseable &&
+                        <div>
+                            <textarea placeholder="Specify Revisions *"
+                                rows="3"
+                                cols="35"
+                                style={{
+                                    backgroundColor: "#ede5d5",
+                                    borderRadius: "10px", 
+                                    borderStyle: "solid",
+                                    borderWidth: "3px",
+                                    borderColor: "#b59607",}}
+                                value={reviseReason}
+                                onChange={(e)=>setReviseReason(e.target.value)}
+                                type="text" />
+                            <br />
+                            <br />
+
+                            <button style={{ borderRadius: "20px" }}
+                                name='revisionCancel'
+                                className="btn btn-danger" >
+                                <i className="fa-solid fa-xmark" />
+                            </button>
+                            &nbsp;
+                            <button style={{ borderRadius: "20px" }}
+                                name='revisionOK'
+                                disabled={!reviseReason}
+                                className="btn btn-success" >
+                                <i className="fa-solid fa-check" />
+                            </button>
+                        </div>
+                    }
+
+                    {isRejectable &&
+                        <div>
+                            <textarea placeholder="Specify Rejection Reasons *"
+                                rows="3"
+                                cols="35"
+                                style={{
+                                    backgroundColor: "#eddada",
+                                    borderRadius: "10px",
+                                    borderStyle: "solid",
+                                    borderWidth: "3px",
+                                    borderColor: "#c20808"
+                                }}
+                                value={rejectReason}
+                                onChange={(e)=> setRejectReason(e.target.value)}
+                                type="text" />
+                            <br />
+                            <br />
+
+                            <button style={{ borderRadius: "20px" }}
+                                name='rejectCancel'
+                                className="btn btn-danger" >
+                                <i className="fa-solid fa-xmark" />
+                            </button>
+                            &nbsp;
+                            <button style={{ borderRadius: "20px" }}
+                                disabled={!rejectReason}
+                                name='rejectOK'
+                                className="btn btn-success" >
+                                <i className="fa-solid fa-check" />
+                            </button>
+                        </div>
+                    }
+
+                    {(isAcceptable && (!isReviseable || !isRejectable)) &&
+                        <button style={{ margin: "4px" }}
+                            name='accept'
+                            className='btn btn-success'>
+                            <AssignmentTurnedInOutlinedIcon /> Publish Article
+                        </button>}
+                    &nbsp;
+
+                    {(!isReviseable && !isRejectable) &&
+                        <button style={{ margin: "4px" }} name='revision'
+                            className='btn btn-warning'>
+                            <LowPriorityOutlinedIcon /> Send for Revision
+                        </button>}
+                    &nbsp;
+
+                    {(!isReviseable && !isRejectable) &&
+                        <button style={{ margin: "4px" }}
+                            name='reject'
+                            className='btn btn-danger'>
+                            <BlockOutlinedIcon />  Reject Article
+                        </button>}
+                </div>
+
+            </form>
+
 
 
 

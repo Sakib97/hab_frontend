@@ -381,13 +381,7 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                             onChange={setNewTag}
                             suffixIcon={suffix_new_tag}
                             placeholder="Type a new tag"
-                        // options={[
-                        //     { value: 'Ava Swift', label: 'Ava Swift' },
-                        //     { value: 'Cole Reed', label: 'Cole Reed' },
-                        //     { value: 'Mia Blake', label: 'Mia Blake' },
-                        //     { value: 'Jake Stone', label: 'Jake Stone' },
-                        //     { value: 'Lily Lane', label: 'Lily Lane' }
-                        // ]}
+                        
                         />
                     )}
 
