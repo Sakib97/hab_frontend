@@ -110,6 +110,10 @@ const EditorArticleDetailsForRev = () => {
         }
     }
 
+    const renderHTMLContent = (content) => {
+        return { __html: content  };  // Prepare the HTML content for rendering
+    };
+
 
     return (
         // <div style={{
@@ -187,18 +191,28 @@ const EditorArticleDetailsForRev = () => {
                 <div style={{ display: "flex", justifyContent: "center" }} >
 
                     {isEnglish && <span>Caption: {article.cover_img_cap_en}</span>}
-                    {!isEnglish && <span className='bn'>শিরোনাম : {article.cover_img_cap_bn}</span>}
+                    {!isEnglish && <span className='bn2'>শিরোনাম : {article.cover_img_cap_bn}</span>}
 
                 </div>
                 <div>
                     {isEnglish && <span><b>{article.subtitle_en}</b></span>}
-                    {!isEnglish && <span className='bn'><b>{article.subtitle_bn}</b></span>}
+                    {!isEnglish && <strong><span className='bn'>{article.subtitle_bn}</span></strong>}
 
                 </div>
                 <hr className={styles.divider} />
                 <div>
-                    {isEnglish && <span>{article.content_en}</span>}
-                    {!isEnglish && <span className='bn'>{article.content_bn}</span>}
+                    {/* {isEnglish && <span>{article.content_en}</span>} */}
+                    {isEnglish && <div
+                        dangerouslySetInnerHTML={renderHTMLContent(article.content_en)}  // Render the HTML content
+                    />}
+
+                    {!isEnglish &&
+                        <div>
+                            <div
+                                dangerouslySetInnerHTML={renderHTMLContent(article.content_bn)}
+                            />
+                        </div>
+                    }
                 </div>
             </div>
             <hr />
@@ -212,12 +226,13 @@ const EditorArticleDetailsForRev = () => {
                                 cols="35"
                                 style={{
                                     backgroundColor: "#ede5d5",
-                                    borderRadius: "10px", 
+                                    borderRadius: "10px",
                                     borderStyle: "solid",
                                     borderWidth: "3px",
-                                    borderColor: "#b59607",}}
+                                    borderColor: "#b59607",
+                                }}
                                 value={reviseReason}
-                                onChange={(e)=>setReviseReason(e.target.value)}
+                                onChange={(e) => setReviseReason(e.target.value)}
                                 type="text" />
                             <br />
                             <br />
@@ -250,7 +265,7 @@ const EditorArticleDetailsForRev = () => {
                                     borderColor: "#c20808"
                                 }}
                                 value={rejectReason}
-                                onChange={(e)=> setRejectReason(e.target.value)}
+                                onChange={(e) => setRejectReason(e.target.value)}
                                 type="text" />
                             <br />
                             <br />

@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button';
 import DOMPurify from 'dompurify';
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useMutation, useQueryClient } from 'react-query';
+import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 
 const postData = async (data, url, axiosInstance) => {
   const response = await axiosInstance.post(url,
@@ -20,7 +21,7 @@ const postData = async (data, url, axiosInstance) => {
       withCredentials: true
     }
   );
-  return response.data;
+  return response;
 }
 
 const ProfileWrite = () => {
@@ -37,6 +38,8 @@ const ProfileWrite = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [editorMail, setEditorMail] = useState('');
+
 
   // Add a ref to the form
   const formRef = useRef(null);
@@ -92,23 +95,19 @@ const ProfileWrite = () => {
     return sanitizedContent;
   };
 
-  // const renderHTMLContent = () => {
-  //     return { __html: content };  // Prepare the HTML content for rendering
-  // };
-
   const axiosInst = axiosPrivate;
-  const { mutate, isLoading, isError, isSuccess } = useMutation(
-    (article_obj) => postData(article_obj, CREATE_ARTICLE_API, axiosInst), // Pass the data here
+  const { mutate, isLoading, isError, isSuccess, data } = useMutation(
+    async (article_obj) =>
+      postData(article_obj, CREATE_ARTICLE_API, axiosInst), // Pass the data here
     {
       onMutate: () => {
         setLoading(true);
         setError(null);
         setSuccess(false);
       },
-      onSuccess: (data) => {
+      onSuccess: () => {
         setLoading(false);
         setSuccess(true);
-        console.log("Success Server message:", data.message);
         // Invalidate any queries you need to refetch after posting, if necessary
         queryClient.invalidateQueries('createArticle');
       },
@@ -137,7 +136,7 @@ const ProfileWrite = () => {
         toast.error("Please fill in all required (*) Article Info correctly !", { duration: 7000 });
         return;
       }
-      handleResetInfoAndRTE()
+      // handleResetInfoAndRTE()
       console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
       console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
       const sanitizedContentEN = getSanitizedHTML(editorContentEN)
@@ -158,12 +157,24 @@ const ProfileWrite = () => {
         "tags": JSON.stringify(articleInfo.tags),
         "new_tag": JSON.stringify(articleInfo.newTag)
       }
-      mutate(article_obj);
-      console.log("loading:: ", loading);
-      console.log("success:: ", success);
-      console.log("error:: ", error);
-      
-      
+
+      mutate(article_obj, {
+        onSuccess: (data) => {
+          // console.log("API Response:", data.data.msg); 
+          if (data?.data) {
+            const message = data.data.msg;
+            const email = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+            setEditorMail(email[0])
+            // toast.success(`Article submitted: ${data.data.msg}`, { duration: 5000 });
+          } else {
+            toast.success("Article submitted successfully!", { duration: 5000 });
+          }
+        },
+        onError: (error) => {
+          console.error("Error in submission:", error);
+          toast.error("Failed to submit article. Please try again.", { duration: 5000 });
+        }
+      });
 
       // const parser = new DOMParser();
       // const doc = parser.parseFromString(editorContentEN, "text/html");
@@ -224,8 +235,13 @@ const ProfileWrite = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => {
+    setShow(false);
+  }
+  const handleShow = () => {
+    setEditorMail('')
+    setShow(true);
+  }
 
   return (
     <div className="profileWrite">
@@ -269,9 +285,6 @@ const ProfileWrite = () => {
             className="btn btn-success" >
             Submit for Review
           </button>
-          {/* <button type="submit" name="reviewSubmit" className="btn btn-success" >
-            Submit for Review
-          </button> */}
         </div>
         <Modal aria-labelledby="contained-modal-title-vcenter" centered
           show={show} onHide={handleClose}
@@ -281,25 +294,45 @@ const ProfileWrite = () => {
 
           {/* <Modal.Header closeButton> */}
           <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
-            <Modal.Title>Confirm Submit ?</Modal.Title>
+            <Modal.Title>
+              {editorMail ? <span style={{ fontWeight: "bold", color: "green" }}> Success ! </span> :
+                <span> Confirm Submit ? </span>}
+            </Modal.Title>
           </Modal.Header>
 
           <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
-            Please save all drafts before submitting ! <br />
-            If you confirm, all drafts will be cleared !
+            {!editorMail && <span>
+              Please save all drafts before submitting ! <br />
+              If you confirm, all drafts will be cleared ! <br />
+            </span>}
+
+            {editorMail && <div style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+              <CheckCircleTwoToneIcon style={{ color: "green", fontSize: "50px" }} />
+              <span style={{ color: "green", fontWeight: "bold" }} >Article Submitted for Review Successfully !</span>
+              <span>Editor Mail: <span style={{color: "#1039a1"}}> <b>{editorMail}</b> </span>  </span>
+            </div>}
           </Modal.Body>
 
           <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
+
             <Button style={{ borderRadius: "20px" }} variant="outline-danger"
               onClick={handleClose}>
               <i className="fa-solid fa-xmark"></i>
             </Button>
-            <Button type="submit"
+
+            {(!isLoading && !editorMail) && <Button type="submit"
               name="reviewSubmit"
               style={{ borderRadius: "20px" }} variant="outline-success"
             >
               <i className="fa-solid fa-check"></i>
-            </Button>
+            </Button>}
+            {isLoading && <p>Loading...</p>}
+
           </Modal.Footer>
         </Modal>
       </form>
