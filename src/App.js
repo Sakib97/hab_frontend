@@ -20,6 +20,8 @@ import EditorArticleReview from './pages/dashboard/editor/EditorArticleReview';
 import EditorUnrevArticles from './pages/dashboard/editor/EditorUnrevArticles';
 import EditorReviewHistory from './pages/dashboard/editor/EditorReviewHistory';
 import EditorArticleDetailsForRev from './pages/dashboard/editor/EditorArticleDetailsForRev';
+import ProfileNotification from './pages/profile/ProfileNotification';
+
 function App() {
 
   const ROLES = {
@@ -65,7 +67,9 @@ function App() {
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}> */}
             <Route element={<RequireAuth allowedRoles={[ROLES.Author]} />}>
               <Route path="/profile" element={<Profile />} >
-                <Route path='write' element={<ProfileWrite />}></Route>
+                <Route path='write' element={<ProfileWrite />}></Route> 
+                <Route path='notification' element={<ProfileNotification />}></Route> 
+                
               </Route>
             </Route>
 

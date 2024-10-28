@@ -66,7 +66,9 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
                         style={defaultStyle}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
-                        icon={<FontAwesomeIcon icon={faBell} />}> Notifications</MenuItem>
+                        component={<Link to="/profile/notification" />}
+                        icon={<FontAwesomeIcon icon={faBell} />}>
+                        Notifications</MenuItem>
                     <MenuItem
                         style={defaultStyle}
                         onMouseEnter={handleMouseEnter}
