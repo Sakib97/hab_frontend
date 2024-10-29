@@ -20,6 +20,7 @@ import EditorArticleReview from './pages/dashboard/editor/EditorArticleReview';
 import EditorUnrevArticles from './pages/dashboard/editor/EditorUnrevArticles';
 import EditorReviewHistory from './pages/dashboard/editor/EditorReviewHistory';
 import EditorArticleDetailsForRev from './pages/dashboard/editor/EditorArticleDetailsForRev';
+import EditorNotifications from './pages/dashboard/editor/EditorNotifications';
 import ProfileNotification from './pages/profile/ProfileNotification';
 
 function App() {
@@ -79,8 +80,9 @@ function App() {
                   <Route path='unreviwed-articles' element={<EditorUnrevArticles />}></Route>
                   <Route path='review-history' element={<EditorReviewHistory />}></Route>
                   <Route path='article-review' element={<EditorArticleDetailsForRev />}></Route>
-                
                 </Route>
+                <Route path='notification' element={<EditorNotifications />}></Route> 
+                
               </Route>
             </Route>
 

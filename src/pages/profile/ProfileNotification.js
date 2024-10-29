@@ -22,14 +22,12 @@ const ProfileNotification = () => {
     return (
         <div style={{
             width: "100%",
-            padding: "30px",
+            padding: "20px",
             // backgroundColor: "gray"
         }}>
             <h1> Notifications </h1>
-
+            <hr />
             <div style={{}}>
-
-
                 <List
                     pagination={{
                         position,

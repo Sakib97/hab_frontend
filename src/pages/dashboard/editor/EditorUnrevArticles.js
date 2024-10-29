@@ -5,6 +5,8 @@ import useAuth from '../../../hooks/useAuth';
 import { useQuery } from 'react-query';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import { Link } from 'react-router-dom';
+import { getFormattedTime } from '../../../utils/dateUtils';
+
 
 const fetchData = async (url, axiosInstance) => {
     const response = await axiosInstance.get(url);
@@ -53,7 +55,7 @@ const EditorUnrevArticles = () => {
         href: '/editor_dashboard/review/article-review',
         title: article.title_en,
         avatar: article.author_image_url,
-        description: `${article.author_firstname} ${article.author_lastname} || ${article.submitted_at}`,
+        description: `${article.author_firstname} ${article.author_lastname} || ${getFormattedTime(article.submitted_at)}`,
         content: article.subtitle_en,
         cover_img_link: article.cover_img_link,
         status: article.status,

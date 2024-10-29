@@ -13,7 +13,7 @@ import CategoryTwoToneIcon from '@mui/icons-material/CategoryTwoTone';
 import NotificationsTwoToneIcon from '@mui/icons-material/NotificationsTwoTone';
 import EditNoteTwoToneIcon from '@mui/icons-material/EditNoteTwoTone';
 import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Badge } from 'antd';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import GoToTopButton from '../../../components/GoToTopButton';
 import BadgeTwoToneIcon from '@mui/icons-material/BadgeTwoTone';
@@ -30,7 +30,7 @@ const Editor = () => {
         //     'notes': {name: 'Write Notes', icon: <EditNoteTwoToneIcon/>} 
 
         'editor_dashboard': 'Editor Dashboard',
-        'notifications': 'Notifications',
+        'notification': 'Notifications',
         'review': 'Article Reviews',
         'create_subcat_tag': 'Create Subcategory & Tag',
         'notes': 'Write Notes'
@@ -111,11 +111,17 @@ const Editor = () => {
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
                                 icon={<BadgeTwoToneIcon />}>Editor Profile</MenuItem>
+
                             <MenuItem
                                 style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
-                                icon={<NotificationsTwoToneIcon />}>Notification</MenuItem>
+                                component={<Link to="/editor_dashboard/notification" />}
+                                icon={<Badge count={50} overflowCount={9} color="#f5222d" >
+                                    <NotificationsTwoToneIcon />
+                                </Badge>}>
+                                Notification
+                            </MenuItem>
                             <MenuItem
                                 style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
