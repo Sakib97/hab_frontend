@@ -86,6 +86,7 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
                             style={defaultStyle}
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
+                            component={<Link to="/profile/my_articles" />}
                             icon={<FontAwesomeIcon icon={faNewspaper} />}>
                             My Articles
                         </MenuItem>}

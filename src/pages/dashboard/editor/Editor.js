@@ -17,24 +17,39 @@ import { Breadcrumb, Badge } from 'antd';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import GoToTopButton from '../../../components/GoToTopButton';
 import BadgeTwoToneIcon from '@mui/icons-material/BadgeTwoTone';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import { useQuery } from 'react-query';
+
+const fetchData = async (url, axiosInstance) => {
+    const response = await axiosInstance.get(url);
+    return response.data;
+};
 
 const Editor = () => {
     const [collapsed, setCollapsed] = useState(true);
     const [broken, setBroken] = useState(window.matchMedia('(max-width:768px)').matches);
 
-    const breadcrumbNameMap = {
-        //     'editor_dashboard': {name: 'Editor Dashboard', icon: <BadgeTwoToneIcon/>} ,
-        //     'notifications': {name: 'Notifications', icon: <NotificationsTwoToneIcon/>} ,
-        //     'review': {name: 'Article Reviews', icon: <GradingIcon/>} ,
-        //    'create_subcat_tag': {name: 'Create Subcategory & Tag', icon: <CategoryTwoToneIcon/>} ,
-        //     'notes': {name: 'Write Notes', icon: <EditNoteTwoToneIcon/>} 
+    const TOTAL_UNREAD_COUNT_URL = '/api/v1/notification/unread_editor_notis_count'
+    const axiosPrivate = useAxiosPrivate();
 
+    const axiosInst = axiosPrivate;
+    const { data: unreadCount, error: unreadError,
+        isLoading: unreadLoading, refetch  } = useQuery(
+            ['unreadCount', TOTAL_UNREAD_COUNT_URL],
+            () => fetchData(TOTAL_UNREAD_COUNT_URL, axiosInst),
+            {
+                // keepPreviousData: true,
+                staleTime: 10,
+                refetchOnWindowFocus: true, 
+                refetchOnMount: true
+            }
+        );
+    const breadcrumbNameMap = {
         'editor_dashboard': 'Editor Dashboard',
         'notification': 'Notifications',
         'review': 'Article Reviews',
         'create_subcat_tag': 'Create Subcategory & Tag',
         'notes': 'Write Notes'
-
     };
     const location = useLocation();
     let currentLink = ''
@@ -55,6 +70,11 @@ const Editor = () => {
             };
         })
     ];
+
+    useEffect(() => {
+        // Refetch notifications when location changes or button is clicked
+        refetch();
+    }, [location])
 
 
     // for hover effect on sidebar menue
@@ -117,7 +137,7 @@ const Editor = () => {
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
                                 component={<Link to="/editor_dashboard/notification" />}
-                                icon={<Badge count={50} overflowCount={9} color="#f5222d" >
+                                icon={<Badge count={unreadCount?.totalUnread ? unreadCount.totalUnread : 0} overflowCount={5} color="#f5222d" >
                                     <NotificationsTwoToneIcon />
                                 </Badge>}>
                                 Notification

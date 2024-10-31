@@ -11,14 +11,14 @@ import useFetch from "../../hooks/useFetch";
 import axios, { axiosPrivate } from "../../api/axios";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useQuery } from "react-query";
-import {  useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const fetchData = async (url, axiosInstance) => {
     const response = await axiosInstance.get(url);
     return response.data;
-  };
+};
 
-const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
+const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
 
     const GET_MENU_URL = '/api/v1/category/get_all_cat'
     const GET_SUBMENU_URL = '/api/v1/category/get_all_subcat'
@@ -56,58 +56,14 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
     useEffect(() => {
         // Dismiss all toasts when the component is unmounted
         return () => {
-          toast.remove();
+            toast.remove();
         };
-      }, [location]); // Runs on page navigation
+    }, [location]); // Runs on page navigation
 
     const detectLanguage = (text) => {
         const detectedLanguage = franc(text, { only: ['eng', 'ben'] })
         return detectedLanguage
     }
-
-    useEffect(() => {
-        const savedInfo = localStorage.getItem(DRAFT_ARTICLE_INFO);
-        // console.log("SavedInfo:: ", savedInfo);
-
-        if (savedInfo) {
-            const parsedInfo = JSON.parse(savedInfo);
-            finalArticleInfo(parsedInfo);
-
-            setCategory(parsedInfo.category)
-            setSubCategory(parsedInfo.subCategory)
-            setTags(parsedInfo.tags)
-       
-            if (Array.isArray(parsedInfo.newTag) && parsedInfo.newTag.length !== 0) {
-                setNewTag(parsedInfo.newTag)
-                setIsNewTagVisible(true);
-                setIsOldTagDisabled(true);
-            }
-
-            setTitleEN(String(parsedInfo.titleEN));
-            setSubtitleEN(String(parsedInfo.subtitleEN))
-            setTitleBN(String(parsedInfo.titleBN))
-            setSubtitleBN(String(parsedInfo.subtitleBN))
-            setCoverImgLink(String(parsedInfo.coverImgLink))
-            setCoverImgCapEN(String(parsedInfo.coverImgCapEN))
-            setCoverImgCapBN(String(parsedInfo.coverImgCapBN))
-            setDraftInfo(parsedInfo);
-        }
-
-        // To close all Select when the user scrolls
-        const handleScroll = () => {
-            // On scroll, all the dropdowns are closed by calling the blur() method for each one.
-            selectRefs.current.forEach(ref => {
-                if (ref) ref.blur();  
-            });
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-
-    }, [])
 
     const MAX_COUNT = 3;
     const MAX_COUNT_NEW_TAG = 1;
@@ -151,28 +107,28 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
     const axiosInst = axios;
     const { data: catData, error: catError, isLoading: catLoading } = useQuery(
         ['menuData', GET_MENU_URL],
-        () => fetchData(GET_MENU_URL, axiosInst), 
+        () => fetchData(GET_MENU_URL, axiosInst),
         {
             staleTime: 60000,  // Example option: Cache data for 60 seconds
             refetchOnWindowFocus: false,  // Disable refetch on window focus
         }
-      );
+    );
 
-      const { data: subCatData, error: subCatError, isLoading: subCatLoading} = useQuery(
+    const { data: subCatData, error: subCatError, isLoading: subCatLoading } = useQuery(
         ['submenuData', GET_SUBMENU_URL],
-        () => fetchData(GET_SUBMENU_URL, axiosInst), 
+        () => fetchData(GET_SUBMENU_URL, axiosInst),
         {
             staleTime: 60000,  // Example option: Cache data for 60 seconds
             refetchOnWindowFocus: false,  // Disable refetch on window focus
         }
-      );
-    
-      const { data: tagData, error: tagError, isLoading: tagLoading } = useQuery(
+    );
+
+    const { data: tagData, error: tagError, isLoading: tagLoading } = useQuery(
         ['tagData', GET_TAG_URL],
         () => fetchData(GET_TAG_URL, axiosInst), {
-            refetchOnWindowFocus: false,  // Disable refetch on window focus
-        }
-      );
+        refetchOnWindowFocus: false,  // Disable refetch on window focus
+    }
+    );
 
     // const { data: catData, error: catError, isLoading: catLoading } = useFetch(GET_MENU_URL, false)
     // const { data: subCatData, error: subCatError, isLoading: subCatLoading } = useFetch(GET_SUBMENU_URL, false)
@@ -195,12 +151,12 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
     )
 
     const categoryNameIdMap = filteredSortedCatData.map(category =>
-        ({
-            id: category.category_id,
-            name: category.category_name
-        })
-        )
-    
+    ({
+        id: category.category_id,
+        name: category.category_name
+    })
+    )
+
 
     // get the subcats by category and then sort
     // Filter the enabled subcategory data based on the selected category
@@ -218,11 +174,11 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
     }));
 
     const subcategoryNameIdMap = sortedSubCatData.map(subCategory =>
-        ({
-            id: subCategory.subcategory_id,
-            name: subCategory.subcategory_name,
-        })
-        )
+    ({
+        id: subCategory.subcategory_id,
+        name: subCategory.subcategory_name,
+    })
+    )
     // console.log("subcategoryNameIdMap:: ", subcategoryNameIdMap);
 
 
@@ -232,6 +188,55 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
             label: tag.tag_name
         })) : [];
 
+    useEffect(() => {
+        const savedInfo = localStorage.getItem(DRAFT_ARTICLE_INFO);
+        // console.log("SavedInfo:: ", savedInfo);
+
+        if (savedInfo) {
+            const parsedInfo = JSON.parse(savedInfo);
+            finalArticleInfo(parsedInfo);
+
+            setCategory(parsedInfo.category)
+            setCategoryID(parsedInfo.categoryID)
+
+            setSubCategory(parsedInfo.subCategory)
+            setSubCategoryID(parsedInfo.subcategoryID)
+
+
+            setTags(parsedInfo.tags)
+
+            if (Array.isArray(parsedInfo.newTag) && parsedInfo.newTag.length !== 0) {
+                setNewTag(parsedInfo.newTag)
+                setIsNewTagVisible(true);
+                setIsOldTagDisabled(true);
+            }
+
+            setTitleEN(String(parsedInfo.titleEN));
+            setSubtitleEN(String(parsedInfo.subtitleEN))
+            setTitleBN(String(parsedInfo.titleBN))
+            setSubtitleBN(String(parsedInfo.subtitleBN))
+            setCoverImgLink(String(parsedInfo.coverImgLink))
+            setCoverImgCapEN(String(parsedInfo.coverImgCapEN))
+            setCoverImgCapBN(String(parsedInfo.coverImgCapBN))
+            setDraftInfo(parsedInfo);
+        }
+
+        // To close all Select when the user scrolls
+        const handleScroll = () => {
+            // On scroll, all the dropdowns are closed by calling the blur() method for each one.
+            selectRefs.current.forEach(ref => {
+                if (ref) ref.blur();
+            });
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+
+    }, [])
+
     const handleCategoryChange = (category_name) => {
         setCategory(category_name);  // Update the selected category
         setSubCategory();  // Clear the selected subcategory
@@ -240,7 +245,7 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
 
     };
 
-    const handleSubCategoryChange = (subcategory_name)=> {
+    const handleSubCategoryChange = (subcategory_name) => {
         setSubCategory(subcategory_name)
         const subcategory_id = subcategoryNameIdMap.find(subcat => subcat.name === subcategory_name)?.id
         setSubCategoryID(subcategory_id)
@@ -272,14 +277,15 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
 
         if (coverImgCapBN && detectLanguage(coverImgCapBN) !== 'ben') {
             setError(true)
-            toast.error("Save Failed ! \n Incorrect Bangla Image Caption ! \n Previous info will be retained (in any) !", { duration: 6000});
+            toast.error("Save Failed ! \n Incorrect Bangla Image Caption ! \n Previous info will be retained (in any) !", { duration: 6000 });
             return;
         }
 
         setError(false);
 
         const draftData = {
-            category: category, subCategory: subCategory, categoryID, subcategoryID,
+            category: category, subCategory: subCategory, categoryID:categoryID, 
+            subcategoryID: subcategoryID,
             tags, newTag: newTag ? newTag : '', titleEN, titleBN,
             subtitleEN, subtitleBN, coverImgLink, coverImgCapEN, coverImgCapBN
         };
@@ -320,28 +326,28 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
             })
     }
 
-      // Expose the resetFields method to the parent component
-  useImperativeHandle(ref, () => ({
-    articleInfoResetFields() {
-        localStorage.removeItem(DRAFT_ARTICLE_INFO);
-        setCategory()
-        setSubCategory()
-        setTags([])
-        setNewTag([])
-        setTitleEN('');
-        setSubtitleEN('');
-        setTitleBN('')
-        setSubtitleBN('')
-        setCoverImgLink('')
-        setCoverImgCapEN('')
-        setCoverImgCapBN('')
-        setDraftInfo({});
-    }
-  }));
+    // Expose the resetFields method to the parent component
+    useImperativeHandle(ref, () => ({
+        articleInfoResetFields() {
+            localStorage.removeItem(DRAFT_ARTICLE_INFO);
+            setCategory()
+            setSubCategory()
+            setTags([])
+            setNewTag([])
+            setTitleEN('');
+            setSubtitleEN('');
+            setTitleBN('')
+            setSubtitleBN('')
+            setCoverImgLink('')
+            setCoverImgCapEN('')
+            setCoverImgCapBN('')
+            setDraftInfo({});
+        }
+    }));
 
     return (
         <div className={styles.customFormPart}>
-            <Toaster/>
+            <Toaster />
             <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                     <label>Category *</label>
@@ -349,8 +355,8 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                         // For each <Select />, assign the element (el) 
                         // to the corresponding index in the selectRefs.current array.
                         ref={(el) => (selectRefs.current[0] = el)}
-                        placeholder={catLoading? "Loading.." : 
-                            catError? "Server Error !" : "Select Category"}
+                        placeholder={catLoading ? "Loading.." :
+                            catError ? "Server Error !" : "Select Category"}
                         style={{ width: 180 }}
                         value={category}
                         onChange={handleCategoryChange}
@@ -365,8 +371,8 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                     <label>Sub Category *</label>
                     <Select
                         ref={(el) => (selectRefs.current[1] = el)}
-                        placeholder={subCatLoading? "Loading.." : 
-                            subCatError? "Server Error !" : "Select Sub Category"}
+                        placeholder={subCatLoading ? "Loading.." :
+                            subCatError ? "Server Error !" : "Select Sub Category"}
                         style={{ width: 180 }}
                         value={subCategory}
                         // onChange={setSubCategory}
@@ -390,8 +396,8 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                         onChange={setTags}
                         suffixIcon={suffix}
                         // placeholder="Please select"
-                        placeholder={tagLoading? "Loading.." : 
-                            tagError? "Server Error !" : "Please select"}
+                        placeholder={tagLoading ? "Loading.." :
+                            tagError ? "Server Error !" : "Please select"}
                         options={tagOptions}
                     />
                     <span style={{ fontSize: "12px" }}>No Matching Tags?
@@ -412,7 +418,7 @@ const ProfileWriteArticleInfo =forwardRef( ({finalArticleInfo}, ref) => {
                             onChange={setNewTag}
                             suffixIcon={suffix_new_tag}
                             placeholder="Type a new tag"
-                        
+
                         />
                     )}
 

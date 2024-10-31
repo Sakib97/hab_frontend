@@ -39,18 +39,6 @@ const EditorUnrevArticles = () => {
         );
     // console.log("unrevData:: ", unrevData);
 
-    // const unredDataDisplay = Array.from({ length: unrevData?.length }).map((_, i) => ({
-    //     href: '/editor_dashboard/review/article-review',
-    //     title: unrevData[i].title_en, // Map title with title_en from API response
-    //     avatar: unrevData[i].author_image_url, // Map avatar with author_image_url from API response
-    //     description: unrevData[i].author_firstname + " " + unrevData[i].author_lastname + " || " + unrevData[i].submitted_at,
-    //     content: unrevData[i].subtitle_en, // Map content with content_en from API response
-    //     // content: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Exercitationem impedit ea numquam fuga beatae rem asperiores sit optio sint, illum, laboriosam esse, animi reiciendis tempora ipsam quae iusto eius deleniti quisquam laudantium voluptate a. Minima sunt laborum aperiam aliquid assumenda, accusamus nam vel totam, officiis voluptates fugiat laboriosam eveniet at.",
-    //     cover_img_link: unrevData[i].cover_img_link,
-    //     status: unrevData[i].status,
-    //     article: unrevData[i]
-    // }));
-
     const unredDataDisplay = unrevData?.articles?.map(article => ({
         href: '/editor_dashboard/review/article-review',
         title: article.title_en,

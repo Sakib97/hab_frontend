@@ -44,18 +44,27 @@ const EditorArticleDetailsForRev = () => {
         // Step 1: Remove the curly braces from the tag string
         const tags = article.tags;
 
-        const cleanedTags = tags.replace(/{|}/g, '');
+        const cleanedTags = tags.replace(/{|}|"/g, '');
 
         // Step 2: Split the string by the comma
         const separatedWords = cleanedTags.split(',');
-        const actualTags = separatedWords.slice(0, -1);
-        setTagsList(actualTags)
 
-        // Check if the last tag is 'newTagRequested' and update state if true
-        const lastTag = separatedWords[separatedWords.length - 1];
-        if (lastTag === "newTagRequested") {
-            setNewTag(true);
+        if (separatedWords.length > 1) {
+            const lastTag = separatedWords[separatedWords.length - 1];
+            // Check if the last tag is 'newTagRequested' and update state if true
+            if (lastTag === "newTagRequested") {
+                setNewTag(true);
+                const actualTags = separatedWords.slice(0, -1);
+                setTagsList(actualTags)
+            } else {
+                setTagsList(separatedWords)
+
+            }
+        } else {
+            setTagsList(separatedWords)
         }
+
+
 
         const dateStr = article.submitted_at
         const date = new Date(dateStr);
@@ -84,6 +93,10 @@ const EditorArticleDetailsForRev = () => {
         const clickedButton = e.nativeEvent.submitter; // The button that triggered the submit
         const buttonName = clickedButton.name; // The name of the button
 
+        if(buttonName === 'accept'){
+            console.log("accepted");
+            
+        }
         if (buttonName === 'revision') {
             setIsRejectable(false)
             setIsReviseable(true)
@@ -111,7 +124,7 @@ const EditorArticleDetailsForRev = () => {
     }
 
     const renderHTMLContent = (content) => {
-        return { __html: content  };  // Prepare the HTML content for rendering
+        return { __html: content };  // Prepare the HTML content for rendering
     };
 
 
@@ -138,7 +151,7 @@ const EditorArticleDetailsForRev = () => {
 
                     <span className={styles.tagRequest}>
                         {newTag && <span>New Tag Request: </span>}
-                        {!newTag && <span>Tags: </span>}
+                        {!newTag && <span>Tag(s): </span>}
                         {tagsList.map((tag, index) => (
                             <Badge pill bg="dark" key={index} className="me-2">
                                 {tag}

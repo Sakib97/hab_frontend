@@ -22,6 +22,7 @@ import EditorReviewHistory from './pages/dashboard/editor/EditorReviewHistory';
 import EditorArticleDetailsForRev from './pages/dashboard/editor/EditorArticleDetailsForRev';
 import EditorNotifications from './pages/dashboard/editor/EditorNotifications';
 import ProfileNotification from './pages/profile/ProfileNotification';
+import ProfileMyArticle from './pages/profile/ProfileMyArticle';
 
 function App() {
 
@@ -62,6 +63,7 @@ function App() {
               <Route path="/profile" element={<Profile />} >
                 <Route index element={<Navigate to="account" />} />
                 <Route path='account' element={<ProfileAccount />}></Route>
+                <Route path='my_articles' element={<ProfileMyArticle />}></Route>
               </Route>
             </Route>
 
