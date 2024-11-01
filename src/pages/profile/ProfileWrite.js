@@ -158,7 +158,7 @@ const ProfileWrite = () => {
         "new_tag": JSON.stringify(articleInfo.newTag)
       }
 
-      console.log("article_obj:: ", article_obj);
+      // console.log("article_obj:: ", article_obj);
       
 
       mutate(article_obj, {

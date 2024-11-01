@@ -12,10 +12,27 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Divider from '@mui/material/Divider';
 import { Button, Tooltip } from "antd";
 import LanguageToggle from '../../../components/LanguageToggle';
+import Modal from 'react-bootstrap/Modal';
+import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
+import { useMutation, useQueryClient } from 'react-query';
+
 import { Input } from 'antd';
 const { TextArea } = Input;
 
+const postData = async (data, url, axiosInstance) => {
+    const response = await axiosInstance.post(url,
+        JSON.stringify(data),
+        {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true
+        }
+    );
+    return response;
+}
+
 const EditorArticleDetailsForRev = () => {
+    const CREATE_TAG_API = '/api/v1/category/create_tag'
+    const ADD_TAG_TO_ARTICLE_API = '/api/v1/article/add_tag_to_article'
     const [newTag, setNewTag] = useState(false)
     const [tagsList, setTagsList] = useState([])
     const [submittedAt, setSubmittedAt] = useState()
@@ -25,6 +42,52 @@ const EditorArticleDetailsForRev = () => {
     const [isRejectable, setIsRejectable] = useState(false)
     const [reviseReason, setReviseReason] = useState('')
     const [rejectReason, setRejectReason] = useState('')
+
+    const [tagExistsErrorMsg, setTagErrorMsg] = useState('')
+    const [tagAddSuccess, setTagAddSuccess] = useState(false)
+
+    const axiosPrivate = useAxiosPrivate();
+    const queryClient = useQueryClient();
+    const axiosInst = axiosPrivate;
+    const { mutate: tagCreateMutate, isLoading: tagCreateIsLoading, isError: tagCreateIsError,
+        isSuccess: tagCreateIsSuccess, data: tagCreateData } = useMutation(
+            async (tag_obj) =>
+                postData(tag_obj, CREATE_TAG_API, axiosInst), // Pass the data here
+            {
+                onSuccess: () => {
+                    // Invalidate any queries you need to refetch after posting, if necessary
+                    queryClient.invalidateQueries('createTag');
+                },
+                onError: (error) => {
+                    console.error("Error creating Tag : ", error);
+                },
+            }
+        );
+
+    const { mutate: tagAddMutate, isLoading: tagAddIsLoading, isError: tagAddIsError,
+        isSuccess: tagAddIsSuccess, data: tagAddData } = useMutation(
+            async (add_tag_obj) =>
+                postData(add_tag_obj, ADD_TAG_TO_ARTICLE_API, axiosInst), // Pass the data here
+            {
+                onSuccess: () => {
+                    // Invalidate any queries you need to refetch after posting, if necessary
+                    queryClient.invalidateQueries('addTag');
+                },
+                onError: (error) => {
+                    console.error("Error adding Tag to article: ", error);
+                },
+            }
+        );
+
+    // for modal
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {
+        setShow(false);
+    }
+    const handleShow = () => {
+        setShow(true);
+    }
 
     const location = useLocation();
     const article = location.state?.article;
@@ -44,17 +107,20 @@ const EditorArticleDetailsForRev = () => {
         // Step 1: Remove the curly braces from the tag string
         const tags = article.tags;
 
-        const cleanedTags = tags.replace(/{|}|"/g, '');
+        const cleanedTags = tags.replace(/{|}|\[|\]|"|'/g, '');
 
         // Step 2: Split the string by the comma
         const separatedWords = cleanedTags.split(',');
 
         if (separatedWords.length > 1) {
             const lastTag = separatedWords[separatedWords.length - 1];
+
             // Check if the last tag is 'newTagRequested' and update state if true
-            if (lastTag === "newTagRequested") {
+            if (String(lastTag) === " newTagRequested") {
                 setNewTag(true);
                 const actualTags = separatedWords.slice(0, -1);
+                // console.log("actualTags:: ", actualTags);    
+
                 setTagsList(actualTags)
             } else {
                 setTagsList(separatedWords)
@@ -63,8 +129,6 @@ const EditorArticleDetailsForRev = () => {
         } else {
             setTagsList(separatedWords)
         }
-
-
 
         const dateStr = article.submitted_at
         const date = new Date(dateStr);
@@ -88,14 +152,74 @@ const EditorArticleDetailsForRev = () => {
     }
     // console.log("article::: ", article);
 
+    const tagCreate = () => {
+        // console.log("tag OK button clicked !", tagsList[0]);
+        const tag_obj = {
+            "tag_name": tagsList[0],
+            "tag_slug": tagsList[0]
+        }
+        tagCreateMutate(tag_obj, {
+            onSuccess: (data) => {
+                // console.log("API Response:", data.data.msg); 
+                if (data?.data) {
+                    const message = data.data.msg;
+                    console.log("Tag created successfully 1!");
+                    // toast.success(`Article submitted: ${data.data.msg}`, { duration: 5000 });
+                } else {
+                    // toast.success("Tag created successfully!", { duration: 5000 });
+                    console.log("Tag created successfully 2!");
+
+                }
+            },
+            onError: (error) => {
+                const errorMessage = error.response.data.detail
+                const extractedMessage = errorMessage.split(':').pop().trim();
+                console.log("Error in submission:", extractedMessage);
+                if (extractedMessage === "Tag already exists !") {
+                    setTagErrorMsg(extractedMessage)
+                }
+                //   toast.error("Failed to submit article. Please try again.", { duration: 5000 });
+            }
+        });
+
+    }
+
+    const tagAddtoArticle = () => {
+        console.log("tagAddtoArticle clicked");
+        const tag_add_obj = {
+            "article_id": article.article_id,
+            "tag_name": article.tags
+        }
+
+        tagAddMutate(tag_add_obj, {
+            onSuccess: (data) => {
+                // console.log("API Response:", data.data.msg); 
+                setTagAddSuccess(true)
+                if (data?.data) {
+                    const message = data.data.msg;
+                    console.log("Tag added successfully 1!");
+                    // toast.success(`Article submitted: ${data.data.msg}`, { duration: 5000 });
+                } else {
+                    // toast.success("Tag created successfully!", { duration: 5000 });
+                    console.log("Tag Added successfully 2!");
+                }
+            },
+            onError: (error) => {
+                console.error("Error in tag add:", error);
+                //   toast.error("Failed to submit article. Please try again.", { duration: 5000 });
+            }
+        });
+
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevent page reload
         const clickedButton = e.nativeEvent.submitter; // The button that triggered the submit
         const buttonName = clickedButton.name; // The name of the button
 
-        if(buttonName === 'accept'){
+        if (buttonName === 'accept') {
             console.log("accepted");
-            
+
         }
         if (buttonName === 'revision') {
             setIsRejectable(false)
@@ -129,13 +253,6 @@ const EditorArticleDetailsForRev = () => {
 
 
     return (
-        // <div style={{
-        //     // paddingLeft: "350px",
-        //     // display: "flex"
-        //     // position: "static"
-        //     display: "flex", justifyContent: "center", alignItems: "center",
-        //     // backgroundColor: "#e5f5f5"
-        // }}>
         <div className={`${styles.outerContainer}`}>
             <div className={styles.articleContainer}>
 
@@ -159,18 +276,41 @@ const EditorArticleDetailsForRev = () => {
                         ))}
                         {newTag && <span>
                             <br />
-                            <Tooltip title="Accept">
+                            {tagExistsErrorMsg &&
+                                <span>
+                                    <span style={{ color: "red", fontSize: "11px" }}>
+                                        <b>Tag Already Exists !</b> </span><br />
+                                    {!tagAddSuccess && <span style={{ color: "blue", fontSize: "10px" }}>
+                                        <b>Add tag to article ?</b></span>}
+                                </span>}
+
+                            {tagCreateIsSuccess && <span>
+                                <span style={{ color: "green", fontSize: "11px" }}>
+                                    <b>Tag Created !</b> </span><br />
+                                {!tagAddSuccess && <span style={{ color: "blue", fontSize: "10px" }}>
+                                    <b>Add tag to article ?</b></span>}
+                            </span>}
+
+                            {tagAddIsSuccess && <span style={{ color: "green", fontSize: "11px" }}>
+                                <b>Tag Added to article successfully !</b>
+                            </span>}
+
+                            {!tagAddSuccess && <><Tooltip title="Accept">
                                 <Button size='small'
-                                    // style={{ color: "black", border: "solid", borderWidth: "1px" }} 
                                     shape="circle"
-                                    icon={<CheckCircleTwoToneIcon style={{ color: "green" }} fontSize="small" />} />
+                                    name='tagOK'
+                                    onClick={(tagExistsErrorMsg || tagCreateIsSuccess) ? tagAddtoArticle : tagCreate}
+                                    icon={<CheckCircleTwoToneIcon style={{ color: "green" }}
+                                        fontSize="small" />} />
                             </Tooltip> &nbsp;
                             <Tooltip title="Decline">
                                 <Button size='small'
-                                    // style={{ color: "black", border: "solid", borderWidth: "1px" }}
                                     shape="circle"
+                                    name='tagCancel'
                                     icon={<CancelTwoToneIcon style={{ color: "red", fontSize: '20px' }} />} />
                             </Tooltip>
+                            </> }
+
                         </span>}
                     </span>
                 </div>
@@ -301,6 +441,7 @@ const EditorArticleDetailsForRev = () => {
                     {(isAcceptable && (!isReviseable || !isRejectable)) &&
                         <button style={{ margin: "4px" }}
                             name='accept'
+                            onClick={handleShow}
                             className='btn btn-success'>
                             <AssignmentTurnedInOutlinedIcon /> Publish Article
                         </button>}
@@ -321,14 +462,40 @@ const EditorArticleDetailsForRev = () => {
                         </button>}
                 </div>
 
+
+                <Modal aria-labelledby="contained-modal-title-vcenter" centered
+                    show={show} onHide={handleClose}
+                >
+
+                    {/* <Modal.Header closeButton> */}
+                    <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
+                        <Modal.Title>
+                            <span> Confirm Article ? </span>
+                        </Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
+                        <span>
+                            Once confirmed, you will be redirected to the "Review History" Page. <br />
+                        </span>
+                    </Modal.Body>
+
+                    <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
+
+                        <Button style={{ borderRadius: "20px" }} variant="outline-danger"
+                            onClick={handleClose}>
+                            <i className="fa-solid fa-xmark"></i>
+                        </Button>
+
+                    </Modal.Footer>
+                </Modal>
+
             </form>
 
 
 
 
         </div>
-
-        // </div>
     );
 }
 
