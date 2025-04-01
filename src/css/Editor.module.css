@@ -9,9 +9,9 @@
 
 .editorSidebar {
     position: fixed;
-    top: 112px;
+    top: 165px;
     left: 0;
-    height: calc(100vh - 112px);
+    height: calc(100vh - 165px);
     z-index: 1000;
     transition: width 0.2s ease-in-out;
     overflow-y: scroll;

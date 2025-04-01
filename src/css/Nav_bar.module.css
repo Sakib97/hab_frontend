@@ -1,8 +1,9 @@
 .customNavbar {
     /* background: linear-gradient(45deg, #424d58, #142155); */
-    background: linear-gradient(45deg, #2b3239, #1d2959);
-    /* background: green; */
+    /* background: linear-gradient(45deg, #2b3239, #1d2959); */
+    background: rgb(185, 183, 183) !important;
     padding: 10px 20px;
+    /* margin-bottom: 10px !important; */
     /* position: relative;
    
     z-index: 1000; */
@@ -10,20 +11,22 @@
   }
   
   .navbarBrandCustom {
-    font-size: 1.5rem;
+    font-size: 1.4rem !important;
     font-weight: bold;
-    color: #fbfafa !important;
+    color: #000000 !important;
   }
   
-  .nav-link-custom {
+  .navLinkCustom {
     font-size: 1rem;
-    margin-right: 20px;
-    color: #fff ;
+    margin-right: 2px;
+    color: #000000 !important;
     transition: color 0.3s ease;
   }
   
-  .nav-link-custom:hover {
-    color: #d1ecf1 !important;
+  .navLinkCustom:hover {
+    /* color: #d1ecf1 !important; */
+    text-decoration: underline black 3px;
+    text-underline-offset: 10px;
   }
 
   .nav-item {
@@ -83,4 +86,65 @@
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
+}
+
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  margin-right: 2px;
+  
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.searchIcon {
+  padding: 6px 8px;
+  background-color: #ffffff;
+  /* color: #666; */
+}
+
+.searchInput {
+  padding: 6px;
+  border: none;
+  outline: none;
+  width: 120px; /* Fixed width */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+  .searchContainer {
+    padding: 10px 0; /* Spacing when collapsed */
+  }
+
+  .searchInput {
+    width: 120px; /* Smaller on mobile */
+  }
+}
+
+@media (max-width: 400px) {
+  .searchInput {
+    width: 100px;
+  }
+}
+
+/* New style for the vertical divider */
+.verticalDivider {
+  width: 1px;
+  height: 40px; /* Adjust height as needed */
+  background-color: rgb(0, 0, 0);
+  margin: 0 15px; /* Spacing on both sides */
+  transform: translateY(1px);
+}
+@media (max-width: 991px) {
+  .verticalDivider {
+    display: none;
+  }
 }

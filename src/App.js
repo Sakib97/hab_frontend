@@ -41,7 +41,9 @@ function App() {
           <Nav_bar></Nav_bar>
         </div>
 
-        <div style={{paddingTop: "62px"}} className="content">
+        <div
+          // style={{ paddingTop: "62px" }}
+          className="content">
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
 
@@ -70,9 +72,9 @@ function App() {
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}> */}
             <Route element={<RequireAuth allowedRoles={[ROLES.Author]} />}>
               <Route path="/profile" element={<Profile />} >
-                <Route path='write' element={<ProfileWrite />}></Route> 
-                <Route path='notification' element={<ProfileNotification />}></Route> 
-                
+                <Route path='write' element={<ProfileWrite />}></Route>
+                <Route path='notification' element={<ProfileNotification />}></Route>
+
               </Route>
             </Route>
 
@@ -83,8 +85,8 @@ function App() {
                   <Route path='review-history' element={<EditorReviewHistory />}></Route>
                   <Route path='article-review' element={<EditorArticleDetailsForRev />}></Route>
                 </Route>
-                <Route path='notification' element={<EditorNotifications />}></Route> 
-                
+                <Route path='notification' element={<EditorNotifications />}></Route>
+
               </Route>
             </Route>
 

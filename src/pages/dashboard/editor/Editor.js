@@ -34,13 +34,13 @@ const Editor = () => {
 
     const axiosInst = axiosPrivate;
     const { data: unreadCount, error: unreadError,
-        isLoading: unreadLoading, refetch  } = useQuery(
+        isLoading: unreadLoading, refetch } = useQuery(
             ['unreadCount', TOTAL_UNREAD_COUNT_URL],
             () => fetchData(TOTAL_UNREAD_COUNT_URL, axiosInst),
             {
                 // keepPreviousData: true,
                 staleTime: 10,
-                refetchOnWindowFocus: true, 
+                refetchOnWindowFocus: true,
                 refetchOnMount: true
             }
         );
@@ -96,7 +96,8 @@ const Editor = () => {
     return (
         <div className="editor" >
             <div className={`${styles.editorNav}`} >
-                <Navbar sticky='top' className={`bg-body-tertiary ${styles.secNav}`} >
+                <Navbar sticky='top'
+                    className={`bg-body-tertiary ${styles.secNav}`} >
                     <Container>
                         <Button variant="light" onClick={() => setCollapsed(!collapsed)}>
                             {collapsed ? <MenuTwoToneIcon /> : <MenuOpenIcon />}

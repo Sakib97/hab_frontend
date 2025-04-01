@@ -6,7 +6,10 @@ import useAuth from '../hooks/useAuth';
 import { Badge, Avatar } from '@mui/material';
 import useProfileContext from '../hooks/useProfileContext';
 // import Divider from '@mui/material/Divider';
-import { Divider, useMediaQuery, useTheme, createTheme } from '@mui/material';
+// import { Divider, useMediaQuery, useTheme, createTheme } from '@mui/material';
+import { Divider } from 'antd';
+import { Padding } from '@mui/icons-material';
+import SubNavBar from './SubNavBar';
 
 const Nav_bar = () => {
     const { auth } = useAuth()
@@ -33,31 +36,51 @@ const Nav_bar = () => {
         <div>
 
             <Navbar
-                fixed="top" bg="dark" variant="dark" expand="lg" 
-                className={`${styles.customNavbar} bg-body-tertiary`} >
+                style={{ Padding: '30px' }}
+                // fixed="top" 
+                expand="lg"
+                className={`${styles.customNavbar}`} >
                 <Container >
-                    <Navbar.Brand href="/" className={styles.navbarBrandCustom}>History & Beyond</Navbar.Brand>
+                    <Navbar.Brand href="/" className={styles.navbarBrandCustom} >
+                        History & Beyond
+                    </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="ms-auto">
-                            <Nav.Item>
-                                <Link to="/" className="ml-2 nav-link"> Home </Link>
+
+                            <div className={styles.searchContainer}>
+                                <div className={styles.searchBar}>
+                                    <span className={styles.searchIcon}> <i className="fas fa-search" /></span>
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className={styles.searchInput}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* <Divider style={{ color: "black" }} type="vertical" /> */}
+                            {/* Vertical Divider */}
+                            <div className={styles.verticalDivider}></div>
+
+                            <Nav.Item className={styles.navLinkCustom}>
+                                <Link to="/" className={`${styles.navLinkCustom} ml-2 nav-link`} > Home </Link>
                             </Nav.Item>
 
                             {!auth?.email &&
-                                <Nav.Item>
-                                    <Link to="/auth/register" className="ml-2 nav-link"> Register </Link>
+                                <Nav.Item className={styles.navLinkCustom} style={{ color: 'green' }}>
+                                    <Link to="/auth/register" className={`${styles.navLinkCustom} ml-2 nav-link`}> Register </Link>
                                 </Nav.Item>
                             }
                             {!auth?.email &&
-                                <Nav.Item>
-                                    <Link to="/auth/login" className="ml-2 nav-link"> Login </Link>
+                                <Nav.Item className={styles.navLinkCustom}>
+                                    <Link to="/auth/login" className={`${styles.navLinkCustom} ml-2 nav-link`}> Login </Link>
                                 </Nav.Item>
                             }
 
                             <div style={{ paddingRight: "15px" }} className={styles.dropdown}>
-                                <Nav.Item>
-                                    <Nav.Link href="">Dropdown <i className="fas fa-caret-down"></i>
+                                <Nav.Item className={styles.navLinkCustom}>
+                                    <Nav.Link href="" className={`${styles.navLinkCustom} ml-2 nav-link`}>Profile <i className="fas fa-caret-down"></i>
                                     </Nav.Link>
                                 </Nav.Item>
                                 <div className={styles.dropdownContent}>
@@ -91,7 +114,7 @@ const Nav_bar = () => {
                             /> */}
 
                             {auth?.email &&
-                                <Nav.Item>
+                                <Nav.Item className={styles.navLinkCustom}>
                                     <Link to="/profile/account" className="ml-2 nav-link">
                                         <Badge badgeContent={40} max={9} color="success">
                                             <Avatar
@@ -108,7 +131,7 @@ const Nav_bar = () => {
             </Navbar>
 
             {/* <Breadcrums /> */}
-
+<SubNavBar/>
         </div>
 
     );

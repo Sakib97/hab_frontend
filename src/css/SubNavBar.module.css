@@ -1,0 +1,78 @@
+/* SubNavBar.module.css */
+.subNavbar {
+    background-color: #f8f9fa;
+    /* Light gray background like in the image */
+    border-top: 1px solid #dee2e6;
+    border-bottom: 3px solid #000000;
+    padding: 10px 0 10px 0;
+    position: sticky;
+    top: 70px;
+    /* Adjust based on the height of your main navbar */
+    /* z-index: 999; */
+}
+
+.subNavLink {
+    color: #333;
+    font-size: 16px;
+    margin: 0 15px;
+    text-decoration: none;
+    pointer-events: auto; 
+}
+
+.subNavLink:hover {
+    /* color: #007bff; 
+    text-decoration: underline; */
+
+    text-decoration: underline black 3px !important;
+    text-underline-offset: 7px !important;
+    /* z-index: 999; */
+}
+
+.sideBar {
+    top: 112px !important;
+    z-index: 1001;
+    /* width: 90% !important; */
+    text-align: center !important;
+    color: #605f5f;
+}
+
+.scrollableDiv {
+    display: flex;
+     /* or 'scroll' if you always want the scrollbar */
+    overflow-x: auto;
+    width: 100%;
+    /* border: 1px solid #ccc; */
+    /* padding: 10px; */
+    flex-wrap: nowrap !important;
+    /* Optional: Center vertically */
+    align-items: center; 
+    /* Optional: Center horizontally */
+    justify-content: center; 
+}
+
+.item {
+    /* Prevent items from shrinking or growing */
+    flex: 0 0 auto; 
+    /* margin-right: 10px; */
+    padding: 3px;
+    /* background-color: #f0f0f0; */
+    /* border: 1px solid #ddd; */
+}
+
+@media (max-width: 991px) {
+    .scrollableDiv {
+        display: flex;
+         /* or 'scroll' if you always want the scrollbar */
+        overflow-x: auto;
+        width: 100%;
+        border: 1px solid #ccc;
+        /* padding: 2px; */
+        flex-wrap: nowrap !important;
+        /* Optional: Center vertically */
+        align-items: center; 
+        /* Optional: Center horizontally */
+        justify-content: left; 
+    }
+    
+  }
+

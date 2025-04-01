@@ -354,7 +354,6 @@ const EditorArticleDetailsForRev = () => {
                 </div>
                 <hr className={styles.divider} />
                 <div>
-                    {/* {isEnglish && <span>{article.content_en}</span>} */}
                     {isEnglish && <div
                         dangerouslySetInnerHTML={renderHTMLContent(article.content_en)}  // Render the HTML content
                     />}
