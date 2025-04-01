@@ -4,7 +4,7 @@ npm install bootstrap@5.3.3
 # react-bootstrap
 npm install react-bootstrap bootstrap
 
-Add the line below to use bootstrap styles in the whole project.
+# Add the line below to use bootstrap styles in the whole project.
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 
