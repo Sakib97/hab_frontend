@@ -1,14 +1,11 @@
 import useAuth from "../../hooks/useAuth";
 import useProfileContext from "../../hooks/useProfileContext";
 import styles from '../../css/Home.module.css'
+import Footer from "../../components/Footer";
 // import image from './ghibli.png'
-
-// import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-// import { Avatar, Card } from 'antd';
-// const { Meta } = Card;
+import { Link } from 'react-router-dom';
 
 import Card from 'react-bootstrap/Card';
-import { Divider } from 'antd';
 
 const Home = () => {
     const { auth } = useAuth()
@@ -27,16 +24,18 @@ const Home = () => {
                 </h3> */}
                 <div className={`${styles.mainSection}`}>
                     <div className={`${styles.mainArticles}`}>
-                        <Card className={`${styles.mainCard}`}>
-                            <Card.Img variant="top" src="https://picsum.photos/400/180" />
-                            <Card.Body>
-                                <Card.Title>Special title treatment</Card.Title>
-                                <Card.Text>
-                                    Some quick example text to build on the card title and make up the
-                                    bulk of the card's content.
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
+                        <Link to="/article">
+                            <Card className={`${styles.mainCard}`}>
+                                <Card.Img variant="top" src="https://picsum.photos/400/180" />
+                                <Card.Body>
+                                    <Card.Title>Special title treatment</Card.Title>
+                                    <Card.Text>
+                                        Some quick example text to build on the card title and make up the
+                                        bulk of the card's content.
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </Link>
                         <br />
 
                         <div className={`${styles.subCardRow}`}>
@@ -210,27 +209,8 @@ const Home = () => {
                 </div>
 
             </div>
-            <div className={styles.footer}>
-                <hr />
-                <h3 style={{marginLeft: '10px'}}>History and Beyond</h3>
-                <div className={styles.footerBars}>
-                    <div className={styles.footerOptionsBar1}>
-                        <h6 style={{ paddingBottom: '5px' }}>About Us</h6>
-                        <h6 style={{ paddingBottom: '5px' }}>Join as Contributor </h6>
-                        <h6 style={{ paddingBottom: '5px' }}>Terms and Conditions</h6>
-                    </div>
-                    <div className={styles.footerOptionsBar2}>
-                        <h6 style={{ paddingBottom: '5px' }}>Conatct Us</h6>
-                        <h6 style={{ paddingBottom: '5px' }}>Privacy Policy</h6>
-                    </div>
+            <Footer />
 
-
-                </div>
-                <span style={{ paddingTop: '10px', display: 'flex', justifyContent: 'center' }}>
-                    © 2025 History and Beyond. All Rights Reserved.
-                </span>
-
-            </div>
         </div>
     );
 }

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import styles from '../css/LanguageToggle.module.css'
 
+ 
 const LanguageToggle = ({ onToggle }) => {
+    // State to manage the language toggle
     const [isEnglish, setIsEnglish] = useState(true);
-
+ 
     const toggleLanguage = () => {
         const newIsEnglish = !isEnglish;
         setIsEnglish(newIsEnglish);

@@ -23,6 +23,8 @@ import EditorArticleDetailsForRev from './pages/dashboard/editor/EditorArticleDe
 import EditorNotifications from './pages/dashboard/editor/EditorNotifications';
 import ProfileNotification from './pages/profile/ProfileNotification';
 import ProfileMyArticle from './pages/profile/ProfileMyArticle';
+import Article from './pages/article/Article';
+import Footer from "../src/components/Footer";
 
 function App() {
 
@@ -46,6 +48,7 @@ function App() {
           className="content">
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
+            <Route exact path="/article" element={<Article/>}></Route>
 
 
             <Route element={<RequireNoAuth />}>
@@ -103,6 +106,11 @@ function App() {
 
           </Routes>
         </div>
+
+        {/* <div>
+          <Footer />
+        </div> */}
+
       </div>
     </Router>
 
