@@ -24,7 +24,9 @@ const Home = () => {
                 </h3> */}
                 <div className={`${styles.mainSection}`}>
                     <div className={`${styles.mainArticles}`}>
-                        <Link to="/article">
+                        {/* /americas/mexico/article/87/this-component-s-rendering-logic-correctly-accounts-for-the-fact-that */}
+                        <Link 
+                        to="/americas/mexico/article/87/this-component-s-rendering-logic-correctly-accounts-for-the-fact-that">
                             <Card className={`${styles.mainCard}`}>
                                 <Card.Img variant="top" src="https://picsum.photos/400/180" />
                                 <Card.Body>

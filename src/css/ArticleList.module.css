@@ -1,0 +1,84 @@
+.subCatList {
+    display: flex;
+    /* flex-wrap: Controls whether the flex items should
+     wrap to the next line when there is not enough 
+     space in the flex container to fit them all on a 
+     single line. 
+     wrap: The flex items will wrap onto multiple lines if necessary.
+     */
+    flex-wrap: wrap;
+    /* gap between multiple rows (if multiple rows available) */
+    row-gap: 5px; 
+    margin: 10px 0 0 0 ;
+}
+
+.subCatItem {
+    /* background-color: aquamarine; */
+    display: flex;
+    align-items: center;
+}
+
+.subCatItemLink{
+    text-decoration: none;
+    background-color: #e6dfdf;
+    color: black;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 10px 0 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.subCatItemLink:hover {
+    background-color: #c9c0c0;
+    color: #000;
+    text-decoration: none;
+}
+
+.subCatItemSeperator {
+    font-size: 6px;
+    margin: 8px;
+    color: brown;
+}
+
+.articleListItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.articleListItemPic {
+    width: 300px;
+    height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+@media (max-width: 991px) {
+    .articleListItem {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .articleListItemPic {
+
+        width: 100%;
+        height: auto;
+        /* height: 150px;
+        width: auto;
+        object-fit: cover; */
+    }
+
+    .subCatList {
+        justify-content: center;
+    }
+
+    /* .subCatItemSeperator{
+        display: none;
+    } */
+}

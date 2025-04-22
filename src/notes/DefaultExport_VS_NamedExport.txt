@@ -1,0 +1,34 @@
+++++++++++++++
+Default Export: 
+===============
+import axios from './axios';
+
+- Often used for the primary object or function a module provides. 
+- It’s convenient when you expect users to import one main thing 
+(e.g., a general-purpose Axios instance).
+
+Sample:
+=======
+
+export default axios.create({
+    baseURL: BASE_URL
+})
+
+
++++++++++++++
+Named Export:
+=============
+import { axiosPrivate } from './axios';
+
+ - Useful for exporting additional utilities or variations 
+   from the same module 
+   (e.g., a specialized Axios instance for private routes).
+
+Sample: 
+=======
+
+export const axiosPrivate = axios.create({
+    baseURL: BASE_URL,
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true
+})

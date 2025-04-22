@@ -25,6 +25,7 @@ import ProfileNotification from './pages/profile/ProfileNotification';
 import ProfileMyArticle from './pages/profile/ProfileMyArticle';
 import Article from './pages/article/Article';
 import Footer from "../src/components/Footer";
+import ArticleList from './pages/articleList/ArticleList';
 
 function App() {
 
@@ -49,6 +50,8 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
             <Route exact path="/article" element={<Article/>}></Route>
+            <Route exact path="/:catSlug/:subCatSlug/article/:articleID/:articleTitleSlug" element={<Article/>}></Route>
+            <Route exact path="/category/:categorySlug" element={<ArticleList/>}></Route>
 
 
             <Route element={<RequireNoAuth />}>
@@ -85,8 +88,10 @@ function App() {
               <Route path="/editor_dashboard" element={<Editor />} >
                 <Route path='review' element={<EditorArticleReview />}>
                   <Route path='unreviwed-articles' element={<EditorUnrevArticles />}></Route>
+                  {/* <Route path='unreviwed-article/:articleID' element={<EditorUnrevArticles />}></Route> */}
                   <Route path='review-history' element={<EditorReviewHistory />}></Route>
-                  <Route path='article-review' element={<EditorArticleDetailsForRev />}></Route>
+                  {/* <Route path='article-review' element={<EditorArticleDetailsForRev />}></Route> */}
+                  <Route path='article-review/:articleID' element={<EditorArticleDetailsForRev />}></Route>
                 </Route>
                 <Route path='notification' element={<EditorNotifications />}></Route>
 

@@ -1,0 +1,103 @@
+****In React Query, a query is:****
+A piece of data you fetch from a server, 
+identified by a unique queryKey.
+
++++++++++++++++++++++++++++++++++
+1. useQuery — for Fetching (Read)
+=================================
+- useQuery is used to fetch data (GET requests) and keep it cached.
+
+const { data, isLoading, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts
+});
+
+Automatically handles: Caching , Loading state ,
+====================== 
+Error state , Auto refetch , Background updates.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+2. useMutation — for Updating / Creating / Deleting (Write)
+=======================================================
+- useMutation is used for operations that change data:
+POST, PUT, PATCH, DELETE.
+
+const mutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
+    }
+});
+
+Handles: API writes , Success/error handling ,
+======= 
+Triggers re-fetch via queryClient after mutation.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+3. useQueryClient — for Cache Control & Manual Updates
+======================================================
+useQueryClient gives you programmatic control over the React Query cache.
+
+const queryClient = useQueryClient();
+queryClient.invalidateQueries({ queryKey: ['posts'] });
+
+Used to: Invalidate & refetch queries,
+========
+Read cached data, Set/update cache manually,
+Remove queries from cache.
+
++++++++++++++++++++++
+4. invalidateQueries
+=====================
+ - Allows you to manually mark queries as stale 
+ and potentially refetch them.
+ 
+ - When you call invalidateQueries, it marks the 
+ specified query or queries as "stale." 
+ - A stale query means that the cached data is no longer 
+ considered fresh or reliable.
+ - By default, React Query will automatically refetch 
+ stale queries when they are accessed again 
+ (e.g., when a component re-renders or mounts).
+
+ - If the invalidated query is currently being used 
+ by a component (i.e., it is "active"), 
+ React Query will immediately trigger a background 
+ refetch to update the data.
+
+Simple Example: 
+===============
+const queryClient = useQueryClient();
+
+const mutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
+    }
+});
+What it does: 
+ - You create a post with mutation.mutate().
+ - When the server confirms the post is added (onSuccess fires), 
+ - invalidateQueries marks ['posts'] as stale
+ - Any component using useQuery(['posts']) will 
+   automatically re-fetch fresh posts from the server! 
+   (A GET will be performed automatically !)
+
+Visual Flow:
+============
+Before mutation:
+React Query Cache: [Post1, Post2, Post3]
+
+=> mutation.mutate(newPost) 
+=> onSuccess: queryClient.invalidateQueries(['posts'])
+
+After invalidation:
+React Query: "Oh! posts is stale."
+React Query: Automatically re-fetches ['posts'].
+React Query Cache: [Post1, Post2, Post3, NewPost]
+
+   
+
+ - https://www.youtube.com/watch?v=83JJyZrZLOU&ab_channel=HarishNeel%7CAI
+ - https://stackoverflow.com/questions/76044003/react-query-invalidatequeries-cache
+ 

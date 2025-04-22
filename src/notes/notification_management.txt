@@ -1,0 +1,50 @@
++++++++++++++++++++++++++++++++++++
+How Editor Notification Works Here:
+===================================
+
+Step 1:
+=======
+Link: /editor_dashboard/notification
+
+/editor_dashboard : takes us to <Editor />
+
+Step 2:
+=======
+Inside <Editor /> we call: 
+    TOTAL_UNREAD_COUNT_URL = '/api/v1/notification/unread_editor_notis_count'
+
+It's useQuery() has these parameters: 
+                refetchOnWindowFocus: true,  (will call API when window is focused, 
+                                        while we are inside <Editor /> of course !)
+                refetchOnMount: true (will call API when we reload <Editor />)
+
+Step 3:
+=======
+Later in <Editor />, we do this with notification item: 
+<Badge count={unreadCount?.totalUnread ? unreadCount.totalUnread : 0 }>
+
+Summary (of step 1,2,3): 
+=========================================================
+1. When ever we come to <Editor />, we get the total number of unread notis and 
+it is shown above the notis icon. 
+
+2. To know if new notis have been created, we did step 2. 
+==========================================================
+
+Step 4:
+=======
+/editor_dashboard/notification : takes us to <EditorNotifications />
+
+Step 5:
+=======
+Inside <EditorNotifications />, we call: 
+ALL_EDITOR_NOTIS_URL = `/api/v1/notification/editor_notifcation_list?page=${page}&limit=${pageSize}`
+
+Step 6:
+=======
+In the backend, this API makes all notis_read_status = True. 
+
+So, when "TOTAL_UNREAD_COUNT_URL" also loads with "ALL_EDITOR_NOTIS_URL",
+the unred numbers above the notis icon disappears.
+
+

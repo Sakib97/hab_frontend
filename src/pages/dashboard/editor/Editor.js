@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Link } from 'react-router-dom';
-
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import styles from '../../../css/Editor.module.css'
@@ -77,19 +76,40 @@ const Editor = () => {
     }, [location])
 
 
+    // for activeStyle to be applied to the sidebar if on current page
+    const currentPath = location.pathname;
     // for hover effect on sidebar menue
     const defaultStyle = {
         borderRadius: "10px",
-        marginTop: "4px",
-        marginLeft: "5px",
+        margin: "2px 4px 2px 5px",
         backgroundColor: "transparent",
         transition: "background-color 0.3s ease",
     };
-    const handleMouseEnter = (e) => {
-        e.currentTarget.style.backgroundColor = "#CBCBCB"; // hover background color
+    const activeStyle = {
+        backgroundColor: "#CBCBCB", // active background color
+        color: "#000", // active text color
+        fontWeight: "bold", // active text weight
     };
-    const handleMouseLeave = (e) => {
-        e.currentTarget.style.backgroundColor = "transparent"; // reset background color
+    const handleMouseEnter = (e, path) => {
+        const isActive = currentPath.startsWith(path);
+        if (!isActive) {
+            e.currentTarget.style.backgroundColor = "#CBCBCB"; // hover background color
+        }
+    };
+    const handleMouseLeave = (e, path) => {
+        const isActive = currentPath.startsWith(path);
+        if (!isActive) {
+            e.currentTarget.style.backgroundColor = "transparent"; // reset background color
+        }
+    };
+
+    // Helper function to get the style based on the current path
+    const getMenuItemStyle = (path) => {
+        // Check if the current path matches the MenuItem's path
+        const isActive = currentPath.startsWith(path);
+        // Merge default style with active style if it's the active item
+        return isActive ? { ...defaultStyle, ...activeStyle } : defaultStyle;
+        // return isActive ? activeStyle : defaultStyle;
     };
 
 
@@ -134,9 +154,9 @@ const Editor = () => {
                                 icon={<BadgeTwoToneIcon />}>Editor Profile</MenuItem>
 
                             <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
+                                style={getMenuItemStyle("/editor_dashboard/notification")}
+                                onMouseEnter={(e) => handleMouseEnter(e, "/editor_dashboard/notification")}
+                                onMouseLeave={(e) => handleMouseLeave(e, "/editor_dashboard/notification")}
                                 component={<Link to="/editor_dashboard/notification" />}
                                 icon={<Badge count={unreadCount?.totalUnread ? unreadCount.totalUnread : 0} overflowCount={5} color="#f5222d" >
                                     <NotificationsTwoToneIcon />
@@ -144,9 +164,9 @@ const Editor = () => {
                                 Notification
                             </MenuItem>
                             <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
+                                style={getMenuItemStyle("/editor_dashboard/review")}
+                                onMouseEnter={(e) => handleMouseEnter(e, "/editor_dashboard/review")}
+                                onMouseLeave={(e) => handleMouseLeave(e, "/editor_dashboard/review")}
                                 component={<Link to="/editor_dashboard/review" />}
                                 icon={<GradingIcon />}> Article Reviews</MenuItem>
                             <MenuItem style={defaultStyle}
@@ -158,75 +178,6 @@ const Editor = () => {
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
                                 icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-
-                            {/* <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
-
-                            <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                icon={<NotificationsTwoToneIcon />}>Notification</MenuItem>
-
-                            <MenuItem disabled></MenuItem> */}
                         </Menu>
 
                     </Sidebar>

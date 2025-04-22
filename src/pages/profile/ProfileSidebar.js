@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import useAuth from "../../hooks/useAuth";
-
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import {
     faUser, faBookBookmark, faComments, faRightFromBracket, faNewspaper,
@@ -10,33 +9,59 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
-
 import styles from '../../css/Profile.module.css'
 import logo2 from '../../assets/logo4.png'
 import useLogout from "../../hooks/useLogout";
-import { Link } from 'react-router-dom';
-
+import { Link, useLocation } from 'react-router-dom';
 
 const ProfileSidebar = ({ setSidebarExpanded }) => {
     const { auth, setAuth } = useAuth()
-
     const [collapsed, setCollapsed] = useState(true);
     const logout = useLogout();
     const [isExpanded, setIsExpanded] = useState(false);
+    const location = useLocation();
+    const currentPath = location.pathname;
 
     // for hover effect on sidebar menue
     const defaultStyle = {
         borderRadius: "10px",
-        margin: "0 4px 0 5px",
+        margin: "2px 4px 2px 5px",
         backgroundColor: "transparent",
         transition: "background-color 0.3s ease",
     };
-    const handleMouseEnter = (e) => {
-        e.currentTarget.style.backgroundColor = "#CBCBCB"; // hover background color
+    const activeStyle = {
+        backgroundColor: "#CBCBCB", // active background color
+        color: "#000", // active text color
+        fontWeight: "bold", // active text weight
+        borderRadius: "10px",
+        margin: "2px 4px 2px 5px",
+        transition: "background-color 0.3s ease",
     };
-    const handleMouseLeave = (e) => {
-        e.currentTarget.style.backgroundColor = "transparent"; // reset background color
+
+    const handleMouseEnter = (e, path) => {
+        // const isActive = currentPath === path;
+        const isActive = currentPath.startsWith(path);
+        if (!isActive) {
+            e.currentTarget.style.backgroundColor = "#CBCBCB"; // hover background color
+        }
     };
+    const handleMouseLeave = (e, path) => {
+        const isActive = currentPath.startsWith(path);
+        if (!isActive) {
+            e.currentTarget.style.backgroundColor = "transparent"; // reset background color
+        }
+    };
+
+    // Helper function to get the style based on the current path
+    const getMenuItemStyle = (path) => {
+        // Check if the current path matches the MenuItem's path
+        // const isActive = currentPath === path;
+        const isActive = currentPath.startsWith(path);
+        // Merge default style with active style if it's the active item
+        // return isActive ? { ...defaultStyle, ...activeStyle } : defaultStyle;
+        return isActive ? activeStyle : defaultStyle;
+    };
+
 
     return (
         <div className={styles.sidebarContainer} >
@@ -56,16 +81,19 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
                     <hr />
 
                     <MenuItem
-                        style={defaultStyle}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
+                        style={getMenuItemStyle("/profile/account")}
+                        onMouseEnter={(e) => handleMouseEnter(e, "/profile/account")}
+                        onMouseLeave={(e) => handleMouseLeave(e, "/profile/account")}
                         component={<Link to="/profile/account" />}
                         icon={<FontAwesomeIcon icon={faUser} />}>
                         My Account</MenuItem>
                     <MenuItem
-                        style={defaultStyle}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
+                        // style={defaultStyle}
+                        style={getMenuItemStyle("/profile/notification")}
+                        // onMouseEnter={handleMouseEnter}
+                        // onMouseLeave={handleMouseLeave}
+                        onMouseEnter={(e) => handleMouseEnter(e, "/profile/notification")}
+                        onMouseLeave={(e) => handleMouseLeave(e, "/profile/notification")}
                         component={<Link to="/profile/notification" />}
                         icon={<FontAwesomeIcon icon={faBell} />}>
                         Notifications</MenuItem>
@@ -83,9 +111,9 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
 
                     {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
                         <MenuItem
-                            style={defaultStyle}
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
+                            style={getMenuItemStyle("/profile/my_articles")}
+                            onMouseEnter={(e) => handleMouseEnter(e, "/profile/my_articles")}
+                            onMouseLeave={(e) => handleMouseLeave(e, "/profile/my_articles")}
                             component={<Link to="/profile/my_articles" />}
                             icon={<FontAwesomeIcon icon={faNewspaper} />}>
                             My Articles
@@ -93,9 +121,9 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
 
                     {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
                         <MenuItem
-                            style={defaultStyle}
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
+                            style={getMenuItemStyle("/profile/write")}
+                            onMouseEnter={(e) => handleMouseEnter(e, "/profile/write")}
+                            onMouseLeave={(e) => handleMouseLeave(e, "/profile/write")}
                             component={<Link to="/profile/write" />}
                             icon={<FontAwesomeIcon icon={faFilePen} />}>
                             Write Article

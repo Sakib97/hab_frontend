@@ -6,14 +6,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@100..900&display=swap');
 .bn{
   font-family: "Noto Serif Bengali", serif;
-  font-weight: 600;
-  font-size: 20px;
+  font-weight: 600 !important;
+  /* font-size: 20px; */
 }
 
 .bn2{
   font-family: "Noto Serif Bengali", serif;
-  font-weight: 400;
+  font-weight: 400 !important;
   font-size: 17px;
+}
+
+.bn3{
+  font-family: "Noto Serif Bengali", serif;
+  /* font-weight: 400 !important; */
+  /* font-size: 17px; */
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Alkatra:wght@400..700&family=Galada&display=swap');

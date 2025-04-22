@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import styles from '../../../css/EditorArticleDetailsForRev.module.css'
 import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Row, Col } from 'antd';
@@ -6,49 +6,47 @@ import { useState, useEffect } from 'react';
 import Badge from 'react-bootstrap/Badge';
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import CancelTwoToneIcon from '@mui/icons-material/CancelTwoTone';
-import LowPriorityOutlinedIcon from '@mui/icons-material/LowPriorityOutlined';
-import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
-import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import Divider from '@mui/material/Divider';
 import { Button, Tooltip } from "antd";
 import LanguageToggle from '../../../components/LanguageToggle';
-import Modal from 'react-bootstrap/Modal';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
-import { useMutation, useQueryClient } from 'react-query';
-
-import { Input } from 'antd';
-const { TextArea } = Input;
-
-const postData = async (data, url, axiosInstance) => {
-    const response = await axiosInstance.post(url,
-        JSON.stringify(data),
-        {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true
-        }
-    );
-    return response;
-}
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import EditorArticleDetailsActions from './EditorArticleDetailsActions';
+import { getFormattedTime } from '../../../utils/dateUtils';
+import { fetchData } from '../../../utils/getDataUtil';
+import { postData } from '../../../utils/postDataUtils';
+import { SafeHtmlRenderer } from '../../../utils/htmlRenderUtil';
+import { set } from 'jodit/esm/core/helpers';
 
 const EditorArticleDetailsForRev = () => {
+    const { articleID } = useParams();
+    // if ?notification=true&id=... is present in the URL, then mark the notification as CLICKED
+    const [searchParams] = useSearchParams();
+    const isNotification = searchParams.get('notification') === 'true';
+    const notificationId = searchParams.get('id');
+
     const CREATE_TAG_API = '/api/v1/category/create_tag'
     const ADD_TAG_TO_ARTICLE_API = '/api/v1/article/add_tag_to_article'
+    const GET_UNREV_ARTICLE_BY_ID_API = `/api/v1/article/unreviewed_article/${articleID}`
+    const MARK_NOTIFICATION_CLICKED_API = `/api/v1/notification/mark_notis_as_clicked/editor/${notificationId}`
+
     const [newTag, setNewTag] = useState(false)
     const [tagsList, setTagsList] = useState([])
     const [submittedAt, setSubmittedAt] = useState()
 
-    const [isAcceptable, setIsAcceptable] = useState(true)
-    const [isReviseable, setIsReviseable] = useState(false)
-    const [isRejectable, setIsRejectable] = useState(false)
-    const [reviseReason, setReviseReason] = useState('')
-    const [rejectReason, setRejectReason] = useState('')
-
     const [tagExistsErrorMsg, setTagErrorMsg] = useState('')
     const [tagAddSuccess, setTagAddSuccess] = useState(false)
 
+    const [notisUrlError, setNotisUrlError] = useState(false)
+
     const axiosPrivate = useAxiosPrivate();
+    // when testing erroneous endpoints, react-query will do 3 retries 
+    // with exponential backoff. That means your tests take longer and 
+    // might even time-out for those cases. 
+    // This can be solved by turning off retries for tests globally, via the QueryClient. 
     const queryClient = useQueryClient();
     const axiosInst = axiosPrivate;
+
     const { mutate: tagCreateMutate, isLoading: tagCreateIsLoading, isError: tagCreateIsError,
         isSuccess: tagCreateIsSuccess, data: tagCreateData } = useMutation(
             async (tag_obj) =>
@@ -79,19 +77,21 @@ const EditorArticleDetailsForRev = () => {
             }
         );
 
-    // for modal
-    const [show, setShow] = useState(false);
 
-    const handleClose = () => {
-        setShow(false);
-    }
-    const handleShow = () => {
-        setShow(true);
-    }
+    // get this article by article ID
+    const { data: articleData, error: articleError,
+        isLoading: articleLoading } = useQuery(
+            ['articleData', GET_UNREV_ARTICLE_BY_ID_API],
+            () => fetchData(GET_UNREV_ARTICLE_BY_ID_API, axiosInst),
+            {
+                keepPreviousData: true, // Preserve previous data while fetching new
+                staleTime: 600,  // Example option: Cache data for 6 seconds
+                refetchOnWindowFocus: false,  // Disable refetch on window focus
+            }
+        );
 
-    const location = useLocation();
-    const article = location.state?.article;
 
+    const article = articleData?.article;
     const [isEnglish, setIsEnglish] = useState(true);
 
     const handleLanguageToggle = (newIsEnglish) => {
@@ -131,25 +131,57 @@ const EditorArticleDetailsForRev = () => {
         }
 
         const dateStr = article.submitted_at
-        const date = new Date(dateStr);
-        const formattedDate = date.toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-        const formattedTime = date.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        });
-        const finalFormattedString = `${formattedDate}, ${formattedTime}`;
+        const finalFormattedString = getFormattedTime(dateStr);
         setSubmittedAt(finalFormattedString)
 
-    }, []);
+    }, [article]);
 
-    if (!article) {
+   // This is for marking the notification as clicked when entered this page 
+   // via the notification link ----------------------------------------------
+    const notisMutation = useMutation({
+        mutationFn: postData,
+        onSuccess: (response) => {
+            // console.log("Notification marked as clicked:", response.data.type); // new_article_review_request_article_id_86
+            
+            // Extract the article ID from the response 
+            // response.data.type = new_article_review_request_article_id_86
+            const atricle_id_from_response = parseInt(response.data.type.split('_').pop(), 10); // 86
+            if (atricle_id_from_response && 
+                atricle_id_from_response !== parseInt(articleID,10)) {
+                setNotisUrlError(true)
+            }
+            setNotisUrlError(false)
+            // Invalidate and refetch
+            queryClient.invalidateQueries('editorNotisData');
+        },
+    });
+
+
+    useEffect(() => {
+        if (isNotification && notificationId) {
+            // console.log("Notification clicked", isNotification);
+            // console.log("id: ", notificationId);
+            notisMutation.mutate({ data: {}, url: MARK_NOTIFICATION_CLICKED_API, axiosInstance: axiosInst });
+        }
+        else {
+            // setNotisUrlError(true)
+            return;
+        }
+    }, [isNotification, notificationId]);
+    // ---------------------------------------------------
+
+
+    if (articleLoading) {
+        return <h3 style={{ padding: "30px" }}>Loading...</h3>;
+    }
+    if (!article || articleError) {
         return <h3 style={{ padding: "30px", color: "red" }}>No article data found!</h3>;
     }
+
+    if(notisMutation.isError || notisUrlError) {
+        return <h3 style={{ padding: "30px", color: "red" }}>Invalid URL ! Please try again !</h3>;
+    }
+
     // console.log("article::: ", article);
 
     const tagCreate = () => {
@@ -212,41 +244,6 @@ const EditorArticleDetailsForRev = () => {
 
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent page reload
-        const clickedButton = e.nativeEvent.submitter; // The button that triggered the submit
-        const buttonName = clickedButton.name; // The name of the button
-
-        if (buttonName === 'accept') {
-            console.log("accepted");
-
-        }
-        if (buttonName === 'revision') {
-            setIsRejectable(false)
-            setIsReviseable(true)
-            setIsAcceptable(false)
-        }
-        if (buttonName === 'reject') {
-            setIsReviseable(false)
-            setIsRejectable(true)
-            setIsAcceptable(false)
-        }
-        if (buttonName === 'revisionCancel') {
-            setRejectReason('')
-            setReviseReason('')
-            setIsReviseable(false)
-            setIsRejectable(false)
-            setIsAcceptable(true)
-        }
-        if (buttonName === 'rejectCancel') {
-            setRejectReason('')
-            setReviseReason('')
-            setIsReviseable(false)
-            setIsRejectable(false)
-            setIsAcceptable(true)
-        }
-    }
-
     const renderHTMLContent = (content) => {
         return { __html: content };  // Prepare the HTML content for rendering
     };
@@ -257,7 +254,7 @@ const EditorArticleDetailsForRev = () => {
             <div className={styles.articleContainer}>
 
                 <h2 className={styles.title}> {article.title_en}</h2>
-                <h3 className={`${styles.subtitle} bn`}>{article.title_bn}</h3>
+                <h2 style={{ marginBottom: '20px' }} className={`${styles.title} bn`}>{article.title_bn}</h2>
 
                 <div className={styles.infoRow}>
                     <span className={styles.category}>
@@ -303,13 +300,13 @@ const EditorArticleDetailsForRev = () => {
                                     icon={<CheckCircleTwoToneIcon style={{ color: "green" }}
                                         fontSize="small" />} />
                             </Tooltip> &nbsp;
-                            <Tooltip title="Decline">
-                                <Button size='small'
-                                    shape="circle"
-                                    name='tagCancel'
-                                    icon={<CancelTwoToneIcon style={{ color: "red", fontSize: '20px' }} />} />
-                            </Tooltip>
-                            </> }
+                                <Tooltip title="Decline">
+                                    <Button size='small'
+                                        shape="circle"
+                                        name='tagCancel'
+                                        icon={<CancelTwoToneIcon style={{ color: "red", fontSize: '20px' }} />} />
+                                </Tooltip>
+                            </>}
 
                         </span>}
                     </span>
@@ -341,159 +338,36 @@ const EditorArticleDetailsForRev = () => {
                 <div>
                     <img src={article.cover_img_link} alt="cover_image" />
                 </div>
-                <div style={{ display: "flex", justifyContent: "center" }} >
+                <div style={{
+                    display: "flex", justifyContent: "center",
+                    color: "#6c757d", marginBottom: '10px'
+                }} >
 
                     {isEnglish && <span>Caption: {article.cover_img_cap_en}</span>}
-                    {!isEnglish && <span className='bn2'>শিরোনাম : {article.cover_img_cap_bn}</span>}
+                    {!isEnglish && <span className='bn3'>শিরোনাম : {article.cover_img_cap_bn}</span>}
 
                 </div>
                 <div>
                     {isEnglish && <span><b>{article.subtitle_en}</b></span>}
-                    {!isEnglish && <strong><span className='bn'>{article.subtitle_bn}</span></strong>}
+                    {!isEnglish && <strong><span className='bn3'>{article.subtitle_bn}</span></strong>}
 
                 </div>
                 <hr className={styles.divider} />
-                <div>
+                <div style={{ textAlign: "justify", fontSize: "18px" }}>
                     {isEnglish && <div
                         dangerouslySetInnerHTML={renderHTMLContent(article.content_en)}  // Render the HTML content
                     />}
 
                     {!isEnglish &&
                         <div>
-                            <div
-                                dangerouslySetInnerHTML={renderHTMLContent(article.content_bn)}
-                            />
+                            <SafeHtmlRenderer html={article.content_bn} />
                         </div>
                     }
                 </div>
             </div>
             <hr />
 
-            <form onSubmit={handleSubmit}>
-                <div className={styles.articleContainer}>
-                    {isReviseable &&
-                        <div>
-                            <textarea placeholder="Specify Revisions *"
-                                rows="3"
-                                cols="35"
-                                style={{
-                                    backgroundColor: "#ede5d5",
-                                    borderRadius: "10px",
-                                    borderStyle: "solid",
-                                    borderWidth: "3px",
-                                    borderColor: "#b59607",
-                                }}
-                                value={reviseReason}
-                                onChange={(e) => setReviseReason(e.target.value)}
-                                type="text" />
-                            <br />
-                            <br />
-
-                            <button style={{ borderRadius: "20px" }}
-                                name='revisionCancel'
-                                className="btn btn-danger" >
-                                <i className="fa-solid fa-xmark" />
-                            </button>
-                            &nbsp;
-                            <button style={{ borderRadius: "20px" }}
-                                name='revisionOK'
-                                disabled={!reviseReason}
-                                className="btn btn-success" >
-                                <i className="fa-solid fa-check" />
-                            </button>
-                        </div>
-                    }
-
-                    {isRejectable &&
-                        <div>
-                            <textarea placeholder="Specify Rejection Reasons *"
-                                rows="3"
-                                cols="35"
-                                style={{
-                                    backgroundColor: "#eddada",
-                                    borderRadius: "10px",
-                                    borderStyle: "solid",
-                                    borderWidth: "3px",
-                                    borderColor: "#c20808"
-                                }}
-                                value={rejectReason}
-                                onChange={(e) => setRejectReason(e.target.value)}
-                                type="text" />
-                            <br />
-                            <br />
-
-                            <button style={{ borderRadius: "20px" }}
-                                name='rejectCancel'
-                                className="btn btn-danger" >
-                                <i className="fa-solid fa-xmark" />
-                            </button>
-                            &nbsp;
-                            <button style={{ borderRadius: "20px" }}
-                                disabled={!rejectReason}
-                                name='rejectOK'
-                                className="btn btn-success" >
-                                <i className="fa-solid fa-check" />
-                            </button>
-                        </div>
-                    }
-
-                    {(isAcceptable && (!isReviseable || !isRejectable)) &&
-                        <button style={{ margin: "4px" }}
-                            name='accept'
-                            onClick={handleShow}
-                            className='btn btn-success'>
-                            <AssignmentTurnedInOutlinedIcon /> Publish Article
-                        </button>}
-                    &nbsp;
-
-                    {(!isReviseable && !isRejectable) &&
-                        <button style={{ margin: "4px" }} name='revision'
-                            className='btn btn-warning'>
-                            <LowPriorityOutlinedIcon /> Send for Revision
-                        </button>}
-                    &nbsp;
-
-                    {(!isReviseable && !isRejectable) &&
-                        <button style={{ margin: "4px" }}
-                            name='reject'
-                            className='btn btn-danger'>
-                            <BlockOutlinedIcon />  Reject Article
-                        </button>}
-                </div>
-
-
-                <Modal aria-labelledby="contained-modal-title-vcenter" centered
-                    show={show} onHide={handleClose}
-                >
-
-                    {/* <Modal.Header closeButton> */}
-                    <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
-                        <Modal.Title>
-                            <span> Confirm Article ? </span>
-                        </Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
-                        <span>
-                            Once confirmed, you will be redirected to the "Review History" Page. <br />
-                        </span>
-                    </Modal.Body>
-
-                    <Modal.Footer style={{ display: "flex", justifyContent: "center" }}>
-
-                        <Button style={{ borderRadius: "20px" }} variant="outline-danger"
-                            onClick={handleClose}>
-                            <i className="fa-solid fa-xmark"></i>
-                        </Button>
-
-                    </Modal.Footer>
-                </Modal>
-
-            </form>
-
-
-
-
+            <EditorArticleDetailsActions article_id={article.article_id} />
         </div>
     );
 }

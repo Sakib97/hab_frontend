@@ -6,17 +6,18 @@ import { useQuery } from 'react-query';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import { Link } from 'react-router-dom';
 import { getFormattedTime } from '../../../utils/dateUtils';
+import { fetchData } from '../../../utils/getDataUtil';
 
-
-const fetchData = async (url, axiosInstance) => {
-    const response = await axiosInstance.get(url);
-    return response.data;
-};
+// const fetchData = async (url, axiosInstance) => {
+//     const response = await axiosInstance.get(url);
+//     return response.data;
+// };
 
 const EditorUnrevArticles = () => {
     const { auth } = useAuth()
-    
-    // for loading new articles only when new page (from pagination) is being loaded
+
+    // for loading new articles only when new page 
+    // (from pagination) is being loaded
     const [page, setPage] = useState(1);
     const pageSize = 2;
 
@@ -33,14 +34,14 @@ const EditorUnrevArticles = () => {
             () => fetchData(UNREVIEWED_ARTICLES_URL, axiosInst),
             {
                 keepPreviousData: true, // Preserve previous data while fetching new
-                staleTime: 60000,  // Example option: Cache data for 60 seconds
+                // staleTime: 60000,  // Example option: Cache data for 60 seconds
                 refetchOnWindowFocus: false,  // Disable refetch on window focus
             }
         );
     // console.log("unrevData:: ", unrevData);
 
     const unredDataDisplay = unrevData?.articles?.map(article => ({
-        href: '/editor_dashboard/review/article-review',
+        href: `/editor_dashboard/review/article-review/${article.article_id}`,
         title: article.title_en,
         avatar: article.author_image_url,
         description: `${article.author_firstname} ${article.author_lastname} || ${getFormattedTime(article.submitted_at)}`,
@@ -57,14 +58,14 @@ const EditorUnrevArticles = () => {
             padding: "20px",
             // backgroundColor: "red",
             width: "100vw",
-            display: "flex", justifyContent: "center", 
+            display: "flex", justifyContent: "center",
         }}>
             {unrevLoading ? "Loading..." :
                 unrevError ? "Server Error ! " :
                     <List
                         itemLayout="vertical"
                         size="large"
-                        
+
                         pagination={{
                             current: page,
                             pageSize,
@@ -72,8 +73,11 @@ const EditorUnrevArticles = () => {
                             // total: 10, // Optional if backend provides total count
                             onChange: (page) => {
                                 // console.log("Current page:", page);
-                                setPage(page); }, // Update page state
-                            align: 'center'
+                                setPage(page);
+                            }, // Update page state
+                            align: 'center',
+                            showQuickJumper: true,
+                            showSizeChanger: false,
                         }}
                         dataSource={unredDataDisplay}
                         renderItem={(item) => (
@@ -92,7 +96,7 @@ const EditorUnrevArticles = () => {
 
                                     avatar={<Avatar src={item.avatar} />}
                                     title={<Link to={item.href}
-                                         state={{ article: item.article }}>
+                                        state={{ article: item.article }}>
                                         {item.title}</Link>}
                                     description={item.description}
                                 />
