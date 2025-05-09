@@ -1,0 +1,39 @@
+=> To send "articleID" (a data) using "state" in React Router, 
+you can pass the "articleID" as part of the "state" object 
+when navigating with the Link component. 
+
+=> On the "target page", you can then retrieve "articleID" from "state" .
+
+Here’s how you can do it step by step:
+=======================================
+
++++++++++++++++++
+In current Page:
+=================
+Search params don't work when using pathname, state.
+Use as below:
+<Link to={`/profile/write?edit=true&a_id=${articleData.article_id}`}
+      state={{
+          editFromState: true,
+          articleIDFromState: articleData.article_id
+        }}
+                    >
+    Click me
+
+</Link>   
+
+++++++++++++++++
+In target page:
+================
+import { useLocation, useSearchParams } from 'react-router-dom';
+
+const location = useLocation();
+const [searchParams] = useSearchParams();
+
+const articleIDFromSearch = searchParams.get('a_id');
+const editFromSearch = searchParams.get('edit');
+
+const { editFromState, articleIDFromState } = location.state || {};
+
+
+NOTE: Same can be done for big objects

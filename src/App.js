@@ -26,6 +26,7 @@ import ProfileMyArticle from './pages/profile/ProfileMyArticle';
 import Article from './pages/article/Article';
 import Footer from "../src/components/Footer";
 import ArticleList from './pages/articleList/ArticleList';
+import ProfileMyArticleDetails from './pages/profile/ProfileMyArticleDetails';
 
 function App() {
 
@@ -71,7 +72,9 @@ function App() {
               <Route path="/profile" element={<Profile />} >
                 <Route index element={<Navigate to="account" />} />
                 <Route path='account' element={<ProfileAccount />}></Route>
-                <Route path='my_articles' element={<ProfileMyArticle />}></Route>
+                <Route path='my_articles' element={<ProfileMyArticle />}>
+                    <Route path='details' element={<ProfileMyArticleDetails />}></Route>
+                </Route>
               </Route>
             </Route>
 

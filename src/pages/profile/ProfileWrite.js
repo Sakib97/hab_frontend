@@ -10,22 +10,60 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import DOMPurify from 'dompurify';
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
+import { useLocation, useSearchParams } from "react-router-dom";
+import { renderStrArray } from "../../utils/htmlRenderUtil";
+import { fetchData } from "../../utils/getDataUtil";
+import { cleanedTags } from "../../utils/slugAndStringUtil";
+import { postData } from "../../utils/postDataUtils";
 
-const postData = async (data, url, axiosInstance) => {
-  const response = await axiosInstance.post(url,
-    JSON.stringify(data),
-    {
-      headers: { 'Content-Type': 'application/json' },
-      withCredentials: true
-    }
-  );
-  return response;
-}
+// const postData = async (data, url, axiosInstance) => {
+//   const response = await axiosInstance.post(url,
+//     JSON.stringify(data),
+//     {
+//       headers: { 'Content-Type': 'application/json' },
+//       withCredentials: true
+//     }
+//   );
+//   return response;
+// }
 
 const ProfileWrite = () => {
+
+  /// When sent_for_edit from my_articles -------------
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const articleIDFromSearch = parseInt(searchParams.get('a_id'));
+  const editFromSearch = searchParams.get('edit') === "true" ? true : false;
+  const { editFromState, articleIDFromState, decisionCommentFromState,
+    editorEmail } = location.state || {};
+
+  // console.log(editFromState, articleIDFromState, decisionCommentFromState, editorEmail);
+
+  const validStateAndSearchParams =
+    articleIDFromSearch != null &&
+    editFromSearch != null &&
+    !isNaN(articleIDFromSearch) &&
+    !isNaN(editFromSearch) &&
+    articleIDFromSearch === articleIDFromState &&
+    editFromSearch === editFromState;
+
+  const invalidStateAndSearchParams =
+    articleIDFromSearch != null &&
+    editFromSearch != null &&
+    !isNaN(articleIDFromSearch) &&
+    !isNaN(editFromSearch) &&
+    (articleIDFromSearch !== articleIDFromState || editFromSearch !== editFromState);
+
+  /// When sent_for_edit from my_articles -------------
+
+  // console.log("validStateAndSearchParams:", validStateAndSearchParams);
+  // console.log("invalidStateAndSearchParams:", invalidStateAndSearchParams);
+
   const CREATE_ARTICLE_API = '/api/v1/article/create_article'
+  const GET_SENT_FOR_EDIT_ARTICLE_BY_ID_API = `/api/v1/article/sent_for_edit_article/${articleIDFromSearch}`
+  const EDIT_ARTICLE_API = `/api/v1/article/edit_article/${articleIDFromSearch}`
   const [open, setOpen] = useState(false);
 
   // articleInfo fetches data from ProfileWriteArticleInfo.js component into this component
@@ -40,6 +78,12 @@ const ProfileWrite = () => {
   const [success, setSuccess] = useState(false);
   const [editorMail, setEditorMail] = useState('');
 
+  // To ensure GET_SENT_FOR_EDIT_ARTICLE_BY_ID_API 
+  // is called on every mount, we remove any cache--------
+  useEffect(() => {
+    queryClient.removeQueries(['sentForEditArticleData']);
+  }, []);
+  // -----------------------------------------------
 
   // Add a ref to the form
   const formRef = useRef(null);
@@ -60,7 +104,9 @@ const ProfileWrite = () => {
     for (const [key, value] of Object.entries(obj)) {
       if (excludedFieldList.includes(key)) {
         continue;
-      } else if (!value) {
+      }
+      else if (!value) {
+        // else if (typeof value === "string" && value.trim() === "") {
         return false;
       }
     }
@@ -98,7 +144,11 @@ const ProfileWrite = () => {
   const axiosInst = axiosPrivate;
   const { mutate, isLoading, isError, isSuccess, data } = useMutation(
     async (article_obj) =>
-      postData(article_obj, CREATE_ARTICLE_API, axiosInst), // Pass the data here
+      postData({
+        data: article_obj,
+        url: CREATE_ARTICLE_API,
+        axiosInstance: axiosInst
+      }), // Pass the data here
     {
       onMutate: () => {
         setLoading(true);
@@ -120,6 +170,31 @@ const ProfileWrite = () => {
     }
   );
 
+  // get this sent for edit article by article ID----------------
+  const { data: articleData, error: articleError,
+    isLoading: articleLoading } = useQuery(
+      ['sentForEditArticleData', GET_SENT_FOR_EDIT_ARTICLE_BY_ID_API],
+      () => fetchData(GET_SENT_FOR_EDIT_ARTICLE_BY_ID_API, axiosInst),
+      {
+        enabled: validStateAndSearchParams, // call API only when there are valid SearchParams
+        keepPreviousData: false, // Preserve previous data while fetching new
+        // staleTime: 600,  // Example option: Cache data for 6 seconds
+        refetchOnWindowFocus: false,  // Disable refetch on window focus
+        refetchOnMount: "always",
+      }
+    );
+
+  // submit data for sent for edit ------------------------
+  const editArticleMutation = useMutation({
+    mutationFn: postData,
+    onSuccess: (response) => {
+      setEditorMail(editorEmail) // editorEmail coming from state
+      queryClient.invalidateQueries('editArticleData');
+    }
+  });
+
+
+  // -----------------------------------------------------
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
 
@@ -128,17 +203,17 @@ const ProfileWrite = () => {
     const buttonName = clickedButton.name; // The name of the button
 
     if (buttonName === 'reviewSubmit') {
-      console.log("init finalArticleInfo::: ", articleInfo.coverImgCapEN
-      );
+      // console.log("init finalArticleInfo::: ", articleInfo.coverImgCapEN);
       if (isAllReqFieldsPresent(articleInfo, ['tags', 'newTag'])) {
-        console.log("finalArticleInfo::: ", articleInfo);
       } else {
+        // console.log("finalArticleInfo::: ", articleInfo);
+
         toast.error("Please fill in all required (*) Article Info correctly !", { duration: 7000 });
         return;
       }
       // handleResetInfoAndRTE()
-      console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
-      console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
+      // console.log("Editor Content in ProfileWrite EN: ", editorContentEN);
+      // console.log("Editor Content in ProfileWrite BN: ", editorContentBN);
       const sanitizedContentEN = getSanitizedHTML(editorContentEN)
       const sanitizedContentBN = getSanitizedHTML(editorContentBN)
       const article_obj = {
@@ -159,25 +234,54 @@ const ProfileWrite = () => {
       }
 
       // console.log("article_obj:: ", article_obj);
-      
 
-      mutate(article_obj, {
-        onSuccess: (data) => {
-          // console.log("API Response:", data.data.msg); 
-          if (data?.data) {
-            const message = data.data.msg;
-            const email = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-            setEditorMail(email[0])
-            // toast.success(`Article submitted: ${data.data.msg}`, { duration: 5000 });
-          } else {
-            toast.success("Article submitted successfully!", { duration: 5000 });
+      if (!validStateAndSearchParams) {
+        mutate(article_obj, {
+          onSuccess: (data) => {
+            // console.log("API Response:", data.data.msg); 
+            if (data?.data) {
+              const message = data.data.msg;
+              const email = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+              setEditorMail(email[0])
+              // toast.success(`Article submitted: ${data.data.msg}`, { duration: 5000 });
+            } else {
+              toast.success("Article submitted successfully!", { duration: 5000 });
+            }
+          },
+          onError: (error) => {
+            console.error("Error in submission:", error);
+            toast.error("Failed to submit article. Please try again.", { duration: 5000 });
           }
-        },
-        onError: (error) => {
-          console.error("Error in submission:", error);
-          toast.error("Failed to submit article. Please try again.", { duration: 5000 });
+        });
+      }
+      if (validStateAndSearchParams) {
+        const edited_article_obj = {
+          "editor_email": editorEmail,
+          "category_name": articleInfo.category,
+          "subcategory_name": articleInfo.subCategory,
+          "title_en": articleInfo.titleEN,
+          "title_bn": articleInfo.titleBN,
+          "subtitle_en": articleInfo.subtitleEN,
+          "subtitle_bn": articleInfo.subtitleBN,
+
+          "content_en": sanitizedContentEN,
+          "content_bn": sanitizedContentBN,
+          "cover_img_link": articleInfo.coverImgLink,
+          "cover_img_cap_en": articleInfo.coverImgCapEN,
+          "cover_img_cap_bn": articleInfo.coverImgCapBN,
+          "tags": JSON.stringify(articleInfo.tags),
+          "new_tag": JSON.stringify(articleInfo.newTag)
         }
-      });
+        // console.log("edited_article_obj:: ", edited_article_obj);
+        editArticleMutation.mutate({
+          data: edited_article_obj,
+          url: EDIT_ARTICLE_API,
+          axiosInstance: axiosInst
+        })
+
+
+      }
+
 
       // const parser = new DOMParser();
       // const doc = parser.parseFromString(editorContentEN, "text/html");
@@ -192,7 +296,7 @@ const ProfileWrite = () => {
     }
   };
 
-  //  
+
 
   const collapseText1 = `<ul> 
   <li> Write the article both in <b>English</b> and <b>বাংলা</b> </li>
@@ -246,13 +350,60 @@ const ProfileWrite = () => {
     setShow(true);
   }
 
+  // To send Invalid URL message if anyone manipulates with URL manually
+  // as edit is very sensitive URL (URL coming for sent_for_edit)
+
+  // if (articleIDFromSearch && editFromSearch) {
+  //   if (articleIDFromSearch !== articleIDFromState || editFromSearch !== editFromState)
+  //     return <h3 style={{ padding: "30px", color: "red", display: 'flex', justifyContent: 'center' }}>
+  //       <b>Invalid URL ! Please try again !</b></h3>;
+
+  //   handleResetInfoAndRTE();
+
+  // }
+
+  // Sent for Edit Functionalities --------------------------
+  useEffect(() => {
+    if (validStateAndSearchParams) {
+      // console.log("handleResetInfoAndRTE");
+      handleResetInfoAndRTE();
+    }
+  }, [validStateAndSearchParams]);
+
+  if (invalidStateAndSearchParams) {
+    return <h3 style={{ padding: "30px", color: "red", display: 'flex', justifyContent: 'center' }}>
+      <b>Invalid URL ! Please try again !</b></h3>;
+  }
+
+  if (validStateAndSearchParams) {
+    // handleResetInfoAndRTE();
+    if (articleLoading) {
+      handleResetInfoAndRTE();
+      // console.log("Loasssss");
+      return <h3 style={{ padding: "30px", display: 'flex', justifyContent: 'center' }}>
+        <b>Loading...</b></h3>;
+    }
+    if (articleError) {
+      return <h3 style={{ padding: "30px", color: "red", display: 'flex', justifyContent: 'center' }}>
+        <b>Server Error ! Please try again !</b></h3>;
+    }
+    // console.log("articleData", articleData);
+
+  }
+  // Sent for Edit Functionalities --------------------------
+
+
   return (
     <div className="profileWrite">
       <div><Toaster /></div>
 
-      < TableOfContent sections={sections} />
+      {!validStateAndSearchParams && < TableOfContent sections={sections} />}
 
-      <h1 style={{ display: "flex", justifyContent: "center" }}>Start Writing.. </h1>
+      <h1 style={{ display: "flex", justifyContent: "center" }}>
+
+        {validStateAndSearchParams ? <span> Start Editing...</span> :
+          <span> Start Writing...</span>}
+      </h1>
 
       <div id="instructions">
         <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Instructions</Divider>
@@ -264,21 +415,56 @@ const ProfileWrite = () => {
       />
 
       <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Info</Divider>
+
+      {validStateAndSearchParams && decisionCommentFromState
+        && <div style={{
+          display: 'flex', justifyContent: 'center', whiteSpace: 'pre-wrap',
+          padding: '10px', fontSize: "20px", color: '#000000', fontWeight: 'bold',
+          border: 'solid 3px', borderRadius: '20px', margin: '-5px 20px 20px 20px'
+        }}>
+          {renderStrArray(decisionCommentFromState, "Editor's Review to Address - ", "text")}
+        </div>
+      }
+
       <form ref={formRef} className={styles.customForm} onSubmit={handleSubmit}>
 
-        <div id="article-info">
-          <ProfileWriteArticleInfo ref={articleInfoChildRef} finalArticleInfo={setArticleInfo} />
-        </div>
+        {validStateAndSearchParams && <div id="article-info">
+          <ProfileWriteArticleInfo ref={articleInfoChildRef}
+            finalArticleInfo={setArticleInfo}
+            isEditable={validStateAndSearchParams}
+            editableArticle={articleData}
+          />
+        </div>}
+
+        {!validStateAndSearchParams && <div id="article-info">
+          <ProfileWriteArticleInfo ref={articleInfoChildRef}
+            finalArticleInfo={setArticleInfo}
+          />
+        </div>}
 
         {/* Pass down the state and the setter to the editor */}
         <div id="body-en">
           <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (English)</Divider>
-          <RichTextEditor ref={rteChildRef1} language="en" onChange={setEditorContentEN} />
+          {validStateAndSearchParams && <RichTextEditor ref={rteChildRef1} language="en"
+            onChange={setEditorContentEN}
+            isEditable={validStateAndSearchParams}
+            editableArticle={articleData}
+          />}
+          {!validStateAndSearchParams && <RichTextEditor ref={rteChildRef1} language="en"
+            onChange={setEditorContentEN}
+          />}
         </div>
 
         <div id="body-bn">
           <Divider style={{ borderColor: '#000000', fontSize: "25px" }} orientation="left">Article Body (Bangla)</Divider>
-          <RichTextEditor ref={rteChildRef2} language="bn" onChange={setEditorContentBN} />
+          {validStateAndSearchParams && <RichTextEditor ref={rteChildRef2} language="bn"
+            onChange={setEditorContentBN}
+            isEditable={validStateAndSearchParams}
+            editableArticle={articleData} />}
+
+          {!validStateAndSearchParams && <RichTextEditor ref={rteChildRef1} language="bn"
+            onChange={setEditorContentBN}
+          />}
         </div>
 
         <hr />
@@ -286,7 +472,7 @@ const ProfileWrite = () => {
           <button onClick={handleShow}
             name="confirmModal"
             className="btn btn-success" >
-            Submit for Review
+            Submit {validStateAndSearchParams && "Edited Article"} for Review
           </button>
         </div>
         <Modal aria-labelledby="contained-modal-title-vcenter" centered
@@ -299,15 +485,24 @@ const ProfileWrite = () => {
           <Modal.Header style={{ display: "flex", justifyContent: "center" }}>
             <Modal.Title>
               {editorMail ? <span style={{ fontWeight: "bold", color: "green" }}> Success ! </span> :
-                <span> Confirm Submit ? </span>}
+                <span> Confirm {validStateAndSearchParams ? "Resubmit" : "Submit"} ? </span>}
             </Modal.Title>
           </Modal.Header>
 
-          <Modal.Body style={{ display: "flex", justifyContent: "center" }}>
-            {!editorMail && <span>
-              Please save all drafts before submitting ! <br />
-              If you confirm, all drafts will be cleared ! <br />
-            </span>}
+          <Modal.Body style={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
+            {!editorMail && (
+              <span>
+                <span style={{ fontWeight: 'bold', fontSize: "20px" }}>Please save all drafts before submitting !</span> <br />
+                {validStateAndSearchParams ? (
+                  <>
+                    Edited article will be submitted for review to
+                    <b> {articleData.editor_firstname} {articleData.editor_lastname}</b> ({articleData.editor_email})
+                  </>
+                ) : (
+                  <>If you confirm, all drafts will be cleared ! <br /></>
+                )}
+              </span>
+            )}
 
             {editorMail && <div style={{
               display: "flex",
@@ -317,7 +512,7 @@ const ProfileWrite = () => {
             }}>
               <CheckCircleTwoToneIcon style={{ color: "green", fontSize: "50px" }} />
               <span style={{ color: "green", fontWeight: "bold" }} >Article Submitted for Review Successfully !</span>
-              <span>Editor Mail: <span style={{color: "#1039a1"}}> <b>{editorMail}</b> </span>  </span>
+              <span>Editor Mail: <span style={{ color: "#1039a1" }}> <b>{editorMail}</b> </span>  </span>
             </div>}
           </Modal.Body>
 
@@ -328,13 +523,17 @@ const ProfileWrite = () => {
               <i className="fa-solid fa-xmark"></i>
             </Button>
 
-            {(!isLoading && !editorMail) && <Button type="submit"
+            {(!isLoading && !editorMail && !editArticleMutation.isLoading) && <Button type="submit"
               name="reviewSubmit"
               style={{ borderRadius: "20px" }} variant="outline-success"
             >
               <i className="fa-solid fa-check"></i>
             </Button>}
-            {isLoading && <p>Loading...</p>}
+            {(isLoading || editArticleMutation.isLoading) && <p>&nbsp; Loading...</p>}
+            {editArticleMutation.isError &&
+              <span style={{ fontWeight: 'bold', color: 'red' }}>
+                Error Submitting Article ! Please try apain
+              </span>}
 
           </Modal.Footer>
         </Modal>

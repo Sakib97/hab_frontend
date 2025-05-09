@@ -47,3 +47,19 @@ export const containsCharacter = (str) => {
   // if not found, returns false
   return /\S/.test(str);
 }
+
+
+// input: "['Parliamentary System', 'Politics']" OR "['World Order', 'newTagRequested']"
+// output: 'Parliamentary System', 'Politics'  OR 'World Order'
+export const cleanedTags = (inputString) => {
+  // Parse the string into an array
+  const cleanedStr = inputString.replace(/'/g, '"'); // Replace single quotes with double quotes for valid JSON
+  const tagsArray = JSON.parse(cleanedStr); // Convert the string into an array
+
+  // Filter out 'newTagRequested' and return the remaining tags
+  const filteredTags = tagsArray.filter(tag => tag !== 'newTagRequested');
+
+  // Join the filtered tags into a comma-separated string
+  // return filteredTags.join("', '"); // 'Parliamentary System', 'Politics'
+  return filteredTags; // ['Parliamentary System', 'Politics']
+}

@@ -13,10 +13,17 @@ import styles from '../../css/Profile.module.css'
 import logo2 from '../../assets/logo4.png'
 import useLogout from "../../hooks/useLogout";
 import { Link, useLocation } from 'react-router-dom';
+import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
+import { Button } from 'react-bootstrap';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import { Badge } from 'antd';
 
-const ProfileSidebar = ({ setSidebarExpanded }) => {
+
+const ProfileSidebar = ({ unreadCount, setSidebarExpanded }) => {
     const { auth, setAuth } = useAuth()
     const [collapsed, setCollapsed] = useState(true);
+    const [broken, setBroken] = useState(window.matchMedia('(max-width:768px)').matches);
+
     const logout = useLogout();
     const [isExpanded, setIsExpanded] = useState(false);
     const location = useLocation();
@@ -64,110 +71,138 @@ const ProfileSidebar = ({ setSidebarExpanded }) => {
 
 
     return (
-        <div className={styles.sidebarContainer} >
-            <Sidebar collapsed={collapsed}>
-                <Menu >
-                    <MenuItem icon={
-                        <img src={logo2} alt="Logo" style={{ width: '50px', borderRadius: '50%' }} />
-                    }>
-                        <FontAwesomeIcon
-                            onClick={() => {
-                                setCollapsed(true); setSidebarExpanded(false);
-                            }}
-                            style={{ width: '160px', marginLeft: '60px', fontSize: '20px' }}
-                            icon={faCircleChevronLeft} />
+        <div>
+            <div
+                className={`${styles.collapseButton}`}
+            >
+                <Button className={`${styles.collapseButton}`}
+                    variant="outline-dark" size='sm'
+                    onClick={() => setCollapsed(!collapsed)}>
+                    {collapsed ?
+                        // <MenuTwoToneIcon /> 
+                        <i className="fa-solid fa-bars"></i>
+                        : <MenuOpenIcon />}
+                </Button>
+            </div>
 
-                    </MenuItem>
-                    <hr />
-
-                    <MenuItem
-                        style={getMenuItemStyle("/profile/account")}
-                        onMouseEnter={(e) => handleMouseEnter(e, "/profile/account")}
-                        onMouseLeave={(e) => handleMouseLeave(e, "/profile/account")}
-                        component={<Link to="/profile/account" />}
-                        icon={<FontAwesomeIcon icon={faUser} />}>
-                        My Account</MenuItem>
-                    <MenuItem
-                        // style={defaultStyle}
-                        style={getMenuItemStyle("/profile/notification")}
-                        // onMouseEnter={handleMouseEnter}
-                        // onMouseLeave={handleMouseLeave}
-                        onMouseEnter={(e) => handleMouseEnter(e, "/profile/notification")}
-                        onMouseLeave={(e) => handleMouseLeave(e, "/profile/notification")}
-                        component={<Link to="/profile/notification" />}
-                        icon={<FontAwesomeIcon icon={faBell} />}>
-                        Notifications</MenuItem>
-                    <MenuItem
-                        style={defaultStyle}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        icon={<FontAwesomeIcon icon={faBookBookmark} />}> Bookmarks</MenuItem>
-                    <MenuItem
-                        style={defaultStyle}
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        icon={<FontAwesomeIcon icon={faComments} />}> My Comments </MenuItem>
+            <div className={styles.sidebarContainer} >
 
 
-                    {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
-                        <MenuItem
-                            style={getMenuItemStyle("/profile/my_articles")}
-                            onMouseEnter={(e) => handleMouseEnter(e, "/profile/my_articles")}
-                            onMouseLeave={(e) => handleMouseLeave(e, "/profile/my_articles")}
-                            component={<Link to="/profile/my_articles" />}
-                            icon={<FontAwesomeIcon icon={faNewspaper} />}>
-                            My Articles
-                        </MenuItem>}
-
-                    {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
-                        <MenuItem
-                            style={getMenuItemStyle("/profile/write")}
-                            onMouseEnter={(e) => handleMouseEnter(e, "/profile/write")}
-                            onMouseLeave={(e) => handleMouseLeave(e, "/profile/write")}
-                            component={<Link to="/profile/write" />}
-                            icon={<FontAwesomeIcon icon={faFilePen} />}>
-                            Write Article
-                        </MenuItem>}
-
-                    <hr />
-                    <br /><br /><br />
-
-                    {collapsed &&
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <button
+                <Sidebar
+                    backgroundColor={broken ? "white" : "#f0f0f0"}
+                    collapsed={collapsed}
+                    toggled={broken && !collapsed}
+                    customBreakPoint="768px"
+                    onBreakPoint={setBroken}
+                    onBackdropClick={broken ? () => setCollapsed(true) : ''}
+                >
+                    <Menu >
+                        <MenuItem icon={
+                            <img src={logo2} alt="Logo" style={{ width: '50px', borderRadius: '50%' }} />
+                        }>
+                            <FontAwesomeIcon
                                 onClick={() => {
-                                    setCollapsed(false); setSidebarExpanded(true);
+                                    setCollapsed(true); setSidebarExpanded(false);
                                 }}
-                                className="btn btn-light">
-                                <FontAwesomeIcon
-                                    style={{ fontSize: '20px' }}
-                                    icon={faCircleChevronRight} />
-                            </button>
-                        </div>}
-                    <br />
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <OverlayTrigger placement="right" overlay={
-                            <Tooltip id="button-tooltip">Log Out</Tooltip>}>
+                                style={{ width: '160px', marginLeft: '60px', fontSize: '30px' }}
+                                icon={faCircleChevronLeft} />
 
-                            <button onClick={logout} className="btn btn-light">
-                                <FontAwesomeIcon icon={faRightFromBracket} />
-                            </button>
-                        </OverlayTrigger>
+                        </MenuItem>
+                        <hr />
 
-                    </div>
+                        <MenuItem
+                            style={getMenuItemStyle("/profile/account")}
+                            onMouseEnter={(e) => handleMouseEnter(e, "/profile/account")}
+                            onMouseLeave={(e) => handleMouseLeave(e, "/profile/account")}
+                            component={<Link to="/profile/account" />}
+                            icon={<FontAwesomeIcon style={{ fontSize: '20px' }} icon={faUser} />}>
+                            My Account</MenuItem>
+                        <MenuItem
+                            // style={defaultStyle}
+                            style={getMenuItemStyle("/profile/notification")}
+                            // onMouseEnter={handleMouseEnter}
+                            // onMouseLeave={handleMouseLeave}
+                            onMouseEnter={(e) => handleMouseEnter(e, "/profile/notification")}
+                            onMouseLeave={(e) => handleMouseLeave(e, "/profile/notification")}
+                            component={<Link to="/profile/notification" />}
+                            icon={
+                                <Badge size='small' style={{ fontSize: '10px' }}
+                                    count={unreadCount?.totalUnread ? unreadCount.totalUnread : 0}
+                                    overflowCount={9} color="#f5222d">
+                                    <FontAwesomeIcon style={{ fontSize: '20px' }} icon={faBell} />
+                                </Badge>
+                            }>
+                            Notifications</MenuItem>
+                        <MenuItem
+                            style={defaultStyle}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            icon={<FontAwesomeIcon style={{ fontSize: '20px' }} icon={faBookBookmark} />}> Bookmarks</MenuItem>
+                        <MenuItem
+                            style={defaultStyle}
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            icon={<FontAwesomeIcon style={{ fontSize: '20px' }} icon={faComments} />}> My Comments </MenuItem>
 
-                </Menu>
-            </Sidebar>
-            <main style={{ padding: 1 }}>
-                <div>
-                    {/* <button className="sb-button" onClick={() => setIsExpanded(!isExpanded)}>
+
+                        {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
+                            <MenuItem
+                                style={getMenuItemStyle("/profile/my_articles")}
+                                onMouseEnter={(e) => handleMouseEnter(e, "/profile/my_articles")}
+                                onMouseLeave={(e) => handleMouseLeave(e, "/profile/my_articles")}
+                                component={<Link to="/profile/my_articles" />}
+                                icon={<FontAwesomeIcon style={{ fontSize: '20px' }} icon={faNewspaper} />}>
+                                My Articles
+                            </MenuItem>}
+
+                        {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
+                            <MenuItem
+                                style={getMenuItemStyle("/profile/write")}
+                                onMouseEnter={(e) => handleMouseEnter(e, "/profile/write")}
+                                onMouseLeave={(e) => handleMouseLeave(e, "/profile/write")}
+                                component={<Link to="/profile/write" />}
+                                icon={<FontAwesomeIcon style={{ fontSize: '20px' }} icon={faFilePen} />}>
+                                Write Article
+                            </MenuItem>}
+
+                        <hr />
+                        <br /><br /><br />
+
+                        {collapsed &&
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <button
+                                    onClick={() => {
+                                        setCollapsed(false); setSidebarExpanded(true);
+                                    }}
+                                    className="btn btn-light">
+                                    <FontAwesomeIcon
+                                        style={{ fontSize: '20px' }}
+                                        icon={faCircleChevronRight} />
+                                </button>
+                            </div>}
+                        <br />
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <OverlayTrigger placement="right" overlay={
+                                <Tooltip id="button-tooltip">Log Out</Tooltip>}>
+
+                                <button onClick={logout} className="btn btn-light">
+                                    <FontAwesomeIcon icon={faRightFromBracket} />
+                                </button>
+                            </OverlayTrigger>
+
+                        </div>
+
+                    </Menu>
+                </Sidebar>
+                <main style={{ padding: 1 }}>
+                    <div>
+                        {/* <button className="sb-button" onClick={() => setIsExpanded(!isExpanded)}>
                         Toggle
                     </button> */}
-                </div>
-            </main>
+                    </div>
+                </main>
+            </div>
         </div>
-
-
 
     );
 }

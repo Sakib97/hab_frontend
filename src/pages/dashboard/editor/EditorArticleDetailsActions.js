@@ -72,7 +72,9 @@ const EditorArticleDetailsActions = (props) => {
                 "article_id": props.article_id,
                 "decision_comment": reviseReason
             }
-            console.log("revisionModalOK", data, "\nACTIONS_API", ACTIONS_API, "\naction", action);
+            
+            // console.log("rejectModalOK", data, "\nACTIONS_API", ACTIONS_API, "\naction", action);
+            mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
             // mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
             // setShow(false); // modal closed
             // setRejectReason('')
@@ -87,7 +89,7 @@ const EditorArticleDetailsActions = (props) => {
                 "article_id": props.article_id,
                 "decision_comment": rejectReason
             }
-            console.log("rejectModalOK", data, "\nACTIONS_API", ACTIONS_API, "\naction", action);
+            // console.log("rejectModalOK", data, "\nACTIONS_API", ACTIONS_API, "\naction", action);
             mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
             // setShow(false); // modal closed
             // setRejectReason('')

@@ -86,7 +86,8 @@ const EditorUnrevArticles = () => {
                                 key={item.title}
                                 extra={
                                     <img
-                                        width={212}
+                                        // width={212}
+                                        height={200}
                                         alt="logo"
                                         src={item.cover_img_link}
                                     />
@@ -102,7 +103,14 @@ const EditorUnrevArticles = () => {
                                 />
                                 {item.content}
                                 <hr />
-                                Status: <b>{item.status} </b>
+                                {/* Status: <b>{item.status} </b> */}
+                                Status: &nbsp;
+                                {item.status.split('_').slice(0, 2).join('_') === "under_review" &&
+                                    <b style={{ color: '#103B7F', fontSize: '16px' }}>
+                                        {/* if it's under_review_edit_1 etc, then seperate the last number */}
+                                        Under Review {item.status !== "under_review_new" &&
+                                            `(Round ${parseInt(item.status.match(/\d+$/)[0], 10)})`}
+                                        &nbsp; <i className="fa-solid fa-circle-exclamation"></i> </b>}
                             </List.Item>
                         )}
                     />

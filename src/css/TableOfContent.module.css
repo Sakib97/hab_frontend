@@ -1,4 +1,5 @@
 .treeViewContainer {
+    /* position: sticky; */
     position: fixed;
     top: 150px;
     right: 10px;
@@ -10,6 +11,7 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
     max-height: 400px; /* Prevents from overflowing */
     overflow-y: auto; /* Scrollable content */
+    /* transform: translateX(830px); */
   }
   .treeViewContainer ul {
     list-style: none;

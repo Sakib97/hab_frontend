@@ -15,20 +15,22 @@ import EditorArticleDetailsActions from './EditorArticleDetailsActions';
 import { getFormattedTime } from '../../../utils/dateUtils';
 import { fetchData } from '../../../utils/getDataUtil';
 import { postData } from '../../../utils/postDataUtils';
-import { SafeHtmlRenderer } from '../../../utils/htmlRenderUtil';
+import { SafeHtmlRenderer, renderStrArray } from '../../../utils/htmlRenderUtil';
 import { set } from 'jodit/esm/core/helpers';
 
 const EditorArticleDetailsForRev = () => {
     const { articleID } = useParams();
+
     // if ?notification=true&id=... is present in the URL, then mark the notification as CLICKED
     const [searchParams] = useSearchParams();
     const isNotification = searchParams.get('notification') === 'true';
     const notificationId = searchParams.get('id');
+    const userType = searchParams.get('type');
 
     const CREATE_TAG_API = '/api/v1/category/create_tag'
     const ADD_TAG_TO_ARTICLE_API = '/api/v1/article/add_tag_to_article'
     const GET_UNREV_ARTICLE_BY_ID_API = `/api/v1/article/unreviewed_article/${articleID}`
-    const MARK_NOTIFICATION_CLICKED_API = `/api/v1/notification/mark_notis_as_clicked/editor/${notificationId}`
+    const MARK_NOTIFICATION_CLICKED_API = `/api/v1/notification/mark_notis_as_clicked/${userType}/${notificationId}`
 
     const [newTag, setNewTag] = useState(false)
     const [tagsList, setTagsList] = useState([])
@@ -85,7 +87,7 @@ const EditorArticleDetailsForRev = () => {
             () => fetchData(GET_UNREV_ARTICLE_BY_ID_API, axiosInst),
             {
                 keepPreviousData: true, // Preserve previous data while fetching new
-                staleTime: 600,  // Example option: Cache data for 6 seconds
+                // staleTime: 600,  // Example option: Cache data for 6 seconds
                 refetchOnWindowFocus: false,  // Disable refetch on window focus
             }
         );
@@ -136,21 +138,23 @@ const EditorArticleDetailsForRev = () => {
 
     }, [article]);
 
-   // This is for marking the notification as clicked when entered this page 
-   // via the notification link ----------------------------------------------
+    // This is for marking the notification as clicked when entered this page 
+    // via the notification link ----------------------------------------------
     const notisMutation = useMutation({
         mutationFn: postData,
         onSuccess: (response) => {
             // console.log("Notification marked as clicked:", response.data.type); // new_article_review_request_article_id_86
-            
+
             // Extract the article ID from the response 
             // response.data.type = new_article_review_request_article_id_86
             const atricle_id_from_response = parseInt(response.data.type.split('_').pop(), 10); // 86
-            if (atricle_id_from_response && 
-                atricle_id_from_response !== parseInt(articleID,10)) {
+            if (atricle_id_from_response &&
+                atricle_id_from_response !== parseInt(articleID, 10)) {
                 setNotisUrlError(true)
+                return;
+            } else {
+                setNotisUrlError(false)
             }
-            setNotisUrlError(false)
             // Invalidate and refetch
             queryClient.invalidateQueries('editorNotisData');
         },
@@ -158,16 +162,17 @@ const EditorArticleDetailsForRev = () => {
 
 
     useEffect(() => {
-        if (isNotification && notificationId) {
+        if (isNotification && notificationId && userType) {
             // console.log("Notification clicked", isNotification);
             // console.log("id: ", notificationId);
+            // console.log("userType: ", userType);
             notisMutation.mutate({ data: {}, url: MARK_NOTIFICATION_CLICKED_API, axiosInstance: axiosInst });
         }
         else {
             // setNotisUrlError(true)
             return;
         }
-    }, [isNotification, notificationId]);
+    }, [isNotification, notificationId, userType]);
     // ---------------------------------------------------
 
 
@@ -175,12 +180,31 @@ const EditorArticleDetailsForRev = () => {
         return <h3 style={{ padding: "30px" }}>Loading...</h3>;
     }
     if (!article || articleError) {
-        return <h3 style={{ padding: "30px", color: "red" }}>No article data found!</h3>;
+        if (articleError.response.data.detail === "Article Already Reviewed !") {
+            return <h3 style={{
+                display: 'flex', justifyContent: 'center',
+                padding: "30px", color: "red"
+            }}>Article Already Reviewed !</h3>;
+        }
+        else if (articleError.response.data.detail === "Article sent for edit !") {
+            return <h3 style={{
+                display: 'flex', justifyContent: 'center',
+                padding: "30px", color: "red"
+            }}>Article Sent for Edit !</h3>;
+        }
+        else {
+            return <h3 style={{
+                display: 'flex', justifyContent: 'center',
+                padding: "30px", color: "red"
+            }}>No article data found!</h3>;
+        }
     }
 
-    if(notisMutation.isError || notisUrlError) {
-        return <h3 style={{ padding: "30px", color: "red" }}>Invalid URL ! Please try again !</h3>;
+    if (notisMutation.isError || notisUrlError) {
+        return <h3 style={{ padding: "30px", color: "red", display: 'flex', justifyContent: 'center' }}>
+            <b>Invalid URL ! Please try again !!</b></h3>;
     }
+
 
     // console.log("article::: ", article);
 
@@ -326,8 +350,20 @@ const EditorArticleDetailsForRev = () => {
                     <span className={styles.date}>{submittedAt}</span>
                 </div>
 
+                {article.resubmitted_at !== "None" && <div>
+                    <br />
+                    Resubmitted at:
+                    {renderStrArray(article.resubmitted_at, "", "time")}
+                </div>}
+
                 <hr className={styles.divider} />
-                Article Status: <b>{article.status}</b>
+                Article Status: &nbsp;
+                {article.status.split('_').slice(0, 2).join('_') === "under_review" &&
+                    <b style={{ color: '#103B7F', fontSize: '16px' }}>
+                        {/* if it's under_review_edit_1 etc, then seperate the last number */}
+                        Under Review {article.status !== "under_review_new" &&
+                            `(Round ${parseInt(article.status.match(/\d+$/)[0], 10)})`}
+                        &nbsp; <i className="fa-solid fa-circle-exclamation"></i> </b>}
             </div>
             <hr />
 

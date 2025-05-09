@@ -1,0 +1,51 @@
++++++++++++++++++
+1. useParams
+=================
+ => Purpose: Used to access dynamic segments from the URL path.   
+ 
+ => URL Part: Works with the part of the URL before the ?. 
+    These segments are defined in your route configuration 
+    using colons (:)
+
+Example:  
+========
+    Route Definition:
+    =================
+    <Route path="/products/:productId" element={<ProductDetail />} />
+    <Route path="/users/:userId/profile" element={<UserProfile />} />
+    
+    Usage:
+    ======
+    import { useParams } from 'react-router-dom';
+    const { productId } = useParams(); // For URL like /products/123
+
+    // productId will be '123'
+    console.log(productId);
+
+++++++++++++++++++++
+2. useSearchParams:
+====================
+   => Purpose: Used to read and modify the URL query string 
+               (the key-value pairs after the ?).
+   => URL Part: Works with the part of the URL after the ?. 
+                 These are not defined in your route path.
+  
+    URL Example: 
+    ============
+        /search?query=react&page=1&sort=date
+    
+    Usage:
+    ======
+        import { useSearchParams } from 'react-router-dom';
+
+        const [searchParams, setSearchParams] = useSearchParams();
+
+        // Reading values
+        // Gets the value of the 'query' parameter
+        const query = searchParams.get('query'); 
+        
+        // Gets the value of the 'page' parameter
+        const page = searchParams.get('page');   
+
+        console.log('Search Query:', query); // e.g., 'react'
+        console.log('Page:', page);         // e.g., '1'

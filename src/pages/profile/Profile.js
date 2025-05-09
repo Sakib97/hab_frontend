@@ -6,22 +6,43 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import ProfileSidebar from "./ProfileSidebar";
 import styles from '../../css/Profile.module.css'
 import useProfileContext from "../../hooks/useProfileContext";
+import { fetchData } from "../../utils/getDataUtil";
+import { useQuery } from "react-query";
 
 
 const Profile = () => {
 
     const PROFILE_URL = '/api/v1/user/profile'
-
+    const TOTAL_UNREAD_NOTIS_COUNT_URL = '/api/v1/notification/unread_general_notis_count'
     const [isSidebarExpanded, setSidebarExpanded] = useState(false);
 
     const { auth, setAuth } = useAuth()
     const { profile, setProfile } = useProfileContext()
     const axiosPrivate = useAxiosPrivate();
+    const axiosInst = axiosPrivate;
 
     const navigate = useNavigate()
     const location = useLocation()
 
     // const screenWidth = window.innerWidth;
+
+    // for notification count////////////
+    const { data: unreadCount, error: unreadError,
+        isLoading: unreadLoading, refetch } = useQuery(
+            ['unreadGeneralNotisCount', TOTAL_UNREAD_NOTIS_COUNT_URL],
+            () => fetchData(TOTAL_UNREAD_NOTIS_COUNT_URL, axiosInst),
+            {
+                // keepPreviousData: true,
+                staleTime: 10,
+                refetchOnWindowFocus: true,
+                refetchOnMount: true
+            }
+        );
+    useEffect(() => {
+        // Refetch notifications when location changes or button is clicked
+        refetch();
+    }, [location])
+    /////// for notification count////////////
 
     useEffect(() => {
         // console.log("profile:: ", profile);
@@ -70,7 +91,7 @@ const Profile = () => {
 
             <div className={styles.profileContainer}>
                 <div className={styles.sidebarColumn}>
-                    <ProfileSidebar  setSidebarExpanded={setSidebarExpanded} />
+                    <ProfileSidebar unreadCount={unreadCount} setSidebarExpanded={setSidebarExpanded} />
                 </div>
                 {/* <div className={styles.contentColumn}> */}
                 <div className={`${styles.contentColumn} ${isSidebarExpanded ? styles.expandedContent : ''}`}>

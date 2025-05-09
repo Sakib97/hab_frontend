@@ -7,7 +7,9 @@ import { useLocation } from 'react-router-dom';
 import { poweredByJodit } from 'jodit/esm/plugins/powered-by-jodit/powered-by-jodit';
 
 // Use forwardRef to allow parent to access child methods
-const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
+const RichTextEditor = forwardRef(({ language, onChange, isEditable, editableArticle }, ref) => {
+    // console.log("RTE", isEditable, editableArticle);
+
     const DRAFT_ARTICLE_EN = "draftArticleEn";
     const DRAFT_ARTICLE_BN = "draftArticleBn";
 
@@ -33,36 +35,51 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
             savedContent = localStorage.getItem(DRAFT_ARTICLE_BN);
         }
         // if (savedContent  && isMounted) {
-            if (savedContent ) {
+        if (savedContent) {
             setContent(savedContent);
             setContent2(savedContent);
             onChange(savedContent);
         }
-        return () => {
-            isMounted = false; 
-        }
-    // }, [onChange, location]);
-}, []);
+        if (isEditable && editableArticle) {
+            if (language === 'en') {
+                setContent(editableArticle.article.content_en);
+                setContent2(editableArticle.article.content_en);
+                onChange(editableArticle.article.content_en);
+            }
 
-    
+            if (language === 'bn') {
+                setContent(editableArticle.article.content_bn);
+                setContent2(editableArticle.article.content_bn);
+                onChange(editableArticle.article.content_bn);
+            }
+
+
+        }
+        return () => {
+            isMounted = false;
+        }
+        // }, [onChange, location]);
+    }, []);
+
+
     useEffect(() => {
 
         // Dismiss all toasts when the component is unmounted
         return () => {
-          toast.remove();
+            toast.remove();
         };
-      }, [location]); // Runs on page navigation
+    }, [location]); // Runs on page navigation
 
     // IMP::: https://xdsoft.net/jodit/play.html
-    const isContent = ()=> {
-        if (language === 'en'){
+    const isContent = () => {
+        if (language === 'en') {
             const savedContent1 = localStorage.getItem(DRAFT_ARTICLE_EN);
             if (savedContent1 != null) {
                 return true;
             }
             return false;
         }
-        if (language === 'bn'){
+        if (language === 'bn') {
             const savedContent2 = localStorage.getItem(DRAFT_ARTICLE_BN);
             if (savedContent2 != null) {
                 return true;
@@ -71,23 +88,23 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
         }
         return false;
     }
-    
 
-    const config = useMemo(() => ({        
+
+    const config = useMemo(() => ({
         readonly: false, // all options from https://xdsoft.net/jodit/docs/,
         autofocus: false,
         placeholder: !isContent() ?
-            language==='en' ? 'Start Article Body...' : 'লিখা শুরু করুন...'
+            language === 'en' ? 'Start Article Body...' : 'লিখা শুরু করুন...'
             : ' ',
         minHeight: 500,
         maxHeight: 600,
         // minWidth: 400,
         maxWidth: 800,
         toolbarStickyOffset: 50,
-        removeButtons: language==='bn' ? 
-        ['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'source', 'ai-commands', 'ai-assistant'] 
-        : ['speechRecognize', 'about', 'copyformat','classSpan', 'ai-commands', 'ai-assistant'] 
-        , 
+        removeButtons: language === 'bn' ?
+            ['font', 'speechRecognize', 'about', 'copyformat', 'classSpan', 'source', 'ai-commands', 'ai-assistant']
+            : ['speechRecognize', 'about', 'copyformat', 'classSpan', 'ai-commands', 'ai-assistant']
+        ,
         events: {
             error: (error) => {
                 // Handle the error
@@ -129,7 +146,7 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
             //         toc: 'tocccc'
             //     }
             // }
-        }, 
+        },
 
     }),
         []
@@ -138,17 +155,21 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
     const handleEditorChange = (newContent) => {
         setContent(newContent);  // Update the state with the new content
         onChange(newContent); // Call the parent's onChange to lift the state up
-        
+
     };
 
     const saveDraft = () => {
         setContent2(content);
         if (isLangEN) {
-            localStorage.setItem(DRAFT_ARTICLE_EN, content)
+            if (!isEditable) {
+                localStorage.setItem(DRAFT_ARTICLE_EN, content)
+            }
             toast.success("English Draft Article Saved !", { duration: 1000 });
         }
         if (isLangBN) {
-            localStorage.setItem(DRAFT_ARTICLE_BN, content)
+            if (!isEditable) {
+                localStorage.setItem(DRAFT_ARTICLE_BN, content)
+            }
             toast.success("বাংলা খসড়া সেভ হয়েছে !", { duration: 1000 });
         }
 
@@ -180,14 +201,14 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
     };
 
     // Expose the resetFields method to the parent component
-  useImperativeHandle(ref, () => ({
-    rteResetFields() {
-        setContent2('');
-        setContent('');
-        localStorage.removeItem(DRAFT_ARTICLE_EN);
-        localStorage.removeItem(DRAFT_ARTICLE_BN);
-    }
-  }));
+    useImperativeHandle(ref, () => ({
+        rteResetFields() {
+            setContent2('');
+            setContent('');
+            localStorage.removeItem(DRAFT_ARTICLE_EN);
+            localStorage.removeItem(DRAFT_ARTICLE_BN);
+        }
+    }));
 
     const getHTMLContent = () => {
         const sanitizedContent = DOMPurify.sanitize(content);
@@ -218,11 +239,12 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
                     onChange={newContent => handleEditorChange(newContent)}
                     // onChange={value => setContent(value)}
                     onBlur={newContent => setContent2(newContent)}
-                    // onFocus={newContent => setContent2(newContent)}
-                    // onClick={value => setContent2(value)}
+                // onFocus={newContent => setContent2(newContent)}
+                // onClick={value => setContent2(value)}
                 // onChange={newContent => {const newC = newContent;}}
                 />
 
+                {/* {isEditable ? "" : */}
                 <div style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
                     <button type="submit" name="saveDraftEN"
                         onClick={saveDraft} className='btn btn-success'>
@@ -240,6 +262,7 @@ const RichTextEditor =forwardRef( ({language, onChange},ref ) => {
                         </span>
                     </button>
                 </div>
+                {/* } */}
 
             </div>
             {/* <button onClick={getHTMLContent}>Get HTML Content</button>

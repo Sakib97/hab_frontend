@@ -83,7 +83,7 @@ const Nav_bar = () => {
                                     <Nav.Link href="" className={`${styles.navLinkCustom} ml-2 nav-link`}>Profile <i className="fas fa-caret-down"></i>
                                     </Nav.Link>
                                 </Nav.Item>
-                                <div className={styles.dropdownContent}>
+                                <div className={styles.dropdownContent}> 
                                     <Link to="/profile/account"> Profile </Link>
                                     <Link to="/sadmin_dashboard"> SAdmin Dashboard </Link>
                                     <Link to="/editor_dashboard"> Editor Dashboard </Link>

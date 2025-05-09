@@ -18,11 +18,7 @@ import GoToTopButton from '../../../components/GoToTopButton';
 import BadgeTwoToneIcon from '@mui/icons-material/BadgeTwoTone';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import { useQuery } from 'react-query';
-
-const fetchData = async (url, axiosInstance) => {
-    const response = await axiosInstance.get(url);
-    return response.data;
-};
+import { fetchData } from '../../../utils/getDataUtil';
 
 const Editor = () => {
     const [collapsed, setCollapsed] = useState(true);
@@ -34,7 +30,7 @@ const Editor = () => {
     const axiosInst = axiosPrivate;
     const { data: unreadCount, error: unreadError,
         isLoading: unreadLoading, refetch } = useQuery(
-            ['unreadCount', TOTAL_UNREAD_COUNT_URL],
+            ['unreadEditorNotisCount', TOTAL_UNREAD_COUNT_URL],
             () => fetchData(TOTAL_UNREAD_COUNT_URL, axiosInst),
             {
                 // keepPreviousData: true,
@@ -146,7 +142,7 @@ const Editor = () => {
                     >
                         <Menu>
                             {broken && <MenuItem disabled >Editor Menu</MenuItem>}
-                            {/* {broken && <MenuItem style={{ marginBottom: "20px" }} disabled >Editor</MenuItem>} */}
+                            {/* {broken && <MenuItem style={{ marginBottom: "40px" }} disabled >Editor</MenuItem>} */}
                             <MenuItem
                                 style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
@@ -158,7 +154,9 @@ const Editor = () => {
                                 onMouseEnter={(e) => handleMouseEnter(e, "/editor_dashboard/notification")}
                                 onMouseLeave={(e) => handleMouseLeave(e, "/editor_dashboard/notification")}
                                 component={<Link to="/editor_dashboard/notification" />}
-                                icon={<Badge count={unreadCount?.totalUnread ? unreadCount.totalUnread : 0} overflowCount={5} color="#f5222d" >
+                                icon={<Badge
+                                    count={unreadCount?.totalUnread ? unreadCount.totalUnread : 0}
+                                    overflowCount={5} color="#f5222d" >
                                     <NotificationsTwoToneIcon />
                                 </Badge>}>
                                 Notification

@@ -45,18 +45,28 @@ const ProfileNotification = () => {
 
     // --- useEffect to process data when editorNotisData changes ---
     useEffect(() => {
-        //  console.log("editorNotisData changed, processing...");
         // This code runs whenever editorNotisData changes (including initial load)
-        const processedData = generalNotisData?.all_notis?.map(notis => ({
-            title: notis.notification_title,
-            title_color: notis.notification_title_color || "gray",
-            link: `${notis.notification_link}?notification=true&id=${notis.notification_id}` || "",
-            icon: notis.notification_icon || "!",
-            avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=1`,
-            description: notis.notification_text,
-            time: notis.notification_time,
-            is_clicked: notis.is_clicked,
-        })) || [];
+        const processedData = generalNotisData?.all_notis?.map(notis => {
+            // Function to construct the notification link
+            const constructNotificationLink = (notificationLink, notificationId) => {
+              const hasQueryString = notificationLink.includes('?'); // Check if the link already has a query string
+              const queryParams = `notification=true&id=${notificationId}&type=general`; // Additional query parameters
+              return hasQueryString
+                ? `${notificationLink}&${queryParams}` // Append with '&' if there's already a query string
+                : `${notificationLink}?${queryParams}`; // Append with '?' if there's no query string
+            };
+          
+            return {
+              title: notis.notification_title,
+              title_color: notis.notification_title_color || "gray",
+              link: constructNotificationLink(notis.notification_link, notis.notification_id), // Use the constructed link
+              icon: notis.notification_icon || "!",
+              avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=1`,
+              description: notis.notification_text,
+              time: notis.notification_time,
+              is_clicked: notis.is_clicked,
+            };
+          }) || [];
 
         // Update the state with the processed data
         setDisplayedNotis(processedData);

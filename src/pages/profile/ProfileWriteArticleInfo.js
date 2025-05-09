@@ -6,27 +6,30 @@ import { franc } from 'franc-min'
 import toast, { Toaster } from 'react-hot-toast';
 import Divider from '@mui/material/Divider';
 import useFetch from "../../hooks/useFetch";
-
-
 import axios, { axiosPrivate } from "../../api/axios";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
+import { fetchData } from "../../utils/getDataUtil";
+import { cleanedTags } from "../../utils/slugAndStringUtil";
 
-const fetchData = async (url, axiosInstance) => {
-    const response = await axiosInstance.get(url);
-    return response.data;
-};
-
-const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
-
+const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo, isEditable,
+    editableArticle }, ref) => {
+    // console.log("isEditable ", isEditable);
     const GET_MENU_URL = '/api/v1/category/get_all_cat'
     const GET_SUBMENU_URL = '/api/v1/category/get_all_subcat'
     const GET_TAG_URL = '/api/v1/category/get_all_tag'
 
     const DRAFT_ARTICLE_INFO = "draftArticleInfo";
+    // const EDITABLE_DRAFT_ARTICLE_INFO = "editableDraftArticleInfo";
 
-    const [tags, setTags] = useState([])
+    // const [tags, setTags] = useState([])
+    const [tags, setTags] = useState(
+        isEditable && editableArticle?.article?.tags
+            ? cleanedTags(editableArticle.article.tags)
+            : []
+    );
+
     const [newTag, setNewTag] = useState([])
     const [isNewTagVisible, setIsNewTagVisible] = useState(false);
     const [isOldTagDisabled, setIsOldTagDisabled] = useState(false);
@@ -36,14 +39,49 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
     const [categoryID, setCategoryID] = useState()
     const [subcategoryID, setSubCategoryID] = useState()
 
-    const [titleEN, setTitleEN] = useState('')
-    const [subtitleEN, setSubtitleEN] = useState('')
-    const [titleBN, setTitleBN] = useState('')
-    const [subtitleBN, setSubtitleBN] = useState('')
+    // const [titleEN, setTitleEN] = useState('')
+    const [titleEN, setTitleEN] = useState(
+        isEditable && editableArticle?.article?.title_en
+            ? editableArticle.article.title_en
+            : ''
+    );
+    // const [subtitleEN, setSubtitleEN] = useState('')
+    const [subtitleEN, setSubtitleEN] = useState(
+        isEditable && editableArticle?.article?.subtitle_en
+            ? editableArticle.article.subtitle_en
+            : ''
+    );
+    const [titleBN, setTitleBN] = useState(
+        isEditable && editableArticle?.article?.title_bn
+            ? editableArticle.article.title_bn
+            : ''
+    );
+    const [subtitleBN, setSubtitleBN] = useState(
+        isEditable && editableArticle?.article?.subtitle_bn
+            ? editableArticle.article.subtitle_bn
+            : ''
+    );
 
-    const [coverImgLink, setCoverImgLink] = useState('')
-    const [coverImgCapEN, setCoverImgCapEN] = useState('')
-    const [coverImgCapBN, setCoverImgCapBN] = useState('')
+
+    // const [coverImgLink, setCoverImgLink] = useState('')
+    const [coverImgLink, setCoverImgLink] = useState(
+        isEditable && editableArticle?.article?.cover_img_link
+            ? editableArticle.article.cover_img_link
+            : ''
+    );
+
+    // const [coverImgCapEN, setCoverImgCapEN] = useState('')
+    const [coverImgCapEN, setCoverImgCapEN] = useState(
+        isEditable && editableArticle?.article?.cover_img_cap_en
+            ? editableArticle.article.cover_img_cap_en
+            : ''
+    );
+    // const [coverImgCapBN, setCoverImgCapBN] = useState('')
+    const [coverImgCapBN, setCoverImgCapBN] = useState(
+        isEditable && editableArticle?.article?.cover_img_cap_bn
+            ? editableArticle.article.cover_img_cap_bn
+            : ''
+    );
 
     const [draftInfo, setDraftInfo] = useState({})
     const [error, setError] = useState(false)
@@ -188,7 +226,15 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
             label: tag.tag_name
         })) : [];
 
+    // this useEffect is executed when we first come to this write page
     useEffect(() => {
+        // localStorage.setItem(EDITABLE_DRAFT_ARTICLE_INFO, JSON.stringify(editableArticle));
+        // if (isEditable) {
+        //     const editableSavedInfo =localStorage.getItem(EDITABLE_DRAFT_ARTICLE_INFO);
+        //     const editableParsedInfo = JSON.parse(editableSavedInfo);
+        //     setSubtitleEN(editableParsedInfo.editor_email);
+        // }
+
         const savedInfo = localStorage.getItem(DRAFT_ARTICLE_INFO);
         // console.log("SavedInfo:: ", savedInfo);
 
@@ -252,6 +298,10 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
         // console.log("subcategory_id:: ", subcategory_id);
     }
 
+    const handleTagsChange = (newTags) => {
+        setTags(newTags);  // Update local state first
+        // Optionally: Debounce or combine with other fields before sending to parent
+    };
 
     const saveDraftInfo = () => {
         if (titleEN && detectLanguage(titleEN) !== 'eng') {
@@ -284,16 +334,19 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
         setError(false);
 
         const draftData = {
-            category: category, subCategory: subCategory, categoryID:categoryID, 
-            subcategoryID: subcategoryID,
+            category: (isEditable && editableArticle) ? editableArticle.category_name : category,
+            subCategory: (isEditable && editableArticle) ? editableArticle.subcategory_name : subCategory,
+            categoryID: (isEditable && editableArticle) ? editableArticle.article.category_id : categoryID,
+            subcategoryID: (isEditable && editableArticle) ? editableArticle.article.subcategory_id : subcategoryID,
             tags, newTag: newTag ? newTag : '', titleEN, titleBN,
             subtitleEN, subtitleBN, coverImgLink, coverImgCapEN, coverImgCapBN
         };
         setDraftInfo(draftData);
         finalArticleInfo(draftData);
 
-        // Save directly to localStorage
-        localStorage.setItem(DRAFT_ARTICLE_INFO, JSON.stringify(draftData));
+        if (!isEditable){
+            localStorage.setItem(DRAFT_ARTICLE_INFO, JSON.stringify(draftData));
+        }
         toast.success("Draft Info Saved!", { duration: 1000 });
 
         // console.log("info:: ", category, subCategory, tags, titleEN, titleBN, subtitleEN, subtitleBN);
@@ -358,9 +411,11 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
                         placeholder={catLoading ? "Loading.." :
                             catError ? "Server Error !" : "Select Category"}
                         style={{ width: 180 }}
-                        value={category}
+                        // value={category}
+                        value={(isEditable && editableArticle) ? editableArticle.category_name : category}
                         onChange={handleCategoryChange}
                         options={menuOptions}
+                        disabled={isEditable}
                     />
                 </div>
 
@@ -374,10 +429,10 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
                         placeholder={subCatLoading ? "Loading.." :
                             subCatError ? "Server Error !" : "Select Sub Category"}
                         style={{ width: 180 }}
-                        value={subCategory}
-                        // onChange={setSubCategory}
+                        value={(isEditable && editableArticle) ? editableArticle.subcategory_name : subCategory}
                         onChange={handleSubCategoryChange}
                         options={subMenuOptions}
+                        disabled={isEditable}
                     />
                 </div>
 
@@ -388,14 +443,16 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
                     <label>Tags </label>
                     <Select
                         ref={(el) => (selectRefs.current[2] = el)}
+                        // key={tags.length} // Reset when tags change
                         mode="multiple"
                         disabled={isOldTagDisabled}
                         maxCount={MAX_COUNT}
                         value={tags}
+                        // value={(isEditable && editableArticle)? cleanedTags(editableArticle.article.tags) : tags}
                         style={{ width: 250 }}
-                        onChange={setTags}
+                        // onChange={setTags}
+                        onChange={handleTagsChange}
                         suffixIcon={suffix}
-                        // placeholder="Please select"
                         placeholder={tagLoading ? "Loading.." :
                             tagError ? "Server Error !" : "Please select"}
                         options={tagOptions}
@@ -435,6 +492,7 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
                         className={styles.customInput}
                         placeholder="Title (English)"
                         value={titleEN}
+                        // value={(isEditable && editableArticle)? editableArticle.article.title_en : tags}
                         onChange={(e) => setTitleEN(e.target.value)}
                     // required
                     />
@@ -512,7 +570,8 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
             </div>
             <hr />
 
-            <div style={{ marginTop: "-10px", display: "flex", justifyContent: "center" }}>
+            {/* {isEditable ? '' : */}
+                <div style={{ marginTop: "-10px", display: "flex", justifyContent: "center" }}>
                 <button name="saveDraftInfo"
                     className='btn btn-success'
                     onClick={saveDraftInfo}> <i className="fa-solid fa-floppy-disk"></i> Save Draft Info </button> &nbsp;&nbsp;
@@ -520,7 +579,8 @@ const ProfileWriteArticleInfo = forwardRef(({ finalArticleInfo }, ref) => {
                 <button name="clearDraftInfo"
                     className='btn btn-danger'
                     onClick={clearDraftInfo}> <i className="fa-regular fa-trash-can"></i> Clear Draft Info </button>
-            </div>
+            </div> 
+            {/* } */}
         </div>
     );
 })

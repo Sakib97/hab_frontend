@@ -19,7 +19,7 @@
 
 .contentColumn {
     flex: 3;
-    padding: 15px;
+    padding: 10px;
 
     display: flex;
     flex-direction: column;
@@ -51,11 +51,16 @@ h5 {
 .sidebarContainer {
     display: flex;
     height: 100%;
+    
     /* color:#000000; */
     /* color:#efebeb9f; */
     /* min-height: 400px; */
 
     overflow: hidden;
+}
+
+.collapseButton{
+    display: none;
 }
 
 @media (max-width: 768px) {
@@ -71,8 +76,31 @@ h5 {
         min-width: 100%; 
     } */
 
+    .sidebarColumn {
+        position: fixed;
+       /* height: auto; */
+       z-index: 1001;
+       /* background-color: red; */
+    }
+
     .contentColumn {
-        max-width: 84%;
+        /* max-width: 84%; */
+        margin-left: 0px;
+        margin-top: 7px;
+    }
+    .collapseButton {
+        position: fixed;
+        display: flex;
+        /* justify-content: center; */
+        padding: 0 0 0 2px;
+        /* background-color: white; */
+        /* transform: translateX(300px); */
+        /* z-index: 999; */
+    }
+    .sidebarContainer{
+        position: fixed;
+        background-color: white;
+        z-index: 1001;
     }
 
 }

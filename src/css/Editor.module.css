@@ -153,6 +153,12 @@
     justify-content: center;
 }
 
+
+.iconHistory{
+    font-size: 40px;
+    color: darkred;
+}
+
 @media (max-width: 768px) {
 
     /* .editorNav {

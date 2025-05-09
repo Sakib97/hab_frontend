@@ -18,6 +18,11 @@ It's useQuery() has these parameters:
                                         while we are inside <Editor /> of course !)
                 refetchOnMount: true (will call API when we reload <Editor />)
 
+useEffect(() => {
+        // Refetch notifications when location changes or button is clicked
+        refetch();
+    }, [location])
+
 Step 3:
 =======
 Later in <Editor />, we do this with notification item: 
@@ -46,5 +51,13 @@ In the backend, this API makes all notis_read_status = True.
 
 So, when "TOTAL_UNREAD_COUNT_URL" also loads with "ALL_EDITOR_NOTIS_URL",
 the unred numbers above the notis icon disappears.
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+========================================================
+When Notifications are marked as clicked ?
+========================================================
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
