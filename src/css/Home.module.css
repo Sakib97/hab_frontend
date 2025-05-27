@@ -78,6 +78,7 @@
 }
 
 .picOfArticle {
+    border-radius: 8px;
     height: 80px;
     width: 100px;
     /* Ensure height is the same as width */
@@ -138,6 +139,8 @@
 
 .footer{
     background-color: rgb(185, 210, 238);
+    /* position: sticky;
+  bottom: 0; */
 }
 .footerOptions{
     justify-content: center; 

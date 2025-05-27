@@ -5,7 +5,7 @@
     align-items: center;
     border-bottom: 1px solid #ccc;
     padding: 5px ;
-    transform: translateY(-1px);
+    transform: translateY(-14px);
     background-color: white;
     width: 100%; 
     z-index: 999;
@@ -64,8 +64,8 @@
     .navbar {
         flex-direction: row;
         /* Adjusted padding for small screens */
-        transform: translateY(20px);
-        /* margin-top: -10px; */
+        transform: translateY(-14px);
+        /* margin-top: -0px; */
         padding-left: 10px; 
         font-size: 12px; 
     }

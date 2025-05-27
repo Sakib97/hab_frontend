@@ -1,0 +1,227 @@
+.outerProfileContainer {
+    margin: 20px 0 0px 30px;
+    /* background-color: red; */
+}
+
+.profileInfoContainer {
+    display: flex;
+    align-items: center;
+    background-color: #F9F5F5;
+    padding: 20px 20px 20px 20px;
+    width: 85vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 0 30px 0;
+    /* border: 3px solid black; */
+
+}
+
+.profileImageContainer {
+    margin: 0px 20px 0px 0px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* Optional: Keeps the image proportions and covers the circle */
+    object-fit: cover;
+}
+
+.profileNameContainer {
+    font-size: 20px;
+
+}
+
+.messageContainer {
+    background-color: #F9F5F5;
+    padding: 10px 10px 10px 10px;
+    width: 85vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 0 30px 0;
+}
+
+.secondRowContainer {
+    display: flex;
+    justify-content: center;
+    height: 30vh;
+    margin: 0 0 30px 0;
+}
+
+.authCategoryContainer {
+    background-color: #F9F5F5;
+    width: 42vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 10px 0 0;
+    padding: 20px 5px 0px 5px;
+
+}
+
+.authCategoryHeading {
+    font-size: 25px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.authCategoryList {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 10px 0;
+    font-size: 20px;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    /* Add scroll if the tree is too large */
+    overflow-y: auto;
+}
+
+/* Customize the scrollbar appearance for better aesthetics */
+.authCategoryList::-webkit-scrollbar {
+    width: 7px;
+  }
+  .authCategoryList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .authCategoryList::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  .authCategoryList::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+.authCategoryTree {
+    font-size: 18px !important;
+    color: black !important;
+    background-color: #F9F5F5 !important;
+    max-height: 200px !important;
+    /* border: 1px solid #000000 !important; */
+}
+
+/* Style the tree nodes (optional, for deeper customization) */
+.authCategoryTree .ant-tree-node-content-wrapper {
+    font-size: 16px !important;
+    color: black !important;
+}
+
+.awaitReviewContainer {
+    background-color: #F9F5F5;
+    width: 41vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 0 0 10px;
+    padding: 20px 5px 0px 5px;
+}
+
+.awaitNumber {
+    margin: 30px 0 0 0px;
+    font-size: 50px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center
+}
+
+.awaitButtonContainer {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 10px 0px;
+}
+
+.awaitButton {
+    background-color: #F9F5F5;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 10px 20px 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+}
+
+.awaitButton:hover {
+    background-color: #000000;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.thirdRowContainer {
+    display: flex;
+    justify-content: center;
+    height: 30vh;
+    margin: 0 0 30px 0;
+
+}
+
+.totalReviewContainer {
+    background-color: #F9F5F5;
+    width: 25vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 10px 0 0;
+    padding: 20px 5px 10px 5px;
+}
+
+.newAuthContainer {
+    background-color: #F9F5F5;
+    width: 25vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 50px 0 50px;
+    padding: 20px 5px 10px 5px;
+}
+
+.hideArticleContainer {
+    background-color: #F9F5F5;
+    width: 25vw;
+    box-shadow: 5px 5px 13px #888888;
+    /* Right 5px, Down 5px, 5px blur, gray color */
+    border-radius: 10px;
+    margin: 0 0 0 10px;
+    padding: 20px 5px 10px 5px;
+}
+
+.textContainer {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    /* margin: 10px 0 10px 0; */
+    padding: 10px;
+    font-size: 17px;
+}
+
+@media (max-width: 991px) {
+    .secondRowContainer {
+        display: inline;
+    }
+
+    .authCategoryContainer {
+        width: 85vw;
+        margin: 0 0 30px 0;
+    }
+
+    .awaitReviewContainer {
+        width: 85vw;
+        margin: 0 0 30px 0;
+        padding: 20px 5px 10px 5px;
+
+    }
+
+    .thirdRowContainer {
+        display: inline;
+    }
+
+    .totalReviewContainer,
+    .newAuthContainer,
+    .hideArticleContainer {
+        width: 85vw;
+        margin: 0 0 30px 0;
+        padding: 0 0 10px 0;
+    }
+
+}

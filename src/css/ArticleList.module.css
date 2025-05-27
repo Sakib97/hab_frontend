@@ -1,3 +1,4 @@
+
 .subCatList {
     display: flex;
     /* flex-wrap: Controls whether the flex items should
@@ -41,21 +42,54 @@
 }
 
 .articleListItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin: 20px 0;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    margin: 20px 0 0 0 !important;
     border-radius: 10px;
     background-color: #f4f4f4;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.articleListItemContent {
+    text-decoration: none;
+    color: #333;
+    /* font-size: 18px; */
+    font-weight: 600;
+    /* transition: color 0.3s ease; */
+    text-decoration: none;
+}
+
+.articleListItemContent:hover {
+    color: rgb(255, 0, 0);
+    opacity: 0.9;
+    /* font-weight: 600; */
+    /* text-decoration: underline; */
+}
+
 .articleListItemPic {
-    width: 300px;
+    width: 200px;
     height: 200px;
     border-radius: 10px;
     object-fit: cover;
+}
+
+.loadMoreBtn{
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 10px 20px 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+}
+.loadMoreBtn:hover {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border: 2px solid #000000 !important;
+    cursor: pointer;
 }
 
 @media (max-width: 991px) {

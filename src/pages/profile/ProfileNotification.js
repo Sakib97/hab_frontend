@@ -7,20 +7,6 @@ import { Link } from 'react-router-dom';
 import { getFormattedTime } from '../../utils/dateUtils';
 import AccessTimeTwoToneIcon from '@mui/icons-material/AccessTimeTwoTone';
 import styles from '../../css/Notification.module.css';
-const data = [
-    {
-        title: 'Ant Design Title 1',
-    },
-    {
-        title: 'Ant Design Title 2',
-    },
-    {
-        title: 'Ant Design Title 3',
-    },
-    {
-        title: 'Ant Design Title 4',
-    },
-];
 
 const ProfileNotification = () => {
     const [page, setPage] = useState(1);
@@ -59,7 +45,7 @@ const ProfileNotification = () => {
             return {
               title: notis.notification_title,
               title_color: notis.notification_title_color || "gray",
-              link: constructNotificationLink(notis.notification_link, notis.notification_id), // Use the constructed link
+              link: constructNotificationLink(notis?.notification_link, notis?.notification_id), // Use the constructed link
               icon: notis.notification_icon || "!",
               avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=1`,
               description: notis.notification_text,

@@ -54,6 +54,8 @@ const ProfileMyArticle = () => {
             description: `Submission Time: ${getFormattedTime(article.submitted_at)}`,
             content: article.subtitle_en,
             cover_img_link: article.cover_img_link,
+            category_name: article.category_name,
+            subcategory_name: article.subcategory_name,
             // article
         })) || [];
 
@@ -120,10 +122,15 @@ const ProfileMyArticle = () => {
                         >
                             <List.Item.Meta
                                 // avatar={<Avatar src={item.avatar} />}
-                                title={<Link to={item.href}>
-
-                                    <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{item.title}</span>
-                                </Link>}
+                                title={
+                                    <div>
+                                        {item.category_name} {'>'} {item.subcategory_name}
+                                        <br />
+                                        <Link to={item.href}>
+                                            <span style={{ fontSize: '18px', fontWeight: 'bold', color: "black" }}>{item.title}</span>
+                                        </Link>
+                                    </div>
+                                }
                                 description={item.description}
                             />
                             <span style={{ fontSize: '16px' }}>{item.content}</span>
@@ -139,13 +146,13 @@ const ProfileMyArticle = () => {
                             {item.status.split('_').slice(0, 2).join('_') === "under_review" &&
                                 <b style={{ color: '#103B7F', fontSize: '16px' }}>
                                     {/* if it's under_review_edit_1 etc, then seperate the last number */}
-                                    Under Review {item.status !== "under_review_new" && 
-                                    `(Round ${parseInt(item.status.match(/\d+$/)[0] , 10)})`}  
+                                    Under Review {item.status !== "under_review_new" &&
+                                        `(Round ${parseInt(item.status.match(/\d+$/)[0], 10)})`}
                                     &nbsp; <i className="fa-solid fa-circle-exclamation"></i> </b>}
 
                             {item.status.split('_').slice(0, -1).join('_') === "sent_for_edit" &&
                                 <b style={{ color: '#B71C1C', fontSize: '16px' }}>
-                                    Edit Requested (Round {item.status.split('_')[item.status.split('_').length - 1] })  
+                                    Edit Requested (Round {item.status.split('_')[item.status.split('_').length - 1]})
                                     &nbsp;<i className="fa-solid fa-square-pen"></i> </b>
                             }
                         </List.Item>

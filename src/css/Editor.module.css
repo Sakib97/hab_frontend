@@ -9,7 +9,7 @@
 
 .editorSidebar {
     position: fixed;
-    top: 165px;
+    top: 166px;
     left: 0;
     height: calc(100vh - 165px);
     z-index: 1000;
@@ -159,7 +159,8 @@
     color: darkred;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) { */
+    @media (max-width: 991px) {
 
     /* .editorNav {
         top: 0px;

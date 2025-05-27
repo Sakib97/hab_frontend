@@ -55,7 +55,7 @@ const EditorUnrevArticles = () => {
     // console.log("unredDataDisplay:: ", unredDataDisplay);
     return (
         <div style={{
-            padding: "20px",
+            padding: "5px 20px 20px 20px",
             // backgroundColor: "red",
             width: "100vw",
             display: "flex", justifyContent: "center",
@@ -98,10 +98,11 @@ const EditorUnrevArticles = () => {
                                     avatar={<Avatar src={item.avatar} />}
                                     title={<Link to={item.href}
                                         state={{ article: item.article }}>
-                                        {item.title}</Link>}
+                                        <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{item.title}</span>
+                                        </Link>}
                                     description={item.description}
                                 />
-                                {item.content}
+                                <span style={{ fontSize: '16px' }}>{item.content}</span>
                                 <hr />
                                 {/* Status: <b>{item.status} </b> */}
                                 Status: &nbsp;
@@ -110,7 +111,7 @@ const EditorUnrevArticles = () => {
                                         {/* if it's under_review_edit_1 etc, then seperate the last number */}
                                         Under Review {item.status !== "under_review_new" &&
                                             `(Round ${parseInt(item.status.match(/\d+$/)[0], 10)})`}
-                                        &nbsp; <i className="fa-solid fa-circle-exclamation"></i> </b>}
+                                        &nbsp;<i className="fa-solid fa-circle-exclamation"></i> </b>}
                             </List.Item>
                         )}
                     />

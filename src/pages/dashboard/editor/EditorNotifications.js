@@ -75,7 +75,7 @@ const EditorNotifications = () => {
 
     return (
         <div style={{
-            padding: "40px 0 0 20px",
+            padding: "20px 0 0 20px",
             // backgroundColor: "red",
             width: "90vw"
         }}
@@ -143,7 +143,7 @@ const EditorNotifications = () => {
                         />
                 }
             </div>
-
+            
         </div>
     );
 }

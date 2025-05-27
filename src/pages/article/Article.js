@@ -4,7 +4,7 @@ import LanguageToggle from '../../components/LanguageToggle';
 import ArticleReacftions from './ArticleReactions';
 import ArticleComments from './ArticleComments';
 import Footer from '../../components/Footer';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { deSlugify, slugify, stringToArray } from '../../utils/slugAndStringUtil';
 import { fetchData } from '../../utils/getDataUtil';
 import axios from '../../api/axios';
@@ -140,12 +140,19 @@ const Article = () => {
                             separator=">"
                             items={[
                                 {
-                                    // title: 'Home',
-                                    title: `${articleData.article.category_name}` // Category,
+                                    title:
+                                        <Link to={`/category/${slugify(articleData.article.category_name)}`}>
+                                            {`${articleData.article.category_name}`}
+                                        </Link>
+
                                 },
                                 {
-                                    // title: 'Application Center',
-                                    title: `${articleData.article.subcategory_name}` // Subcategory,
+                                    title:
+                                        <Link to={`/category/${slugify(articleData.article.category_name)}/${slugify(articleData.article.subcategory_name)}`}>
+                                            <span style={{color: 'black' }}>
+                                                {`${articleData.article.subcategory_name}`}
+                                            </span>
+                                        </Link>
                                 }
                             ]}
                         />

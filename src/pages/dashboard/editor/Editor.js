@@ -136,7 +136,7 @@ const Editor = () => {
                         backgroundColor={broken ? "white" : "#f0f0f0"}
                         collapsed={collapsed}
                         toggled={broken && !collapsed}
-                        customBreakPoint="768px"
+                        customBreakPoint="991px"
                         onBreakPoint={setBroken}
                         onBackdropClick={broken ? () => setCollapsed(true) : ''}
                     >
@@ -144,9 +144,10 @@ const Editor = () => {
                             {broken && <MenuItem disabled >Editor Menu</MenuItem>}
                             {/* {broken && <MenuItem style={{ marginBottom: "40px" }} disabled >Editor</MenuItem>} */}
                             <MenuItem
-                                style={defaultStyle}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
+                                style={getMenuItemStyle("/editor_dashboard/profile")}
+                                onMouseEnter={(e) => handleMouseEnter(e, "/editor_dashboard/profile")}
+                                onMouseLeave={(e) => handleMouseLeave(e, "/editor_dashboard/profile")}
+                                component={<Link to="/editor_dashboard/profile" />}
                                 icon={<BadgeTwoToneIcon />}>Editor Profile</MenuItem>
 
                             <MenuItem
@@ -184,10 +185,13 @@ const Editor = () => {
                 <main className={`${styles.editorContent} 
                 ${!collapsed ? styles.expandedEditor : ''}`}
                     style={{ padding: 0 }}>
-                    <div className={`${styles.editorBreadcrumb}`} >
+                    {/* <div className={`${styles.editorBreadcrumb}`} >
                         <Breadcrumb items={breadcrumbItems} />
-                    </div>
-                    <div style={{ marginTop: "25px", paddingTop: 10 }}>
+                    </div> */}
+                    <div style={{
+                        // marginTop: "25px",
+                        // paddingTop: 10
+                    }}>
                         <Outlet />
                     </div>
                     <GoToTopButton />

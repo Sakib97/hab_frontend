@@ -18,17 +18,6 @@ import { fetchData } from "../../utils/getDataUtil";
 import { cleanedTags } from "../../utils/slugAndStringUtil";
 import { postData } from "../../utils/postDataUtils";
 
-// const postData = async (data, url, axiosInstance) => {
-//   const response = await axiosInstance.post(url,
-//     JSON.stringify(data),
-//     {
-//       headers: { 'Content-Type': 'application/json' },
-//       withCredentials: true
-//     }
-//   );
-//   return response;
-// }
-
 const ProfileWrite = () => {
 
   /// When sent_for_edit from my_articles -------------

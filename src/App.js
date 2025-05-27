@@ -16,6 +16,7 @@ import ProfileAccount from './pages/profile/ProfileAccount';
 import ProfileWrite from './pages/profile/ProfileWrite';
 import ForgetPassMail from './pages/auth/ForgetPassMail';
 import ForgetPassResetPass from './pages/auth/ForgetPassResetPass';
+import EditorProfile from './pages/dashboard/editor/EditorProfile';
 import EditorArticleReview from './pages/dashboard/editor/EditorArticleReview';
 import EditorUnrevArticles from './pages/dashboard/editor/EditorUnrevArticles';
 import EditorReviewHistory from './pages/dashboard/editor/EditorReviewHistory';
@@ -26,6 +27,7 @@ import ProfileMyArticle from './pages/profile/ProfileMyArticle';
 import Article from './pages/article/Article';
 import Footer from "../src/components/Footer";
 import ArticleList from './pages/articleList/ArticleList';
+import ArticleSubCategoryList from './pages/articleList/ArticleSubCategoryList';
 import ProfileMyArticleDetails from './pages/profile/ProfileMyArticleDetails';
 
 function App() {
@@ -50,10 +52,10 @@ function App() {
           className="content">
           <Routes>
             <Route exact path="/" element={<Home />}></Route>
-            <Route exact path="/article" element={<Article/>}></Route>
-            <Route exact path="/:catSlug/:subCatSlug/article/:articleID/:articleTitleSlug" element={<Article/>}></Route>
-            <Route exact path="/category/:categorySlug" element={<ArticleList/>}></Route>
-
+            <Route exact path="/article" element={<Article />}></Route>
+            <Route exact path="/:catSlug/:subCatSlug/article/:articleID/:articleTitleSlug" element={<Article />}></Route>
+            <Route exact path="/category/:categorySlug" element={<ArticleList />}></Route>
+            <Route exact path="/category/:categorySlug/:subcategorySlug" element={<ArticleSubCategoryList />}></Route>
 
             <Route element={<RequireNoAuth />}>
               <Route path="/auth" element={<AuthLayout />}>
@@ -73,7 +75,7 @@ function App() {
                 <Route index element={<Navigate to="account" />} />
                 <Route path='account' element={<ProfileAccount />}></Route>
                 <Route path='my_articles' element={<ProfileMyArticle />}>
-                    <Route path='details' element={<ProfileMyArticleDetails />}></Route>
+                  <Route path='details' element={<ProfileMyArticleDetails />}></Route>
                 </Route>
               </Route>
             </Route>
@@ -89,13 +91,16 @@ function App() {
 
             <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
               <Route path="/editor_dashboard" element={<Editor />} >
+                <Route index element={<Navigate to="profile" />} />
+                <Route path='profile' element={<EditorProfile />}></Route>
+
                 <Route path='review' element={<EditorArticleReview />}>
+                  <Route index element={<Navigate to="unreviwed-articles" />} />
                   <Route path='unreviwed-articles' element={<EditorUnrevArticles />}></Route>
-                  {/* <Route path='unreviwed-article/:articleID' element={<EditorUnrevArticles />}></Route> */}
                   <Route path='review-history' element={<EditorReviewHistory />}></Route>
-                  {/* <Route path='article-review' element={<EditorArticleDetailsForRev />}></Route> */}
                   <Route path='article-review/:articleID' element={<EditorArticleDetailsForRev />}></Route>
                 </Route>
+
                 <Route path='notification' element={<EditorNotifications />}></Route>
 
               </Route>

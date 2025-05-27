@@ -93,7 +93,15 @@ const EditorArticleDetailsForRev = () => {
         );
 
 
+    // useEffect(() => {
+    //     if (articleData && articleData.article) {
+    //         // console.log("articleData:: ", articleData.article);
+    //         // console.log("articleData:: ", articleData.article.tags);
+    //         // console.log("articleData:: ", articleData.article.submitted_at);
+    //     }
+    // }, [articleData]);
     const article = articleData?.article;
+    
     const [isEnglish, setIsEnglish] = useState(true);
 
     const handleLanguageToggle = (newIsEnglish) => {
@@ -134,6 +142,8 @@ const EditorArticleDetailsForRev = () => {
 
         const dateStr = article.submitted_at
         const finalFormattedString = getFormattedTime(dateStr);
+        // console.log("finalFormattedString:: ", finalFormattedString);
+        
         setSubmittedAt(finalFormattedString)
 
     }, [article]);
@@ -350,7 +360,7 @@ const EditorArticleDetailsForRev = () => {
                     <span className={styles.date}>{submittedAt}</span>
                 </div>
 
-                {article.resubmitted_at !== "None" && <div>
+                {article.resubmitted_at !== null && <div>
                     <br />
                     Resubmitted at:
                     {renderStrArray(article.resubmitted_at, "", "time")}

@@ -12,7 +12,9 @@ const EditorArticleReview = () => {
     }, [location])
 
     return (
-        <div style={{ marginTop: "15px" }}>
+        <div style={{ 
+            marginTop: "15px" 
+            }}>
             <div className={styles.navbar}>
                 <div className={styles.navItems}>
                     <Link
@@ -52,7 +54,7 @@ const EditorArticleReview = () => {
             </div>
 
             <div style={{
-                paddingTop: "40px", 
+                paddingTop: "20px", 
                 // display: "flex", justifyContent: "center", alignItems: "center"
                 // display: "flex"
             }}

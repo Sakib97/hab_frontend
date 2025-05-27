@@ -117,7 +117,10 @@ const SubNavBar = () => {
                                         style={defaultStyle}
                                         onMouseEnter={handleMouseEnter}
                                         onMouseLeave={handleMouseLeave}
-                                        component={<Link to={category.path} />}
+                                        component={<Link 
+                                            to={category.path} 
+                                            state={{ resetPagination: true }}
+                                            />}
                                     >
                                         <span style={{
                                             color: '#fff',

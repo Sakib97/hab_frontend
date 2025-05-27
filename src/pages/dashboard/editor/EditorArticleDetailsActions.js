@@ -8,10 +8,12 @@ import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRef, useState, useEffect } from 'react';
 import { containsCharacter } from '../../../utils/slugAndStringUtil';
+import { useNavigate } from 'react-router-dom';
 
 const EditorArticleDetailsActions = (props) => {
     const [action, setAction] = useState('')
     const [actionTextForModal, setActionTextForModal] = useState('')
+    const navigate = useNavigate();
 
     const ACTIONS_API = `/api/v1/article/article_actions/${action}`
     // Add a ref to the form
@@ -59,12 +61,15 @@ const EditorArticleDetailsActions = (props) => {
                 "article_id": props.article_id,
                 "decision_comment": ''
             }
-            console.log("acceptModalOK data", data);
+            // console.log("acceptModalOK data", data);
 
             // sending data as an object (hence {}) to 
             // postData function via mutation 
-            // mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
-
+            mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
+            // With replace: true, the current page is replaced 
+            // with the new page, so the user cannot go back to 
+            // the previous page using the browser's back button.
+            navigate('/editor_dashboard/review/review-history', { replace: true });
             // setShow(false); // modal closed
         }
         if (buttonName === 'revisionModalOK') {
@@ -72,10 +77,10 @@ const EditorArticleDetailsActions = (props) => {
                 "article_id": props.article_id,
                 "decision_comment": reviseReason
             }
-            
+
             // console.log("rejectModalOK", data, "\nACTIONS_API", ACTIONS_API, "\naction", action);
             mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
-            // mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
+            navigate('/editor_dashboard/review/review-history', { replace: true });
             // setShow(false); // modal closed
             // setRejectReason('')
             // setReviseReason('')
@@ -91,6 +96,8 @@ const EditorArticleDetailsActions = (props) => {
             }
             // console.log("rejectModalOK", data, "\nACTIONS_API", ACTIONS_API, "\naction", action);
             mutation.mutate({ data: data, url: ACTIONS_API, axiosInstance: axiosInst });
+            navigate('/editor_dashboard/review/review-history', { replace: true });
+
             // setShow(false); // modal closed
             // setRejectReason('')
             // setReviseReason('')
@@ -104,11 +111,11 @@ const EditorArticleDetailsActions = (props) => {
             setIsRejectable(false)
             setIsReviseable(true)
             setIsAcceptable(false)
-            console.log("revision");
+            // console.log("revision");
 
         }
         if (buttonName === 'reject') {
-            console.log("reject");
+            // console.log("reject");
 
             setIsReviseable(false)
             setIsRejectable(true)
@@ -124,7 +131,7 @@ const EditorArticleDetailsActions = (props) => {
 
         }
         if (buttonName === 'rejectCancel') {
-            console.log("rejectcancel");
+            // console.log("rejectcancel");
 
             setRejectReason('')
             setReviseReason('')

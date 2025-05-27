@@ -199,7 +199,7 @@ const ProfileMyArticleDetails = () => {
                             {renderStrArray(articleData.resubmitted_at, "You Resubmitted at - ", "time")}
                         </div>}
 
-                        
+
                     {articleData.rejected_at !== "None" &&
                         <div>Rejected at: <b> {getFormattedTime(articleData.rejected_at)} </b> </div>}
 
@@ -224,6 +224,8 @@ const ProfileMyArticleDetails = () => {
             {/* {articleData.sent_for_edit_at !== "None" && */}
             {/* if article is under review, don't show the edit button */}
             {articleData.article_status.split('_').slice(0, 2).join('_') !== "under_review" &&
+                articleData.article_status !== "rejected" &&
+                articleData.article_status !== "approved" &&
                 <div className={`${styles.discussion}`}>
                     <Link to={`/profile/write?edit=true&a_id=${articleData.article_id}`}
                         state={{
@@ -245,7 +247,10 @@ const ProfileMyArticleDetails = () => {
 
                 </div>}
 
-            {articleData.article_status.split('_').slice(0, 2).join('_') !== "under_review" && <hr />}
+            {articleData.article_status.split('_').slice(0, 2).join('_') !== "under_review" &&
+                articleData.article_status !== "rejected" &&
+                articleData.article_status !== "approved" &&
+                <hr />}
 
 
             <div className={`${styles.discussion}`}>

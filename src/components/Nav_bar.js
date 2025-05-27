@@ -10,6 +10,7 @@ import useProfileContext from '../hooks/useProfileContext';
 import { Divider } from 'antd';
 import { Padding } from '@mui/icons-material';
 import SubNavBar from './SubNavBar';
+import dashboardImage from '../assets/dashboard.svg';
 
 const Nav_bar = () => {
     const { auth } = useAuth()
@@ -43,6 +44,7 @@ const Nav_bar = () => {
                 <Container >
                     <Navbar.Brand href="/" className={styles.navbarBrandCustom} >
                         History & Beyond
+
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
@@ -56,6 +58,7 @@ const Nav_bar = () => {
                                         placeholder="Search..."
                                         className={styles.searchInput}
                                     />
+                                    <img src="../assets/dashboard.png" alt="" />
                                 </div>
                             </div>
 
@@ -78,18 +81,17 @@ const Nav_bar = () => {
                                 </Nav.Item>
                             }
 
-                            <div style={{ paddingRight: "15px" }} className={styles.dropdown}>
+                            {/* <div style={{ paddingRight: "15px" }} className={styles.dropdown}>
                                 <Nav.Item className={styles.navLinkCustom}>
                                     <Nav.Link href="" className={`${styles.navLinkCustom} ml-2 nav-link`}>Profile <i className="fas fa-caret-down"></i>
                                     </Nav.Link>
                                 </Nav.Item>
-                                <div className={styles.dropdownContent}> 
+                                <div className={styles.dropdownContent}>
                                     <Link to="/profile/account"> Profile </Link>
                                     <Link to="/sadmin_dashboard"> SAdmin Dashboard </Link>
                                     <Link to="/editor_dashboard"> Editor Dashboard </Link>
-
                                 </div>
-                            </div>
+                            </div> */}
                             {/* &nspb; */}
                             {/* <Divider 
                              sx={{ borderColor: 'gray', 
@@ -114,16 +116,38 @@ const Nav_bar = () => {
                             /> */}
 
                             {auth?.email &&
-                                <Nav.Item className={styles.navLinkCustom}>
-                                    <Link to="/profile/account" className="ml-2 nav-link">
-                                        <Badge badgeContent={40} max={9} color="success">
-                                            <Avatar
-                                                sx={{ width: 30, height: 30 }}
-                                                src={profile.image_url ? profile.image_url : 'https://i.ibb.co/YZnHSSd/avatar-2.jpg'}
-                                            />
-                                        </Badge>
-                                    </Link>
-                                </Nav.Item>
+                                <div style={{ paddingRight: "15px" }} className={styles.dropdown}>
+                                    <Nav.Item className={styles.navLinkCustom}>
+                                        <Link to="/profile/account" className="ml-2 nav-link">
+                                            <Badge badgeContent={40} max={9} color="success">
+                                                <Avatar
+                                                    sx={{ width: 30, height: 30 }}
+                                                    src={profile.image_url ? profile.image_url : 'https://i.ibb.co/YZnHSSd/avatar-2.jpg'}
+                                                />
+                                            </Badge>
+                                        </Link>
+                                    </Nav.Item>
+                                    <div className={styles.dropdownContent}>
+                                        <Link to="/profile/notification">Profile Notification </Link>
+                                        <Link to="/profile/account"> Profile </Link>
+
+                                        {auth?.roles.includes(1260) &&
+                                            <div>
+                                                <Link to="/editor_dashboard">
+                                                    <img style={{color:'white', width: "20px", height: "20px" }} 
+                                                    src={dashboardImage} alt="" />
+                                                    Editor Dashboard
+                                                </Link>
+                                                <Link to="/editor_dashboard/notification">
+                                                    <img src="../assets/dashboard.png" alt="" />
+                                                    Editor Notification
+                                                </Link>
+                                            </div>
+                                        }
+                                        {auth?.roles.includes(1453) &&
+                                            <Link to="/sadmin_dashboard"> SAdmin Dashboard </Link>}
+                                    </div>
+                                </div>
                             }
                         </Nav>
                     </Navbar.Collapse>
@@ -131,7 +155,7 @@ const Nav_bar = () => {
             </Navbar>
 
             {/* <Breadcrums /> */}
-<SubNavBar/>
+            <SubNavBar />
         </div>
 
     );

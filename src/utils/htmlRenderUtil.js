@@ -40,7 +40,7 @@ export const renderStrArray = (strArray, headingDisplayText, arrayContentType) =
   // Check if the input is an array-like string
   let convertedArray;
 
-  if (strArray.startsWith('[') && strArray.endsWith(']')) {
+  if (strArray && strArray.startsWith('[') && strArray.endsWith(']')) {
     // Replace single quotes with double quotes to make it valid JSON
     const cleanedStr = strArray.replace(/'/g, '"');
     // Parse the string into an array
