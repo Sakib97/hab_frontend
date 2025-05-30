@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { AuthProvider } from './context/AuthProvider';
 import { ProfileProvider } from './context/ProfileProvider';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
+import '@flaticon/flaticon-uicons/css/all/all.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 // Create a new instance of QueryClient

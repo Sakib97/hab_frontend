@@ -52,6 +52,7 @@
 .dropdownContent {
     /* display: none; */
     display: block;
+  
     position: absolute;
     background-color: #313236;  
     min-width: 160px;
@@ -74,13 +75,15 @@
  
 /* Change color of dropdown links on hover */
 .dropdownContent a:hover {
-    background-color: #2f62ed
+    /* background-color: #2f62ed */
+    background-color: #57575a
 }
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdownContent {
+  /* .dropdown .dropdownContent { */
     /* display: block; */
-    max-height: 300px;
+    max-height: 700px;
 }
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
