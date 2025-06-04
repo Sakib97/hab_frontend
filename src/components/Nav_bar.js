@@ -259,7 +259,7 @@ const Nav_bar = () => {
                                         {auth?.roles.includes(1453) &&
                                             <Link to="/sadmin_dashboard">
                                                 <div style={{ display: 'flex' }}>
-                                                    <i style={{ fontSize: '22px' }} class="fi fi-rs-admin-alt"></i>
+                                                    <i style={{ fontSize: '22px' }} className="fi fi-rs-admin-alt"></i>
                                                     &nbsp;
                                                     SAdmin
                                                 </div>

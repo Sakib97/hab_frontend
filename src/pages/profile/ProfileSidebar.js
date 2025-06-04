@@ -165,12 +165,12 @@ const ProfileSidebar = ({ unreadCount, setSidebarExpanded }) => {
                                 Write Article
                             </MenuItem>}
 
-                            {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203)) &&
+                            {(auth?.roles?.includes(1260) || auth?.roles?.includes(1203) || auth?.roles?.includes(1453)) &&
                             <MenuItem
-                                style={getMenuItemStyle("/profile/write")}
-                                onMouseEnter={(e) => handleMouseEnter(e, "/profile/write")}
-                                onMouseLeave={(e) => handleMouseLeave(e, "/profile/write")}
-                                component={<Link to="/profile/write" />}
+                                style={getMenuItemStyle("/profile/note")}
+                                onMouseEnter={(e) => handleMouseEnter(e, "/profile/note")}
+                                onMouseLeave={(e) => handleMouseLeave(e, "/profile/note")}
+                                component={<Link to="/profile/note" />}
                                 icon={<i style={{fontSize: '20px'}} className="fi fi-br-comment-alt"></i>}>
                                 Write Note
                             </MenuItem>}

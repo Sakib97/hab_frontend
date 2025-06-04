@@ -29,6 +29,7 @@ import Footer from "../src/components/Footer";
 import ArticleList from './pages/articleList/ArticleList';
 import ArticleSubCategoryList from './pages/articleList/ArticleSubCategoryList';
 import ProfileMyArticleDetails from './pages/profile/ProfileMyArticleDetails';
+import ProfileNote from './pages/profile/ProfileNote';
 
 function App() {
 
@@ -39,8 +40,6 @@ function App() {
     'SubEditor': 1444,
     'GeneralUser': 2024
   }
-
-
 
   return (
     <Router>
@@ -82,12 +81,17 @@ function App() {
               </Route>
             </Route>
 
+            <Route element={<RequireAuth allowedRoles={[ROLES.Author, ROLES.Editor, ROLES.Sadmin]} />}>
+              <Route path="/profile" element={<Profile />} >
+                <Route path='note' element={<ProfileNote/>}></Route>
+              </Route>
+            </Route>
+
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}> */}
             <Route element={<RequireAuth allowedRoles={[ROLES.Author]} />}>
               <Route path="/profile" element={<Profile />} >
                 <Route path='write' element={<ProfileWrite />}></Route>
                 <Route path='notification' element={<ProfileNotification />}></Route>
-
               </Route>
             </Route>
 
