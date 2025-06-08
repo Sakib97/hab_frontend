@@ -36,6 +36,13 @@
     border: 2px solid black;
 }
 
+.inputBox:disabled, .noteTextArea:disabled {
+    /* background-color: #f0f0f0;  */
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+
 .noteSubmitBtn{
     width: 20%;
     padding: 10px;
@@ -50,6 +57,18 @@
 }
 .noteSubmitBtn:hover{
     background-color: #027e09; /* Darker green on hover */
+}
+.noteSubmitBtn:disabled {
+    /* background-color: #ccc;  */
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    color: red;
+    font-size: 16px;
+    margin-top: 3px;
+    font-weight: bold;
 }
 
 @media (max-width: 991px) {

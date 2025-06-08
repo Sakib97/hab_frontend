@@ -29,6 +29,11 @@ export const getRoleBadges = (roleIDs) => {
             <Tag
                 key={role}
                 style={{
+                    fontSize: '11px',
+                    height: '19px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: 'auto',
                     borderRadius: '20px',
                     fontWeight: 'bolder',
                     color: 'white',

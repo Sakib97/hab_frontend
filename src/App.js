@@ -30,6 +30,7 @@ import ArticleList from './pages/articleList/ArticleList';
 import ArticleSubCategoryList from './pages/articleList/ArticleSubCategoryList';
 import ProfileMyArticleDetails from './pages/profile/ProfileMyArticleDetails';
 import ProfileNote from './pages/profile/ProfileNote';
+import ProfileNoteDetails from './pages/profile/ProfileNoteDetails';
 
 function App() {
 
@@ -83,7 +84,9 @@ function App() {
 
             <Route element={<RequireAuth allowedRoles={[ROLES.Author, ROLES.Editor, ROLES.Sadmin]} />}>
               <Route path="/profile" element={<Profile />} >
-                <Route path='note' element={<ProfileNote/>}></Route>
+                <Route path='note' element={<ProfileNote />}>
+                  <Route path='details' element={<ProfileNoteDetails />}></Route>
+                </Route>
               </Route>
             </Route>
 

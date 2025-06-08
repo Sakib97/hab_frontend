@@ -7,6 +7,10 @@ import { fetchData } from "../../utils/getDataUtil";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import useAuth from "../../hooks/useAuth";
 import { getRoleBadges } from "../../utils/roleUtil";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { getFormattedTime } from "../../utils/dateUtils";
+import { Outlet } from "react-router-dom";
 
 const ProfileNote = () => {
     const { auth } = useAuth();
@@ -43,9 +47,9 @@ const ProfileNote = () => {
                 enabled: !!debouncedTerm // Only run the query if searchTerm is not empty
             }
         );
-    const { data: noteSubjectListData, error: noteSubjectListError,
-        isLoading: noteSubjectListLoading } = useQuery(
-            ['noteSubjectListData', GET_USER_AND_NOTES_URL],
+    const { data: userInfoAndNotesData, error: userInfoAndNotesError,
+        isLoading: userInfoAndNotesLoading } = useQuery(
+            ['userInfoAndNotesData', GET_USER_AND_NOTES_URL],
             () => fetchData(GET_USER_AND_NOTES_URL, axiosInst),
             {
                 enabled: !!targetUsermail, // only run if targetUsermail is set
@@ -58,19 +62,54 @@ const ProfileNote = () => {
         userObj: user // Store the user object for later use
     }));
 
-    // const { Search } = Input;
-    // const onSearch = (value) => {
-    //     console.log(value);
-    //     // Implement search functionality here
-    // };
-
     const onSelect = (value, option) => {
         const selectedUser = option.userObj;
-        console.log("Selected user:", selectedUser);
+        // console.log("Selected user:", selectedUser);
 
         // Set target user email to trigger notes fetch
         setTargetUsermail(selectedUser.email);
     };
+
+    // ////////////For formik validation and submission of notes//////////
+    const onFormSubmit = (values, actions) => {
+        console.log("Form submitted with values:", values);
+        // Handle form submission logic here, e.g., send values to the server
+        // Reset form after submission
+        actions.resetForm();
+    };
+    const {
+        values,
+        errors,
+        touched,
+        isSubmitting,
+        handleBlur, // validates the input when focus is lost
+        handleChange,
+        handleSubmit,
+    } = useFormik({
+        initialValues: {
+            subject: '',
+            note: ''
+        },
+        validationSchema: Yup.object({
+            subject: Yup.string()
+                .max(150, 'Subject must be 150 characters or less')
+                .required('Subject is required')
+                .test(
+                    'not-only-whitespace',
+                    'Subject cannot be empty or only whitespace',
+                    (value) => value.trim().length > 0
+                  ),
+            note: Yup.string()
+                .max(1000, 'Note must be 1000 characters or less')
+                .required('Note is required')
+                .test(
+                    'not-only-whitespace',
+                    'Note cannot be empty or only whitespace',
+                    (value) => value.trim().length > 0
+                  )
+        }),
+        onSubmit: (onFormSubmit)
+    });
 
     return (
         <div style={{
@@ -79,21 +118,11 @@ const ProfileNote = () => {
         }}>
             <h1>Note</h1>
             <hr />
-            {/* <Search placeholder="input search text" allowClear
-                onSearch={onSearch}
-                style={{ width: '500px' }} /> */}
-            {/* <br /> <br /> */}
 
             <div style={{
                 width: "100%",
                 display: "flex", justifyContent: "center"
             }}>
-                {/* <input className={styles.searchInput}
-                    type="text"
-                    placeholder="Search username / email.."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                /> */}
                 <br />
                 <AutoComplete
                     className={styles.searchInput}
@@ -109,47 +138,48 @@ const ProfileNote = () => {
             </div>
             <br />
             <div>
-                {noteSubjectListLoading && <h3 style={{
+                {userInfoAndNotesLoading && <h3 style={{
                     padding: "30px", fontSize: "20px",
                     display: 'flex', justifyContent: 'center'
                 }}>
                     Loading...</h3>}
 
-                {noteSubjectListError && <h3 style={{
+                {userInfoAndNotesError && <h3 style={{
                     padding: "30px", display: 'flex',
                     justifyContent: 'center', color: 'red',
                     fontWeight: 'bold', fontSize: '30px'
                 }}>Server Error !</h3>}
 
-                {noteSubjectListData &&
-                    <div>
-                        <div style={{ display: "flex",flexWrap:'wrap' }}>
+                {userInfoAndNotesData &&
+                    <div >
+                        <div style={{ display: "flex", flexWrap: 'wrap', justifyContent: "center", alignItems: "center" }}>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <img style={{ height: 'auto', width: '30px', borderRadius: '20px' }}
-                                    src={noteSubjectListData?.target_user?.image_url} alt="propic" />
+                                    src={userInfoAndNotesData?.target_user?.image_url} alt="propic" />
                             </div>
                             <div style={{ padding: "10px", fontSize: "25px", fontWeight: "bold" }}>
-                                {noteSubjectListData?.target_user?.full_name}
+                                {userInfoAndNotesData?.target_user?.full_name}
                             </div>
                             <div style={{ display: "flex", alignItems: "center" }}>
-                                {getRoleBadges(noteSubjectListData?.target_user?.roles)}
+                                {getRoleBadges(userInfoAndNotesData?.target_user?.roles)}
                             </div>
                         </div>
 
                         <hr />
-                        <div className={styles.noteListContainer}>
-                            {noteSubjectListData?.notes?.length > 0 ? (
-                                noteSubjectListData.notes.map((note, index) => (
+                        <div className={styles.noteContainer}>
+                            {userInfoAndNotesData?.notes?.length > 0 ? (
+                                userInfoAndNotesData.notes.map((note, index) => (
                                     <div key={index} className={styles.noteItem}>
                                         <h4>{note.title}</h4>
                                         {/* <p>{note.content}</p> */}
                                         <span className={styles.noteTime}>
-                                            {new Date(note.created_at).toLocaleString()}
+                                            {/* {new Date(note.created_at).toLocaleString()} */}
+                                            {getFormattedTime(note.created_at)}
                                         </span>
                                     </div>
                                 ))
                             ) : (
-                                <p>No notes found for this user.</p>
+                                <p>You have no conversation with this user.</p>
                             )}
                         </div>
                     </div>
@@ -159,20 +189,51 @@ const ProfileNote = () => {
 
             <hr />
             <div className={styles.noteContainer}>
-                <input className={styles.inputBox}
-                    type="text" placeholder="Subject.." />
-                <br />
-                <textarea placeholder="Note.."
-                    className={styles.noteTextArea}
-                ></textarea>
-                <br />
-                <button className={styles.noteSubmitBtn}>
-                    Send &nbsp; <i className="fa-solid fa-paper-plane"></i>
-                </button>
+                {userInfoAndNotesData &&
+                    <div> Send a Note to <b>{userInfoAndNotesData?.target_user?.full_name}</b>  </div>
+                }
+                <form onSubmit={handleSubmit} autoComplete="off" className={styles.noteContainer}>
+                    <input value={values.subject}
+                        id="subject"
+                        name="subject"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        className={styles.inputBox}
+                        type="text" placeholder="*Subject.."
+                        disabled={!userInfoAndNotesData ? true : false}
+                    />
+                    {errors.subject && touched.subject && (
+                        <div className={styles.errorMessage}>{errors.subject}</div>
+                    )}
+                    <br />
+
+                    <textarea placeholder="*Note.."
+                        className={styles.noteTextArea}
+                        id="note"
+                        name="note"
+                        value={values.note}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        disabled={!userInfoAndNotesData ? true : false}
+
+                    ></textarea>
+                    {errors.note && touched.note && (
+                        <div className={styles.errorMessage}>{errors.note}</div>
+                    )}
+                    <br />
+
+                    <button className={styles.noteSubmitBtn}
+                        disabled={isSubmitting || !values.subject.trim() || !values.note.trim() || values.subject.error || values.note.error}
+                        type="submit"
+                    >
+                        Send &nbsp; <i className="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+
             </div>
 
 
-
+        <Outlet/>
 
         </div>
     );
