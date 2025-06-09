@@ -90,11 +90,17 @@ function App() {
               </Route>
             </Route>
 
+            <Route element={<RequireAuth allowedRoles={[ROLES.GeneralUser, ROLES.Author, ROLES.Editor, ROLES.Sadmin]} />}>
+              <Route path="/profile" element={<Profile />} >
+                <Route path='notification' element={<ProfileNotification />}></Route>
+              </Route>
+            </Route>
+
             {/* <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}> */}
             <Route element={<RequireAuth allowedRoles={[ROLES.Author]} />}>
               <Route path="/profile" element={<Profile />} >
                 <Route path='write' element={<ProfileWrite />}></Route>
-                <Route path='notification' element={<ProfileNotification />}></Route>
+                {/* <Route path='notification' element={<ProfileNotification />}></Route> */}
               </Route>
             </Route>
 

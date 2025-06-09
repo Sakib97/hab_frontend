@@ -27,32 +27,51 @@ const ProfileNotification = () => {
         );
     // --- New state to hold the data formatted for display ---
     const [displayedNotis, setDisplayedNotis] = useState([]);
+
+    // for notifications for new notes
+    // const [noteNotification, setNoteNotification] = useState(false);
+    // const [noteTargetMail, setNoteTargetMail] = useState('');
     // -------------------------------------------------------
 
     // --- useEffect to process data when editorNotisData changes ---
     useEffect(() => {
         // This code runs whenever editorNotisData changes (including initial load)
         const processedData = generalNotisData?.all_notis?.map(notis => {
+            // check if notification is for new note
+            // const notis_type_parts = notis?.notification_type?.split('_');
+            // const new_note_part = notis_type_parts?.slice(0, 2).join('_');
+            // if (new_note_part === 'new_note') {
+            //     setNoteNotification(true); // Set noteNotification to true if new note notification
+            //     const emailIndex = notis?.notification_type?.indexOf('_sender_');
+            //     const targetEmail = notis?.notification_type?.slice(emailIndex + '_sender_'.length);
+            //     console.log("targetEmailnotis:: ", targetEmail);
+                
+            //     setNoteTargetMail(targetEmail); // Extract the target email from the notification type
+            // } else {
+            //     setNoteNotification(false); // Set noteNotification to false for other types
+            // }
+
+
             // Function to construct the notification link
             const constructNotificationLink = (notificationLink, notificationId) => {
-              const hasQueryString = notificationLink?.includes('?'); // Check if the link already has a query string
-              const queryParams = `notification=true&id=${notificationId}&type=general`; // Additional query parameters
-              return hasQueryString
-                ? `${notificationLink}&${queryParams}` // Append with '&' if there's already a query string
-                : `${notificationLink}?${queryParams}`; // Append with '?' if there's no query string
+                const hasQueryString = notificationLink?.includes('?'); // Check if the link already has a query string
+                const queryParams = `notification=true&id=${notificationId}&type=general`; // Additional query parameters
+                return hasQueryString
+                    ? `${notificationLink}&${queryParams}` // Append with '&' if there's already a query string
+                    : `${notificationLink}?${queryParams}`; // Append with '?' if there's no query string
             };
-          
+
             return {
-              title: notis.notification_title,
-              title_color: notis.notification_title_color || "gray",
-              link: constructNotificationLink(notis?.notification_link, notis?.notification_id), // Use the constructed link
-              icon: notis.notification_icon || "!",
-              avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=1`,
-              description: notis.notification_text,
-              time: notis.notification_time,
-              is_clicked: notis.is_clicked,
+                title: notis.notification_title,
+                title_color: notis.notification_title_color || "gray",
+                link: constructNotificationLink(notis?.notification_link, notis?.notification_id), // Use the constructed link
+                icon: notis.notification_icon || "!",
+                avatar: `https://api.dicebear.com/7.x/miniavs/svg?seed=1`,
+                description: notis.notification_text,
+                time: notis.notification_time,
+                is_clicked: notis.is_clicked,
             };
-          }) || [];
+        }) || [];
 
         // Update the state with the processed data
         setDisplayedNotis(processedData);
@@ -113,9 +132,15 @@ const ProfileNotification = () => {
                                         {renderHTMLContent(item.icon)} /> </div>}
                                 title={
                                     <span style={{ fontSize: "18px", color: `${item.title_color}` }}>
-                                        <b> {item.link && <Link to={item.link}>
-                                            <span style={{ color: `${item.title_color}` }} className={styles.notisTitle}>
-                                                {item.title} </span> </Link>}
+                                        <b> {item.link &&
+                                            <Link to={item.link}
+                                                // Pass targetUsermail as state if noteNotification is true
+                                                // because note details require targetUsermail as state
+                                                // {...(noteNotification && noteTargetMail &&
+                                                    // { state: { targetUsermail: noteTargetMail } })}
+                                            >
+                                                <span style={{ color: `${item.title_color}` }} className={styles.notisTitle}>
+                                                    {item.title} </span> </Link>}
                                             <span style={{ color: `${item.title_color}` }} className={styles.notisTitle}>
                                                 {!item.link && item.title} </span>
                                         </b>
@@ -131,7 +156,6 @@ const ProfileNotification = () => {
                     )}
                 />
             </div>
-            {/* Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore atque aspernatur necessitatibus dolor labore repudiandae molestiae ea, magni consequuntur voluptate, provident quas exercitationem eum quasi id quos dignissimos praesentium inventore aperiam vel perspiciatis sequi eius iusto! Eum quasi magnam illo odio fugit quo perferendis quos. Molestiae inventore odio, rem id similique ipsam, quo reprehenderit alias, laboriosam voluptates labore? Reprehenderit error esse voluptatum nesciunt veniam ex fugit vero sit animi. Consectetur ipsum tempore dolore magni, iure est. Dolore repellat minus ducimus enim repellendus quia amet ad id, consequatur tenetur quas animi, pariatur similique porro tempore cumque eos, iusto perspiciatis accusantium velit. */}
         </div>
     );
 }

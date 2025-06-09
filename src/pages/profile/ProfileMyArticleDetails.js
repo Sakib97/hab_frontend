@@ -125,7 +125,7 @@ const ProfileMyArticleDetails = () => {
                 </button>
             </div>
 
-            {articleData.article_status === "approved" ?
+            {articleData?.article_status === "approved" ?
                 <div className={`${styles.title}`}>
                     <Link to={articleURL}> {articleData.title_en} </Link>
                 </div> :

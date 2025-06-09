@@ -24,7 +24,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 100%;   
+}
+.noteItem{
+    width: 70%;
+    padding: 10px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    border: 2px solid black;
+    background-color: #ecf0eb;
+    margin-bottom: 10px;
+}
+.noteItem:hover{
+    background-color: #dee1dd; /* Light gray on hover */
+    cursor: pointer;
 }
 
 .noteTextArea{
@@ -71,8 +84,39 @@
     font-weight: bold;
 }
 
+/* Note details classes */
+.noteDetailsHeader{
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.noteDetailsBackButton{
+    padding: 12px 25px;
+    display: flex;
+    justify-content: center;
+    border-radius: 40px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 20px;
+}
+.noteDetailsBackButton:hover {
+    background-color: #d2d0d0;
+    cursor: pointer;
+}
+.noteContentBox{
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    border: 2px solid black;
+    background-color: #ecf0eb;
+    margin-bottom: 10px;
+}
+
 @media (max-width: 991px) {
-    .inputBox, .searchInput, .noteTextArea, .noteSubmitBtn {
+    .inputBox, .searchInput, .noteTextArea, 
+    .noteSubmitBtn, .noteItem {
         width: 100%;
     }
     
