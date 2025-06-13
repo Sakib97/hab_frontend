@@ -149,7 +149,7 @@ const Article = () => {
                                 {
                                     title:
                                         <Link to={`/category/${slugify(articleData.article.category_name)}/${slugify(articleData.article.subcategory_name)}`}>
-                                            <span style={{color: 'black' }}>
+                                            <span style={{ color: 'black' }}>
                                                 {`${articleData.article.subcategory_name}`}
                                             </span>
                                         </Link>
@@ -184,7 +184,12 @@ const Article = () => {
                                     src={articleData.article.author_image_url} alt="" />
                             </div>
                             <div className={`${styles.authorNameOfArticle}`}>
-                                {articleData.article.author_firstname} {articleData.article.author_lastname}
+                                <Link to={`/user/${articleData?.article?.author_slug}`}>
+                                    <span style={{color:'black', fontSize: '18px', fontWeight: 'bold' }}>
+                                        {articleData.article.author_firstname} {articleData.article.author_lastname}
+                                    </span>
+                                </Link>
+
                                 <br />
                                 <div style={{ fontSize: '13px', color: 'gray' }}>
                                     {getFormattedTime(articleData.article.published_at)}

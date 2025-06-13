@@ -176,9 +176,15 @@ const ProfileMyArticleDetails = () => {
                     </div>
 
                     <div>
-                        Editor: <b> {articleData.editor_firstname} {articleData.editor_lastname} </b>
-
-                        ({articleData.editor_email})
+                        Editor: &nbsp;
+                        <Link to={`/user/${articleData?.editor_slug}`}>
+                            <span style={{
+                                fontSize: '22px', color: 'black',
+                                fontWeight: 'bold'
+                            }}>
+                                {articleData.editor_firstname} {articleData.editor_lastname}
+                            </span>
+                        </Link>
                     </div>
                 </div>
 
@@ -255,9 +261,12 @@ const ProfileMyArticleDetails = () => {
 
             <div className={`${styles.discussion}`}>
                 Want to discuss with Editor ? <br />
-                <button style={{ marginTop: '20px' }} className={`${styles.discussButton}`}>
-                    Write a note
-                </button>
+                <Link to={`/profile/note`}>
+
+                    <button style={{ marginTop: '20px' }} className={`${styles.discussButton}`}>
+                        Write a note
+                    </button>
+                </Link>
             </div>
 
 

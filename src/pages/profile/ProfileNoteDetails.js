@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import { postData } from "../../utils/postDataUtils";
 import useAuth from "../../hooks/useAuth";
 import { useEffect, useMemo, useState } from "react";
+import { xorEncode } from "../../utils/encodeUtil";
 
 const ProfileNoteDetails = () => {
     const { auth } = useAuth()
@@ -49,11 +50,13 @@ const ProfileNoteDetails = () => {
     const targetUserEmail = useMemo(() => {
         if (!noteDetailsData?.note_subject) return null;
 
-        const { sender_email, receiver_email } = noteDetailsData.note_subject;
-        return sender_email === user_email ? receiver_email : sender_email;
+        const { sender_slug, receiver_slug } = noteDetailsData?.note_subject;
+        return sender_slug === xorEncode(user_email) ?
+            receiver_slug : sender_slug;
     }, [noteDetailsData, user_email]);
 
     // API call for sending a note reply
+    // const SEND_NOTE_REPLY_URL = `/api/v1/notes/send_note_to_subject/${noteID}/${targetUserEmail}`;
     const SEND_NOTE_REPLY_URL = `/api/v1/notes/send_note_to_subject/${noteID}/${targetUserEmail}`;
     const queryClient = useQueryClient();
     const mutation = useMutation({
@@ -63,9 +66,9 @@ const ProfileNoteDetails = () => {
             // Invalidate and refetch user info and notes data
             queryClient.invalidateQueries('noteDetailsData');
         },
-        onError: (error) => {
-            console.error("Error sending note:", error);
-        }
+        // onError: (error) => {
+        //     console.error("Error sending note:", error);
+        // }
     });
 
     // Formik setup for note reply
@@ -82,7 +85,7 @@ const ProfileNoteDetails = () => {
         // Reset form after submission
         actions.resetForm();
         // navigate(`/profile/note/details?n_id=${noteID}`, { state: { targetUsermail: targetUsermail } }); // Navigate to details page with state
-        navigate(`/profile/note/details?n_id=${noteID}`); 
+        navigate(`/profile/note/details?n_id=${noteID}`);
 
 
     };
@@ -114,34 +117,36 @@ const ProfileNoteDetails = () => {
 
 
     // This is for marking the notification as clicked when entered this page 
-        // via the notification link ----------------------------------------------
-        const notisMutation = useMutation({
-            mutationFn: postData,
-            onSuccess: (response) => {
-                // Invalidate and refetch
-                queryClient.invalidateQueries('generalNotisData');
-            },
-        });
-        useEffect(() => {
-            if (isNotification && notificationId && userType) {
-                notisMutation.mutate({
-                    data: {},
-                    url: MARK_NOTIFICATION_CLICKED_API,
-                    axiosInstance: axiosInst
-                });
-            }
-            else {
-                return;
-            }
-        }, [isNotification, notificationId, userType]);
-        // ---------------------------------------------------
+    // via the notification link ----------------------------------------------
+    const notisMutation = useMutation({
+        mutationFn: postData,
+        onSuccess: (response) => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries('generalNotisData');
+        },
+        onError: (error) => {
+            console.error("Error marking notification as clicked:", error);
+        }
+    });
+    useEffect(() => {
+        if (isNotification && notificationId && userType) {
+            notisMutation.mutate({
+                data: {},
+                url: MARK_NOTIFICATION_CLICKED_API,
+                axiosInstance: axiosInst
+            });
+        }
+        else {
+            return;
+        }
+    }, [isNotification, notificationId, userType]);
+    // ---------------------------------------------------
 
     if (noteDetailsLoading) {
         return <h3 style={{ padding: "30px" }}>Loading...</h3>;
     }
 
-        if (noteDetailsError) {
-
+    if (noteDetailsError) {
         return <h3 style={{
             padding: "30px",
             display: 'flex', justifyContent: 'center',
@@ -164,8 +169,9 @@ const ProfileNoteDetails = () => {
                 <div className={styles.noteDetailsHeader}>
                     <div>{noteDetailsData?.note_subject?.subject_name} </div>
                     <div style={{ fontSize: '18px', fontWeight: 'normal' }}>
-                        by <strong>{noteDetailsData?.note_subject?.sender_name}</strong>
-                        &nbsp; &nbsp;
+                        from <strong>{noteDetailsData?.note_subject?.sender_name}</strong>
+                        &nbsp; to <strong>{noteDetailsData?.note_subject?.receiver_name}</strong>
+                        &nbsp; &nbsp; <br />
                         <span style={{ color: 'gray', fontSize: '14px' }}>
                             {getFormattedTime(noteDetailsData?.note_subject?.created_at)}
                         </span>
@@ -214,6 +220,11 @@ const ProfileNoteDetails = () => {
                         >
                             Reply &nbsp; <i className="fa-solid fa-paper-plane"></i>
                         </button>
+                        {mutation.error && (
+                            <div className={styles.errorMessage}>
+                                {"Error sending note. Please try again."}
+                            </div>
+                        )}
                     </form>
                 </div>
 

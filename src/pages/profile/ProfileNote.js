@@ -12,6 +12,8 @@ import * as Yup from "yup";
 import { getFormattedTime } from "../../utils/dateUtils";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { postData } from "../../utils/postDataUtils";
+import { basicEncode } from "../../utils/encodeUtil";
+import { xorEncode } from "../../utils/encodeUtil";
 
 const ProfileNote = () => {
     const { auth } = useAuth();
@@ -39,7 +41,8 @@ const ProfileNote = () => {
 
     // console.log("searchTerm", searchTerm);
     const SEARCH_USER_LIST_URL = `/api/v1/search/search_uname_mail?query=${debouncedTerm}`;
-    const GET_USER_AND_NOTES_URL = `/api/v1/notes/get_user_note_by_mail/${targetUsermail}/${current_user_mail}`;
+    const GET_USER_AND_NOTES_URL = `/api/v1/notes/get_user_note_by_mail/${targetUsermail}/${xorEncode(current_user_mail)}`;
+
     const SEND_NEW_NOTE_URL = `/api/v1/notes/send_new_note/${targetUsermail}`;
     const axiosPrivate = useAxiosPrivate();
     const axiosInst = axiosPrivate;
@@ -66,7 +69,8 @@ const ProfileNote = () => {
         );
     const options = searchUserListData?.map((user) => ({
         value: `${user?.full_name}`,
-        label: `${user?.full_name} (${user?.email})`,
+        // label: `${user?.full_name} (${user?.email})`,
+        label: `${user?.full_name}`,
         userObj: user // Store the user object for later use
     }));
 
@@ -75,7 +79,8 @@ const ProfileNote = () => {
         // console.log("Selected user:", selectedUser);
 
         // Set target user email to trigger notes fetch
-        setTargetUsermail(selectedUser.email);
+        // setTargetUsermail(selectedUser.email);
+        setTargetUsermail(selectedUser.user_slug);
     };
 
     //////// For sending new note //////////
@@ -164,7 +169,7 @@ const ProfileNote = () => {
                             options={options}
                             onSelect={onSelect}
                             onSearch={setSearchTerm}
-                            placeholder="Search username / email..  "
+                            placeholder="Search username..."
                             allowClear
                             filterOption={false}
                         />
@@ -191,9 +196,12 @@ const ProfileNote = () => {
                                         <img style={{ height: 'auto', width: '30px', borderRadius: '20px' }}
                                             src={userInfoAndNotesData?.target_user?.image_url} alt="propic" />
                                     </div>
-                                    <div style={{ padding: "10px", fontSize: "25px", fontWeight: "bold" }}>
-                                        {userInfoAndNotesData?.target_user?.full_name}
-                                    </div>
+                                    <Link to={`/user/${userInfoAndNotesData?.target_user?.user_slug}`}>
+                                        <div style={{ padding: "10px", fontSize: "25px", fontWeight: "bold" }}>
+                                            {userInfoAndNotesData?.target_user?.full_name}
+                                        </div>
+                                    </Link>
+
                                     <div style={{ display: "flex", alignItems: "center" }}>
                                         {getRoleBadges(userInfoAndNotesData?.target_user?.roles)}
                                     </div>

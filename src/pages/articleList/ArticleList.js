@@ -199,97 +199,105 @@ const ArticleList = () => {
 
                 <hr />
 
-                <div className={`${styles.featuredArticles}`}>
+                <div className={`${styles.featuredArticless}`}>
+                    {featuredArtByCatLoading ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', fontSize: '25px', fontWeight: 'bold', color: 'black' }} >
+                            Loading..
+                        </div>
+                    ) : featuredArtByCatError ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', fontSize: '25px', fontWeight: 'bold', color: 'red' }} >
+                            Server Error!
+                        </div>
+                    ) : featuredArtByCatData?.articles?.length > 0 &&
+                    <div className={styles2.mainBanSection}>
 
-                    <div className={styles2.bangladeshSection}>
-                        <div className={styles2.mainBanSection}>
+                        <div className={styles2.mainBanCard}>
+                            {/* {featuredArtByCatLoading ? (
+                                <div style={{ display: 'flex', justifyContent: 'center', fontSize: '25px', fontWeight: 'bold', color: 'black' }} >
+                                    Loading..
+                                </div>
+                            ) : featuredArtByCatError ? (
+                                <div style={{ display: 'flex', justifyContent: 'center', fontSize: '25px', fontWeight: 'bold', color: 'red' }} >
+                                    Server Error!
+                                </div>
+                            ) : featuredArtByCatData?.articles?.length > 0 && */}
+                            <Link className={`${styles.articleListItemContent}`}
+                                to={`/${categorySlug}/${slugify(featuredArtByCatData?.articles?.[0]?.subcategory_name)}/article/${featuredArtByCatData?.articles?.[0]?.article_id}/${slugify(featuredArtByCatData?.articles?.[0]?.title_en)}`}
+                            >
+                                <Card className={`${styles.articleListItemContent}`} >
+                                    {/* className={`${styles2.mainCard}`} */}
+                                    <Card.Img className={`${styles.articleListItemPic}`} variant="top" src={featuredArtByCatData?.articles?.[0]?.cover_img_link}
+                                        alt={featuredArtByCatData?.articles?.[0]?.title_en} />
+                                    <Card.Body>
+                                        <Card.Title> <div style={{ fontSize: '25px', fontWeight: 'bold', color: 'darkblue' }}>
+                                            {featuredArtByCatData?.articles?.[0]?.title_en}
+                                        </div>
+                                        </Card.Title>
+                                        <Card.Text >
 
-                            <div className={styles2.mainBanCard}>
-                                {featuredArtByCatLoading ? (
-                                    <div style={{ display: 'flex', justifyContent: 'center', fontSize: '25px', fontWeight: 'bold', color: 'black' }} >
-                                        Loading..
-                                    </div>
-                                ) : featuredArtByCatError ? (
-                                    <div style={{ display: 'flex', justifyContent: 'center', fontSize: '25px', fontWeight: 'bold', color: 'red' }} >
-                                        Server Error!
-                                    </div>
-                                ) : featuredArtByCatData?.articles?.length > 0 &&
+
+                                            <div style={{ fontSize: '17px' }}>{featuredArtByCatData?.articles?.[0]?.subtitle_en}</div>
+
+                                            <div style={{ fontSize: '16px', marginTop: '5px', color: '#555' }}>
+                                                <i className="fa-regular fa-user"></i>
+                                                &nbsp; {featuredArtByCatData?.articles?.[0]?.author_firstname} {featuredArtByCatData?.articles?.[0]?.author_lastname}
+                                            </div>
+                                            <div style={{ fontSize: '14px', marginTop: '5px', color: '#888' }}>
+                                                <i style={{ marginRight: '8px' }} className="fa-regular fa-clock"></i>
+                                                {getFormattedTime(featuredArtByCatData?.articles?.[0]?.published_at)}
+                                            </div>
+
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Card>
+
+                            </Link>
+                            {/* } */}
+                        </div>
+
+
+                        <div className={styles2.sideBanCard}>
+
+                            {featuredArtByCatData?.articles?.slice(1).map((article, index) => (
                                 <Link className={`${styles.articleListItemContent}`}
-                                    to={`/${categorySlug}/${slugify(featuredArtByCatData?.articles?.[0]?.subcategory_name)}/article/${featuredArtByCatData?.articles?.[0]?.article_id}/${slugify(featuredArtByCatData?.articles?.[0]?.title_en)}`}
-                                >
-                                    <Card className={`${styles.articleListItemContent}`} >
-                                        {/* className={`${styles2.mainCard}`} */}
-                                        <Card.Img className={`${styles.articleListItemPic}`} variant="top" src={featuredArtByCatData?.articles?.[0]?.cover_img_link}
-                                            alt={featuredArtByCatData?.articles?.[0]?.title_en} />
-                                        <Card.Body>
-                                            <Card.Title> <div style={{ fontSize: '25px', fontWeight: 'bold', color: 'darkblue' }}>
-                                                {featuredArtByCatData?.articles?.[0]?.title_en}
+                                    to={`/${categorySlug}/${slugify(article.subcategory_name)}/article/${article.article_id}/${slugify(article.title_en)}`}>
+
+                                    <div key={article.article_id} className={styles2.picAndTitleOfArticle}>
+                                        <div className={styles2.picOfArticle}>
+                                            <img
+                                                className={styles2.picOfArticle}
+                                                src={article.cover_img_link}
+                                                alt={article.title_en}
+                                            />
+                                        </div>
+
+                                        <div >
+                                            <div style={{ fontSize: '15px', fontWeight: 'bold', color: 'darkblue', paddingLeft: '10px' }}>
+                                                {article.title_en}
                                             </div>
-                                            </Card.Title>
-                                            <Card.Text >
-
-
-                                                <div style={{ fontSize: '17px' }}>{featuredArtByCatData?.articles?.[0]?.subtitle_en}</div>
-
-                                                <div style={{ fontSize: '16px', marginTop: '5px', color: '#555' }}>
-                                                    <i className="fa-regular fa-user"></i>
-                                                    &nbsp; {featuredArtByCatData?.articles?.[0]?.author_firstname} {featuredArtByCatData?.articles?.[0]?.author_lastname}
-                                                </div>
-                                                <div style={{ fontSize: '14px', marginTop: '5px', color: '#888' }}>
-                                                    <i style={{ marginRight: '8px' }} className="fa-regular fa-clock"></i>
-                                                    {getFormattedTime(featuredArtByCatData?.articles?.[0]?.published_at)}
-                                                </div>
-
-                                            </Card.Text>
-                                        </Card.Body>
-                                    </Card>
-
-                                </Link>
-                                }
-                            </div>
-
-
-                            <div className={styles2.sideBanCard}>
-
-                                {featuredArtByCatData?.articles?.slice(1).map((article, index) => (
-                                    <Link className={`${styles.articleListItemContent}`}
-                                        to={`/${categorySlug}/${slugify(article.subcategory_name)}/article/${article.article_id}/${slugify(article.title_en)}`}>
-
-                                        <div key={article.article_id} className={styles2.picAndTitleOfArticle}>
-                                            <div className={styles2.picOfArticle}>
-                                                <img
-                                                    className={styles2.picOfArticle}
-                                                    src={article.cover_img_link}
-                                                    alt={article.title_en}
-                                                />
+                                            <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#555' }}>
+                                                &nbsp; &nbsp;
+                                                <i className="fa-regular fa-user"></i>
+                                                &nbsp;
+                                                {article.author_firstname} {article.author_lastname}
                                             </div>
 
-                                            <div >
-                                                <div style={{ fontSize: '15px', fontWeight: 'bold', color: 'darkblue', paddingLeft: '10px' }}>
-                                                    {article.title_en}
-                                                </div>
-                                                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#555' }}>
-                                                    &nbsp; &nbsp;
-                                                    <i className="fa-regular fa-user"></i>
-                                                    &nbsp;
-                                                    {article.author_firstname} {article.author_lastname}
-                                                </div>
-
-                                                <div style={{ fontSize: '12px', marginTop: '5px', color: '#888' }}>
-                                                    &nbsp; &nbsp;
-                                                    <i style={{ marginRight: '8px' }} className="fa-regular fa-clock"></i>
-                                                    {getFormattedTime(article.published_at)}
-                                                </div>
-
+                                            <div style={{ fontSize: '12px', marginTop: '5px', color: '#888' }}>
+                                                &nbsp; &nbsp;
+                                                <i style={{ marginRight: '8px' }} className="fa-regular fa-clock"></i>
+                                                {getFormattedTime(article.published_at)}
                                             </div>
 
                                         </div>
-                                    </Link>
-                                ))}
-                            </div>
+
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
+                        {/* </div> */}
 
                     </div>
+                    }
 
                 </div>
 

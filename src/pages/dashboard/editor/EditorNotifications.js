@@ -40,7 +40,7 @@ const EditorNotifications = () => {
         const processedData = editorNotisData?.all_notis?.map(notis => {
             // Function to construct the notification link
             const constructNotificationLink = (notificationLink, notificationId) => {
-                const hasQueryString = notificationLink.includes('?'); // Check if the link already has a query string
+                const hasQueryString = notificationLink?.includes('?'); // Check if the link already has a query string
                 const queryParams = `notification=true&id=${notificationId}&type=editor`; // Additional query parameters
                 return hasQueryString
                   ? `${notificationLink}&${queryParams}` // Append with '&' if there's already a query string

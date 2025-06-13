@@ -12,11 +12,12 @@ import DOMPurify from 'dompurify';
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
-import { useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { renderStrArray } from "../../utils/htmlRenderUtil";
 import { fetchData } from "../../utils/getDataUtil";
 import { cleanedTags } from "../../utils/slugAndStringUtil";
 import { postData } from "../../utils/postDataUtils";
+
 
 const ProfileWrite = () => {
 
@@ -66,6 +67,7 @@ const ProfileWrite = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [editorMail, setEditorMail] = useState('');
+  const [editorName, setEditorName] = useState('');
 
   // To ensure GET_SENT_FOR_EDIT_ARTICLE_BY_ID_API 
   // is called on every mount, we remove any cache--------
@@ -230,8 +232,19 @@ const ProfileWrite = () => {
             // console.log("API Response:", data.data.msg); 
             if (data?.data) {
               const message = data.data.msg;
-              const email = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
-              setEditorMail(email[0])
+              // const email = message.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+              // setEditorMail(email[0])
+
+              // Step 1: Get the part after the colon
+              const fullPart = message.split(": ")[1]; // "As Sakib_ikdyklfnerkjthkr"
+              // Step 2: Split from the last underscore
+              const lastUnderscoreIndex = fullPart.lastIndexOf("_");
+              const name = fullPart.substring(0, lastUnderscoreIndex); // "As Sakib"
+              const userSlug = fullPart.substring(lastUnderscoreIndex + 1); // "ikdyklfnerkjthkr"
+
+              setEditorName(name); // Set the editor's name
+              setEditorMail(userSlug);
+
               // toast.success(`Article submitted: ${data.data.msg}`, { duration: 5000 });
             } else {
               toast.success("Article submitted successfully!", { duration: 5000 });
@@ -501,7 +514,14 @@ const ProfileWrite = () => {
             }}>
               <CheckCircleTwoToneIcon style={{ color: "green", fontSize: "50px" }} />
               <span style={{ color: "green", fontWeight: "bold" }} >Article Submitted for Review Successfully !</span>
-              <span>Editor Mail: <span style={{ color: "#1039a1" }}> <b>{editorMail}</b> </span>  </span>
+              <div style={{ display: 'flex' }}>
+                Editor: &nbsp;
+                <Link to={`/user/${editorMail}`} >
+                  <span style={{ color: "#1039a1" }}>
+                    <b>{editorName}</b>
+                  </span>
+                </Link>
+              </div>
             </div>}
           </Modal.Body>
 

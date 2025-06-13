@@ -31,6 +31,7 @@ import ArticleSubCategoryList from './pages/articleList/ArticleSubCategoryList';
 import ProfileMyArticleDetails from './pages/profile/ProfileMyArticleDetails';
 import ProfileNote from './pages/profile/ProfileNote';
 import ProfileNoteDetails from './pages/profile/ProfileNoteDetails';
+import UserProfile from './pages/user/UserProfile';
 
 function App() {
 
@@ -58,6 +59,7 @@ function App() {
             <Route exact path="/:catSlug/:subCatSlug/article/:articleID/:articleTitleSlug" element={<Article />}></Route>
             <Route exact path="/category/:categorySlug" element={<ArticleList />}></Route>
             <Route exact path="/category/:categorySlug/:subcategorySlug" element={<ArticleSubCategoryList />}></Route>
+            <Route exact path="/user/:userSlug" element={<UserProfile />} />
 
             <Route element={<RequireNoAuth />}>
               <Route path="/auth" element={<AuthLayout />}>

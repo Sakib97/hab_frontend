@@ -168,7 +168,7 @@ const Editor = () => {
                                 onMouseLeave={(e) => handleMouseLeave(e, "/editor_dashboard/review")}
                                 component={<Link to="/editor_dashboard/review" />}
                                 icon={<GradingIcon />}> Article Reviews</MenuItem>
-                            <MenuItem style={defaultStyle}
+                            {/* <MenuItem style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
                                 icon={<CategoryTwoToneIcon />}>Create Subcategory & <br /> Tag</MenuItem>
@@ -176,7 +176,7 @@ const Editor = () => {
                                 style={defaultStyle}
                                 onMouseEnter={handleMouseEnter}
                                 onMouseLeave={handleMouseLeave}
-                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem>
+                                icon={<EditNoteTwoToneIcon />}>Write Note</MenuItem> */}
                         </Menu>
 
                     </Sidebar>
