@@ -41,6 +41,15 @@
     width: 100%;
     max-width: 240px;
 }
+.subCardBody{
+    padding: 5px;
+    /* Ensures the content inside the card has some padding */
+}
+.subCardBody:hover {
+    /* Optional: Add a hover effect for better UX */
+    /* color: rgb(21, 125, 9); */
+    color: brown;
+}
 
 .verticalDivider {
     width: 2px;
@@ -89,6 +98,9 @@
 .titleOfArticle {
     /* top right bottom left */
     padding: 0 10px 0 10px;
+}
+.titleOfArticle:hover {
+    color: brown;
 }
 
 .mainBanSection {
@@ -155,6 +167,17 @@
     /* top right bottom left */
     margin:0 300px 0px 0;
 
+}
+
+.linkStyle{
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+.linkStyle:hover{
+    /* text-decoration: underline; */
+    text-decoration: none;
+    /* color: saddlebrown; */
 }
 
 @media (max-width: 991px) {
