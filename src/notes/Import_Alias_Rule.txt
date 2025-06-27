@@ -1,0 +1,6 @@
+// Named export alias (use curly braces + `as`)
+import { OriginalName as Alias } from 'module';
+
+// Default export alias (no curly braces). 
+// Directly write your preferred Alias
+import Alias from 'module/subpath';

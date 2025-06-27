@@ -1,9 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../css/Article.module.css'
 import { SendOutlined } from '@ant-design/icons';
-
+import useAuth from '../../hooks/useAuth';
+import BootstrapButton from 'react-bootstrap/Button';
+import { Link, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
+import useProfileContext from '../../hooks/useProfileContext';
 
 const ArticleComments = () => {
+    const { auth } = useAuth();
+    const { profile } = useProfileContext();
+
+    const location = useLocation();
+    useEffect(() => {
+        // Dismiss all toasts when the component is unmounted
+        return () => {
+            toast.remove();
+        };
+    }, [location]); // Runs on page navigation
+
     // const [isReacted, setIsReacted] = useState({
     //     like: false,
     //     dislike: false
@@ -21,6 +37,18 @@ const ArticleComments = () => {
     // The keys are the comment IDs, The values are objects like { like: false, dislike: false } 
     const [isReacted, setIsReacted] = useState({});
     const toggleReaction = (commentId, reaction) => {
+        if (!auth?.email) {
+            // toast.error("Please Login First !", { duration: 3000 });
+            toast("Please Login First !", {
+                duration: 3000,
+                // icon: <i style={{color: 'red', fontSize: '22px'}} 
+                // className="fa-solid fa-triangle-exclamation"></i>,
+                icon: <i style={{ color: 'red', fontSize: '25px' }}
+                    className="fi fi-ss-octagon-exclamation"></i>
+            });
+            return;
+        }
+
         setIsReacted((prev) => {
             // We grab the current reaction state of the given comment.
             // If there’s no state yet for that comment, we default to { like: false, dislike: false }.
@@ -83,30 +111,58 @@ const ArticleComments = () => {
 
     return (
         <div className={`${styles.articleComments}`}>
+            <Toaster />
+            {/* {auth?.email ? <> */}
             <div className={`${styles.totalComments}`}>
                 <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
                     20 Comments </div>
-                <div style={{ fontWeight: 'bold', fontSize: '20px' }}>  John Doe </div>
+                <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
+                    {auth?.email ? <>
+                        {profile?.first_name} {profile?.last_name}
+                    </> :
+                        <>
+                            <BootstrapButton
+                                as={Link} // Makes Button render as a Link
+                                to="/auth/login"
+                                style={{ borderColor: 'black', color: 'black' }}
+                                variant="outline-light">
+                                <span style={{ fontWeight: 'bold', fontSize: '18px' }}>
+                                    Log in
+                                </span>
+                            </BootstrapButton>
+
+                        </>
+                    }
+                </div>
             </div>
             <hr style={{ border: "1px solid black" }} />
 
-            <div className={`${styles.commentBox}`}>
-                <form className={styles.commentForm}>
-                    <textarea
-                        className={styles.commentFormInput}
-                        type="text"
-                        placeholder="Write your comment..."
-                        autoComplete="comment"
-                        required />
+            {auth?.email ? <>
+                <div className={`${styles.commentBox}`}>
+                    <form className={styles.commentForm}>
+                        <textarea
+                            className={styles.commentFormInput}
+                            type="text"
+                            placeholder="Write your comment..."
+                            autoComplete="comment"
+                            required />
 
-                    <button type="submit"
-                        className={`${styles.commentSubmitButton}`}
-                    // disabled
-                    >
-                        Post <SendOutlined />
-                    </button>
-                </form>
-            </div>
+                        <button type="submit"
+                            className={`${styles.commentSubmitButton}`}
+                        // disabled
+                        >
+                            Post <SendOutlined />
+                        </button>
+                    </form>
+                </div>
+            </> : <>
+                <div style={{
+                    textAlign: 'center', fontSize: '20px', fontWeight: 'bold',
+                    color: '#c41b08'
+                }}>
+                    Please Log in to post your own comments !
+                </div>
+            </>}
 
             <div>
                 <select className={`${styles.commentSortDropdown}`}>
@@ -157,11 +213,16 @@ const ArticleComments = () => {
                             <button onClick={() => toggleExpandReplies(index)} className={`${styles.commentReplyBtn}`}>
                                 {repliesCount(index)} Replies </button>
 
-                            <button onClick={() => toggleReplyBox(index)}
-                                className={`${styles.commentReplyBtn}`}>Reply</button>
+                            {auth?.email &&
+                                <button onClick={() => toggleReplyBox(index)}
+                                    className={`${styles.commentReplyBtn}`}>Reply</button>
+                            }
                             {/* Reply Related Buttons end */}
-                            
-                            <span style={{ marginLeft: '20px', color: '#c41b08' }}> Report </span>
+
+                            {auth?.email &&
+                                <span style={{ marginLeft: '20px', color: '#c41b08' }}>
+                                    Report </span>
+                            }
 
                             {/* comment reply box start*/}
                             {showReplyBox[index] &&
@@ -219,6 +280,19 @@ const ArticleComments = () => {
 
                 )
             })}
+
+            {/* </>
+                : <>
+                    <div style={{
+                        textAlign: 'center', fontSize: '20px', fontWeight: 'bold',
+                        color: '#c41b08'}}>
+                        Please Log in post your own comments.
+                    </div>
+
+                </>
+            } */}
+
+
 
         </div>
     );

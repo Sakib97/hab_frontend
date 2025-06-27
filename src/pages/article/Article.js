@@ -1,7 +1,7 @@
 import styles from '../../css/Article.module.css'
 import { Breadcrumb } from 'antd';
 import LanguageToggle from '../../components/LanguageToggle';
-import ArticleReacftions from './ArticleReactions';
+import ArticleReactions from './ArticleReactions';
 import ArticleComments from './ArticleComments';
 import Footer from '../../components/Footer';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
@@ -17,11 +17,12 @@ import { position } from 'jodit/esm/core/helpers';
 import { SafeHtmlRenderer } from '../../utils/htmlRenderUtil';
 import { postData } from '../../utils/postDataUtils';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-
+import useAuth from '../../hooks/useAuth';
 
 const Article = () => {
     const { catSlug, subCatSlug, articleID, articleTitleSlug } = useParams();
     // console.log(catSlug, subCatSlug, articleID, articleTitleSlug);
+    const { auth } = useAuth();
 
     const [searchParams, setSearchParams] = useSearchParams();
     // const articleID = searchParams.get('a_id');
@@ -31,7 +32,10 @@ const Article = () => {
 
     const MARK_NOTIFICATION_CLICKED_API = `/api/v1/notification/mark_notis_as_clicked/${userType}/${notificationId}`
     const GET_ARTICLE_URL = `/api/v1/article/approved_article/${articleID}`
+    
     const axiosInst = axios;
+    const axiosPrivate = useAxiosPrivate();
+
     const { data: articleData, error: articleError, isLoading: articleLoading } = useQuery(
         ['articleData', GET_ARTICLE_URL],
         () => fetchData(GET_ARTICLE_URL, axiosInst),
@@ -39,6 +43,8 @@ const Article = () => {
             refetchOnWindowFocus: false,  // Disable refetch on window focus
         }
     );
+
+    
 
     const [article, setArticle] = useState(null);
     const [slugMismatch, setSlugMismatch] = useState(false);
@@ -70,7 +76,6 @@ const Article = () => {
         // console.log('Language changed to:', newIsEnglish ? 'English' : 'Bengali');
     };
 
-    const axiosPrivate = useAxiosPrivate();
 
     // This is for marking the notification as clicked when entered this page 
     // via the notification link ----------------------------------------------
@@ -223,7 +228,7 @@ const Article = () => {
                         </div>
                     </div>
                     <hr />
-                    <ArticleReacftions />
+                    <ArticleReactions article_id={articleID} />
                     <ArticleComments />
                 </div>}
 

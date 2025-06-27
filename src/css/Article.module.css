@@ -250,6 +250,14 @@
         margin-left: 15px;
     }
 
+    .articleReactionsIcons:hover {
+        z-index: 800;
+    }
+
+    /* .articleReactionsName{
+        z-index: 700;
+    } */
+
     .commentForm , .commentReplyForm{
         display: flex;          
         /* Stack items vertically */
