@@ -17,10 +17,13 @@ import { List } from 'antd';
 import { useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import { commentValidationSchema } from '../../schemas/commentValidationSchema';
+import { Pagination } from 'antd';
+import { set } from 'date-fns';
 
 const ArticleComments = ({ article_id, article_comment_count }) => {
-    console.log("ArticleComments component rendered with article_id:", article_id, article_comment_count);
+    // console.log("ArticleComments component rendered with article_id:", article_id, article_comment_count);
 
+    const [totalComments, setTotalComments] = useState(article_comment_count || 0);
     const { auth } = useAuth();
     const { profile } = useProfileContext();
 
@@ -37,6 +40,7 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
     const pageSize = 2;
     const GET_ARTICLE_COMMENT_API = `/api/v1/comment/article/comments/${article_id}?page=${page}&limit=${pageSize}`;
     const POST_ARTICLE_COMMENT_API = `/api/v1/comment/article/post_comment/${article_id}`;
+    const COMMENT_REACTION_API = `/api/v1/comment/react/comment`;
 
     const axiosPrivate = useAxiosPrivate();
     const axiosInst = axios;
@@ -52,15 +56,12 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
         {
             keepPreviousData: true, // Preserve previous data while fetching new
             refetchOnWindowFocus: false,  // Disable refetch on window focus
-            // onSuccess: (data) => {
-            //     setTotalCount(data.totalCount);
-            //     setPage(1); // Reset page to 1 on success
-            // }
         }
     );
 
     useEffect(() => {
         const processedComments = articleCommentsData?.parent_comments?.map(comment => {
+            setTotalComments(articleCommentsData?.total_comments_count || 0);
             return {
                 comment_text: comment.comment_text,
                 comment_id: comment.comment_id,
@@ -68,45 +69,13 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
                 username: comment.user_name,
                 user_image_url: comment.user_image_url,
                 created_at: getFormattedTime(comment.created_at),
+                like_count: comment.comment_reaction_count?.reactions?.like || 0,
+                dislike_count: comment.comment_reaction_count?.reactions?.dislike || 0,
+                user_reaction: comment.comment_reaction_count?.user_reaction || { like: false, dislike: false }
             };
         });
         setDiaplayArticleComments(processedComments);
     }, [articleCommentsData]);
-
-
-    // The keys are the comment IDs, The values are objects like { like: false, dislike: false } 
-    const [isReacted, setIsReacted] = useState({});
-    const toggleReaction = (commentId, reaction) => {
-        if (!auth?.email) {
-            // toast.error("Please Login First !", { duration: 3000 });
-            toast("Please Login First !", {
-                duration: 3000,
-                // icon: <i style={{color: 'red', fontSize: '22px'}} 
-                // className="fa-solid fa-triangle-exclamation"></i>,
-                icon: <i style={{ color: 'red', fontSize: '25px' }}
-                    className="fi fi-ss-octagon-exclamation"></i>
-            });
-            return;
-        }
-
-        setIsReacted((prev) => {
-            // We grab the current reaction state of the given comment.
-            // If there’s no state yet for that comment, we default to { like: false, dislike: false }.
-            const current = prev[commentId] || { like: false, dislike: false };
-            const newReaction = {
-                like: false,
-                dislike: false,
-                [reaction]: !current[reaction]
-            };
-
-            // We return a new object that keeps the previous state intact (...prev) 
-            // and updates the specific comment’s state.
-            return {
-                ...prev,
-                [commentId]: newReaction
-            };
-        });
-    };
 
     ///// Mutation for posting a new comment/////////////
     const queryClient = useQueryClient();
@@ -157,7 +126,52 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
     });
 
 
+     // The keys are the comment IDs, The values are objects like { like: false, dislike: false } 
+    const [isReacted, setIsReacted] = useState({
+        like: false,
+        dislike: false
+    });
+    //// mutation for reacting to comments ////
+    const commentReactionMutation = useMutation({
+        mutationFn: postData,
+        onSuccess: (response) => {
+            queryClient.invalidateQueries(['articleCommentsData', GET_ARTICLE_COMMENT_API, page]);
+            // queryClient.invalidateQueries('articleReactionCountData');
+        },
+        onError: (error) => {
+            console.error("Error making reaction:", error);
+        }
 
+    });
+   
+    const toggleReaction = (commentId, reaction) => {
+        if (!auth?.email) {
+            // toast.error("Please Login First !", { duration: 3000 });
+            toast("Please Login First !", {
+                duration: 3000,
+                // icon: <i style={{color: 'red', fontSize: '22px'}} 
+                // className="fa-solid fa-triangle-exclamation"></i>,
+                icon: <i style={{ color: 'red', fontSize: '25px' }}
+                    className="fi fi-ss-octagon-exclamation"></i>
+            });
+            return;
+        }
+
+        setIsReacted((prev) => ({
+            // We grab the current reaction state of the given comment.
+            // If there’s no state yet for that comment, we default to { like: false, dislike: false }.
+            // const current = prev[commentId] || { like: false, dislike: false };
+                like: false,
+                dislike: false,
+                [reaction]: !prev[reaction]
+        }));
+
+        const date = {
+                "content_id": commentId,
+                "reaction_type": reaction
+            };
+        commentReactionMutation.mutate({ data: date, url: COMMENT_REACTION_API, axiosInstance: axiosPrivate });
+    };
 
 
     const [showReplyBox, setShowReplyBox] = useState({});
@@ -221,7 +235,8 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
                 <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
                     {/* {article_comment_count || 0}: This ensures that if 
                     article_comment_count is null or undefined, it will display 0 instead of nothing. */}
-                    {article_comment_count || 0} {article_comment_count === 1 ? 'Comment' : 'Comments'} </div>
+                    {/* {article_comment_count || 0} {article_comment_count === 1 ? 'Comment' : 'Comments'} </div> */}
+                    {totalComments || 0} {totalComments === 1 ? 'Comment' : 'Comments'} </div>
 
                 <div style={{ fontWeight: 'bold', fontSize: '20px' }}>
                     {auth?.email ? <>
@@ -245,7 +260,7 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
             <hr style={{ border: "1px solid black" }} />
 
             {auth?.email ? <>
-                <div style={{textAlign: 'center', fontSize: '15px', fontWeight: 'bold', color: 'red' }}>
+                <div style={{ textAlign: 'center', fontSize: '15px', fontWeight: 'bold', color: 'red' }}>
                     {errors.comment_text && touched.comment_text && (
                         <div className={styles.errorMessage}>{errors.comment_text}</div>
                     )}
@@ -322,27 +337,31 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
 
                             <div className={styles.commentReactions}>
                                 <i
-                                    className={`fa-${reaction.like ? 'solid' : 'regular'} fa-thumbs-up`}
+                                    className={`fa-${reaction.like || comment.user_reaction === "like" ? 
+                                        'solid' : 'regular'} fa-thumbs-up`}
                                     style={{
                                         color: '#0565ad',
                                         cursor: 'pointer',
-                                        transform: reaction.like ? 'scale(1.2)' : 'scale(1)'
+                                        transform: reaction.like || comment.user_reaction === "like" ? 
+                                        'scale(1.2)' : 'scale(1)'
                                     }}
                                     onClick={() => toggleReaction(commentId, 'like')}
                                 ></i>
-                                <span> 11 </span>
+                                <span> {comment.like_count || 0} </span>
 
                                 <i
-                                    className={`fa-${reaction.dislike ? 'solid' : 'regular'} fa-thumbs-down`}
+                                    className={`fa-${reaction.dislike || comment.user_reaction === "dislike" ?
+                                         'solid' : 'regular'} fa-thumbs-down`}
                                     style={{
                                         color: '#8b0808',
                                         cursor: 'pointer',
                                         marginLeft: '10px',
-                                        transform: reaction.dislike ? 'scale(1.2)' : 'scale(1)'
+                                        transform: reaction.dislike || comment.user_reaction === "dislike" ? 
+                                        'scale(1.2)' : 'scale(1)'
                                     }}
                                     onClick={() => toggleReaction(commentId, 'dislike')}
                                 ></i>
-                                <span> 05 </span>
+                                <span> {comment.dislike_count || 0} </span>
 
                                 {/* Reply Related Buttons start */}
                                 <button
@@ -441,19 +460,18 @@ const ArticleComments = ({ article_id, article_comment_count }) => {
                     </button>
                 </div>
             )}
-            {/* 
-            {/* </>
-                : <>
-                    <div style={{
-                        textAlign: 'center', fontSize: '20px', fontWeight: 'bold',
-                        color: '#c41b08'}}>
-                        Please Log in post your own comments.
-                    </div>
 
-                </>
-            } */}
-
-
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <Pagination
+                    showQuickJumper
+                    align='center'
+                    current={page}
+                    pageSize={pageSize}
+                    total={totalComments || 0}
+                    onChange={(newPage) => setPage(newPage)}
+                    showSizeChanger={false}
+                />
+            </div>
 
         </div>
     );
