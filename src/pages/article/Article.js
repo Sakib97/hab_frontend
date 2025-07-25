@@ -229,7 +229,7 @@ const Article = () => {
                     </div>
                     <hr />
                     <ArticleReactions article_id={articleID} />
-                    <ArticleComments />
+                    <ArticleComments article_id={articleID} article_comment_count={articleData?.article.article_comment_count} />
                 </div>}
 
             {!articleLoading && !articleError && !slugMismatch && article &&

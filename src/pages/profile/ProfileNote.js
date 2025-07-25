@@ -22,7 +22,7 @@ const ProfileNote = () => {
     const navigate = useNavigate();
 
     const location = useLocation();
-    const basePath = '/profile/note';
+    const basePath = '/profile/note'; 
     const isBaseRoute = location.pathname === basePath;
     const isDetailsRoute = location.pathname.startsWith(`${basePath}/details`);
 
